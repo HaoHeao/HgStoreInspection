@@ -1,0 +1,92 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "user/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "user/selectInfo/selectInfo",
+			"style": {
+				"navigationBarTitleText": "用户信息修改"
+			}
+		},
+		{
+			"path": "user/index/index"
+		}
+	],
+	"subPackages": [{
+		"root": "pages",
+		"pages": [{
+				"path": "index/index",
+				"style": {
+					"navigationBarTitleText": "卖场巡检"
+				}
+			},
+			{
+				"path": "seeDetail/seeDetail",
+				"style": {
+					"navigationBarTitleText": "查看巡检记录"
+				}
+			},
+			{
+				"path": "viewQuestion/viewQuestion",
+				"style": {
+					"navigationBarTitleText": "问题讨论"
+				}
+			},
+			{
+				"path": "add/add",
+				"style": {
+					"navigationBarTitleText": "添加卖场巡检记录"
+				}
+			},
+			{
+				"path": "addSelect/addSelect"
+			}
+		]
+	}, {
+		"root": "pages-plan",
+		"pages": [{
+				"path": "index/index",
+				"style": {
+					"navigationBarTitleText": "计划巡检"
+				}
+			}, {
+				"path": "seeDetail/seeDetail",
+				"style": {
+					"navigationBarTitleText": "计划巡检内容"
+				}
+			}, {
+				"path": "addQuestion/addQuestion",
+				"style": {
+					"navigationBarTitleText": "提出巡检问题"
+				}
+			},
+			{
+				"path": "viewQuestion/viewQuestion",
+				"style": {
+					"navigationBarTitleText": "问题反馈"
+				}
+			}
+		]
+	}],
+	"preloadRule": {
+		"pages/index/index": {
+			"network": "all",
+			"packages": ["pages"]
+		},
+		"pages-plan/index/index": {
+			"network": "all",
+			"packages": ["pages-plan"]
+		}
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "汉光巡检系统",
+		"navigationBarBackgroundColor": "#fff",
+		"backgroundColor": "#fff",
+		"navigationStyle": "default"
+	}
+}

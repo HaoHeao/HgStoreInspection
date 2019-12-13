@@ -1,0 +1,2 @@
+setCssToHead(["@charset \x22UTF-8\x22;\n.",[1],"container.",[1],"data-v-137c6bed { background: #F6F7F9; }\n.",[1],"container .",[1],"main .",[1],"swiper.",[1],"data-v-137c6bed { width: 100%; min-height: calc(100vh - ",[0,0],"); }\n.",[1],"container .",[1],"main .",[1],"swiper .",[1],"swiper-item.",[1],"data-v-137c6bed { width: 100%; height: 100%; overflow-y: scroll; }\n",],undefined,{path:"./pages-plan/index/index.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages-plan/index/index.wxml') } }));

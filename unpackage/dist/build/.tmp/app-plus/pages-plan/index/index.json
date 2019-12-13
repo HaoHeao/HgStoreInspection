@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "计划巡检",
+  "usingComponents": {
+    "screen": "/components/planScreen/planScreen",
+    "data-list-item": "/components/planPageDataList/index"
+  }
+}
