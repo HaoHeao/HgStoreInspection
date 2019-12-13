@@ -119,7 +119,7 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<view class="replay-btn" v-if="option.data.status == 0" @click="thatReply()">提出反馈</view>
+		<view class="replay-btn" v-if="option.data.status == 0" @click="thatReply()">反馈</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
 			<view class="popup-reply">

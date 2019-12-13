@@ -71,6 +71,7 @@
         },
         onLoad: function(option) {
             this.type = option.type;
+			console.table(this.departmentList)
         },
         onShow: function() {
             if(this.type == 1){

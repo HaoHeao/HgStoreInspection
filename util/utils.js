@@ -19,9 +19,9 @@ let getMarketDeptList = (that) => {
 			that.$store.commit("setFilterQuestion", question);
 
 			// 卖场巡检全部页条件
-			let all = that.$store.state.market.filterAll;
-			all.senddpetid = data.deptlist;
-			that.$store.commit("setFilterAll", all);
+			// let all = that.$store.state.market.filterAll;
+			// all.senddpetid = data.deptlist;
+			// that.$store.commit("setFilterAll", all);
 
 			// 卖场巡检最近页条件
 			let near = that.$store.state.market.filterNear;

@@ -15,7 +15,7 @@
             <view class="item-view label-info">
                 <input v-model="place" class="inp" type="text" value="" placeholder="在此填写位置" />
             </view>
-            <view class="item-title">通知部门</view>
+            <view class="item-title">整改部门</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of deptList" :key="index" v-if="item.select == true">{{item.deptname}}</view>
                 <!-- <view class="item-true">法务部</view>
@@ -23,7 +23,7 @@
                 <view class="item-true">法务部</view> -->
                 <view class="item-true item-true-btn" @click="openSelect(1)">+</view>
             </view>
-            <view class="item-title">通知人员</view>
+            <view class="item-title">整改人员</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
                 <!-- <view class="item-true">法务部</view>
