@@ -1,14 +1,14 @@
 <template>
 	<view class="container">
-		<!-- <screen :current="current" @transfer="getCurrent"></screen> -->
+		<screen :current="current" @transfer="getCurrent"></screen>
 		<view class="main">
 			<swiper class="swiper" circular="true" :autoplay="false" duration="300" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
 					<data-list-item :dataList="dataList0" state="0" @again="getState" @againMore="againMore"></data-list-item>
 				</swiper-item>
-				<!-- <swiper-item class="swiper-item">
+				<swiper-item class="swiper-item">
 					<data-list-item :dataList="dataList1" state="1" @again="getState" @againMore="againMore"></data-list-item>
-				</swiper-item> -->
+				</swiper-item>
 			</swiper>
 		</view>
 	</view>
@@ -22,7 +22,7 @@
 	export default {
 		components: {
 			screen,
-			dataListItem
+			dataListItem,
 		},
 		data() {
 			return {
@@ -34,7 +34,8 @@
 			}
 		},
 		onShow() {
-			this.getPlanList();
+			this.getPlanList(0);
+			this.getPlanList(1);
 		},
 		methods: {
 			// 父组件传值
@@ -45,13 +46,16 @@
 				this.current = e.detail.current;
 			},
 			getState(){
-				this.getPlanList();
+				console.log(this.current)
+				this.getPlanList(0);
+				this.getPlanList(1);
 			},
-			getPlanList: function() {
+			getPlanList: function(datatype) {
 				this.dataList0 = [];
 				this.dataList1 = [];
 				request.getPlanList({
-						usernumber: uni.getStorageSync('userinfo').usernumber
+						usernumber: uni.getStorageSync('userinfo').usernumber,
+						datatype
 					})
 					.then(res => {
 						let [err, data] = res;
@@ -72,16 +76,16 @@
 									} else if (itm.appendtype == 2) {
 										item.itempersonlist.push(itm.itemname);
 									}
-								}
+								};
 								// for(let ind in item.planinspectionappenduser){
 								// 	if(ind == 0 && item.planinspectionappenduser[0]) item.itemdeptlist = item.planinspectionappenduser[0].itemname;
 								// 	if(ind != 0){
 								// 		item.itemdeptlist = item.itemdeptlist + '、' + item.planinspectionappenduser[ind].itemname
 								// 	}
 								// }
-								if (item.status == 1000) {
+								if (datatype == 1) {
 									this.dataList0.push(item);
-								} else if (item.status == 2000) {
+								} else if (datatype == 0) {
 									this.dataList1.push(item);
 								}
 							};
@@ -111,11 +115,11 @@
 		background: #F6F7F9;
 
 		.main {
-			// margin-top: 70rpx;
+			margin-top: 70rpx;
 
 			.swiper {
 				width: 100%;
-				min-height: calc(100vh - 0rpx);
+				min-height: calc(100vh - 70rpx);
 				// min-height: calc(100vh - 70rpx);
 
 				.swiper-item {

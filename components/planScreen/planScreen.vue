@@ -4,8 +4,8 @@
             <view class="left"></view>
             <view class="center">
                 <view class="btn-list">
-                    <view :class="['item', current == 0?'active':'']" @click="changeCurrent(0)">执行中</view>
-                    <view :class="['item', current == 1?'active':'']" @click="changeCurrent(1)">已完成</view>
+                    <view :class="['item', current == 0?'active':'']" @click="changeCurrent(0)">进行中</view>
+                    <view :class="['item', current == 1?'active':'']" @click="changeCurrent(1)">已发布</view>
                 </view>
             </view>
             <view class="right"></view>

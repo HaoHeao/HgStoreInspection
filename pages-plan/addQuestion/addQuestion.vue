@@ -18,18 +18,20 @@
             <view class="item-title">整改部门</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of deptList" :key="index" v-if="item.select == true">{{item.deptname}}</view>
-                <!-- <view class="item-true">法务部</view>
-                <view class="item-true">法务部</view>
-                <view class="item-true">法务部</view> -->
                 <view class="item-true item-true-btn" @click="openSelect(1)">+</view>
             </view>
             <view class="item-title">整改人员</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
-                <!-- <view class="item-true">法务部</view>
-                <view class="item-true">法务部</view>
-                <view class="item-true">法务部</view> -->
                 <view class="item-true item-true-btn" @click="openSelect(2)">+</view>
+            </view>
+			
+            <view class="item-title">确认部门或人员</view>
+            <view class="item-view label-add">
+				<view class="item-true fadeIn" v-for="(item,index) of deptListConfirm" :key="index" v-if="item.select == true">{{item.deptname}}</view>
+				<view class="item-true fadeIn" v-for="(item,index) of userListConfirm.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
+				<view class="item-true fadeIn" v-for="(item,index) of userListOnceConfirm" :key="index" v-if="item.select == true">{{item.username}}</view>
+                <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
             </view>
             <view class="item-title">添加图片</view>
             <view class="item-view label-add">
@@ -42,11 +44,6 @@
                     <view class="text">添加图片</view>
                 </view>
             </view>
-            <!-- <view class="control">
-                <view class="center"></view>
-                <view class="btn cancel" @click="cancelQuestion()">取消</view>
-                <view class="btn confirm" @click="sendQuestion()">确定</view>
-            </view> -->
         </view>
         <view class="confirm-btn" @click="sendQuestion()">提交</view>
         
@@ -54,7 +51,7 @@
 			<view v-if="selectForm == 1" class="popup-from">
 				<view scroll-y="true" class="popup depart">
 					<!-- cover-view -->
-					<view class="title">通知部门</view>
+					<view class="title">整改部门</view>
 					<view class="item-list">
 						<block v-for="(item,index) of deptList" :key="index">
 							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:1,item})">{{item.deptname}}</view>
@@ -65,14 +62,14 @@
 				<view class="control">
 					<view class="center"></view>
 					<view class="reset-from" @click="resetFrom(true)">重置</view>
-					<view class="confirm" @click="openSelect(3)">确定</view>
+					<view class="confirm" @click="openSelect(0)">确定</view>
 				</view>
-				<view class="close-btn" @click="openSelect(3)">×</view>
+				<view class="close-btn" @click="openSelect(0)">×</view>
 			</view>
 			<view v-if="selectForm == 2" class="popup-from">
 				<view scroll-y="true" class="popup depart user">
+					<view class="title">主要领导：</view>
 					<block v-for="(item,index) of userList.leaderlist" :key="index">
-						<view class="title">主要领导：</view>
 						<view class="item-list">
 							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:2,item})">{{item.username}}</view>
 						</view>
@@ -98,9 +95,48 @@
 				<view class="control">
 					<view class="center"></view>
 					<view class="reset-from" @click="resetFrom(false)">重置</view>
-					<view class="confirm" @click="openSelect(3)">确定</view>
+					<view class="confirm" @click="openSelect(0)">确定</view>
 				</view>
-				<view class="close-btn" @click="openSelect(3)">×</view>
+				<view class="close-btn" @click="openSelect(0)">×</view>
+			</view>
+			<view v-if="selectForm == 3" class="popup-from">
+				<view scroll-y="true" class="popup depart user">
+					<view class="title">确认部门：</view>
+					<view class="item-list">
+						<block v-for="(item,index) of deptListConfirm" :key="index">
+							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:3,item})">{{item.deptname}}</view>
+						</block>
+					</view>
+					<view class="title">主要领导：</view>
+					<view class="item-list">
+						<block v-for="(item,index) of userListConfirm.leaderlist" :key="index">
+							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:4,item})">{{item.username}}</view>
+						</block>
+					</view>
+					
+					<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
+						<view class="title">{{item.deptname}}</view>
+						<view class="item-list">
+							<block v-for="(itm,ind) of item.userlist" :key="ind">
+								<view :class="['item fadeIn',itm.select?'active':'']" @click="addSetDeptList({type:4,item:itm})">{{itm.username}}</view>
+							</block>
+						</view>
+					</block>
+					<!-- <view class="title">保安：</view>
+					<view class="item-list">
+						<view class="item">保安</view>
+						<view class="item">工程</view>
+						<view class="item">总办</view>
+						<view class="item">人事</view>
+					</view> -->
+					<view class="popup-down"></view>
+				</view>
+				<view class="control">
+					<view class="center"></view>
+					<view class="reset-from" @click="resetFrom(false)">重置</view>
+					<view class="confirm" @click="openSelect(0)">确定</view>
+				</view>
+				<view class="close-btn" @click="openSelect(0)">×</view>
 			</view>
         </popup>
     </view>
@@ -138,11 +174,9 @@
             },
             userListOnce(){
                 let person = this.$store.state.plan.questionSend.userlist;
-				console.log(person)
                 let leaderlist = person.leaderlist,
                     deptuserlist = person.deptuserlist,
                     allPerson = [];
-                console.log(this.$store.state.plan.questionSend.userlist)
                 for(let item of deptuserlist){
                     for(let ite of item.userlist){
                         allPerson.push(ite)
@@ -152,9 +186,32 @@
                     allPerson.push(item)
                 }
                 return allPerson;
-            }
+            },
+            deptListConfirm(){
+                return this.$store.state.plan.questionSendConfirm.deptlist;
+            },
+            userListConfirm(){
+                return this.$store.state.plan.questionSendConfirm.userlist;
+            },
+            userListOnceConfirm(){
+                let person = this.$store.state.plan.questionSendConfirm.userlist;
+                let leaderlist = person.leaderlist,
+                    deptuserlist = person.deptuserlist,
+                    allPerson = [];
+                for(let item of deptuserlist){
+                    for(let ite of item.userlist){
+                        allPerson.push(ite)
+                    }
+                }
+                for(let item of deptuserlist){
+                    allPerson.push(item)
+                }
+                return allPerson;
+            },
         },
 		onLoad:function(option){
+			console.log(this.deptListConfirm)
+			console.log(this.userListConfirm)
 			console.log(option)
 			this.option = option
 		},
@@ -168,7 +225,7 @@
             // 打开选择蒙层
             openSelect:function(type){
 				console.log(this)
-                if(type == 3){
+                if(type == 0){
                     this.selectForm = false;
                     this.$refs['popup'].close();
                     return;
@@ -224,6 +281,51 @@
                     }
 					console.log(userList)
                     this.$store.commit("setQuestionUserSend", userList);
+                }else if(option.type == 3) {
+                    console.log(this.deptList);
+                    let deptList = this.deptListConfirm;
+                    for (let index in deptList) {
+                        if (deptList[index].deptid == option.item.deptid) {
+                            if (deptList[index].select == true) {
+                                deptList[index].select = false;
+                            } else {
+                                deptList[index].select = true;
+                            }
+                        }
+                    }
+                    this.$store.commit("setQuestionDeptSendConfirm", deptList);
+                } else if (option.type == 4) {
+                    let userList = this.userListConfirm;
+                    let leaderlist = userList.leaderlist,
+                        deptuserlist = userList.deptuserlist;
+                    // leader
+                    for (let index in leaderlist) {
+                        if (leaderlist[index].userid == option.item.userid) {
+                            if (leaderlist[index].select == true) {
+                                leaderlist[index].select = false;
+                            } else {
+                                leaderlist[index].select = true;
+                            }
+                        }
+                    }
+                    // deptuserlist
+                    for (let item of deptuserlist) {
+                        for (let index in item.userlist) {
+                            if (item.userlist[index].userid == option.item.userid) {
+                                if (item.userlist[index].select == true) {
+                                    item.userlist[index].select = false;
+                                } else {
+                                    item.userlist[index].select = true;
+                                }
+                            }
+                        }
+                    }
+                    userList = {
+                        leaderlist,
+                        deptuserlist
+                    }
+					console.log(userList)
+                    this.$store.commit("setQuestionUserSendConfirm", userList);
                 }
                 this.$forceUpdate();
 			},

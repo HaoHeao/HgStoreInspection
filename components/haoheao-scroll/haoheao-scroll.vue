@@ -62,7 +62,7 @@
 		methods: {
 			startFn(e) {
 				this.isDown = true;
-				this.sPageY = e.changedTouches[0].pageY;
+				this.sPageY = e.changedTouches[0].pageY ? e.changedTouches[0].pageY : 0;
 				this.pointY = this.translateY;
 			},
 			moveFn(e) {
@@ -72,7 +72,7 @@
 					scrollOffset: true
 				}, data => {
 					this.scrollTop = data.scrollTop;
-					this.mPageY = e.changedTouches[0].pageY;
+					this.mPageY = e.changedTouches[0].pageY ? e.changedTouches[0].pageY : 0;
 					if (this.scrollTop <= 0) {
 						let translateY = ((this.mPageY - this.sPageY) / 2) + this.pointY;
 						this.translateY = (translateY < 0 ? 0 : translateY);
@@ -86,11 +86,10 @@
 						}
 					}
 				}).exec();
-
 			},
 			endFn(e) {
 				this.isDown = false;
-				this.ePageY = e.changedTouches[0].pageY;
+				this.ePageY = e.changedTouches[0].pageY ? e.changedTouches[0].pageY : 0;
 				setTimeout(() => {
 					this.translateY = this.translateY >= this.pullDownDistance ? this.pullDownDistance : 0;
 					if (this.pullDownStatus == 2) { // 开始刷新
@@ -116,7 +115,6 @@
 			},
 			scroll(e) {
 				this.$emit('onScroll', e);
-
 				if (this.timeout) clearTimeout(this.timeout);
 				this.timeout = setTimeout(() => {
 					this.scrolltolower(e);

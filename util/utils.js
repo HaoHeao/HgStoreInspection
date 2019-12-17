@@ -37,6 +37,11 @@ let getMarketDeptList = (that) => {
 			let planQuestionDeptSend = that.$store.state.plan.questionSend;
 			planQuestionDeptSend = data.deptlist;
 			that.$store.commit("setQuestionDeptSend", planQuestionDeptSend);
+
+			// 计划巡检回复问题确认
+			let planQuestionDeptSendConfirm = that.$store.state.plan.questionSendConfirm;
+			planQuestionDeptSendConfirm = data.deptlist;
+			that.$store.commit("setQuestionDeptSendConfirm", planQuestionDeptSendConfirm);
 		} else {
 			uni.showToast({
 				icon: "none",
@@ -66,6 +71,11 @@ let getMarketUserList = (that) => {
 			let planQuestionUserSend = that.$store.state.plan.questionSend.userlist;
 			planQuestionUserSend = data;
 			that.$store.commit("setQuestionUserSend", planQuestionUserSend);
+
+			// 计划巡检回复问题确认
+			let planQuestionUserSendConfirm = that.$store.state.plan.questionSend.userlist;
+			planQuestionUserSendConfirm = data;
+			that.$store.commit("setQuestionUserSendConfirm", planQuestionUserSendConfirm);
 		} else {
 			uni.showToast({
 				icon: "none",
