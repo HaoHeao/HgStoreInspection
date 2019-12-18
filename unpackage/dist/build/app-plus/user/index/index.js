@@ -1,2 +1,0 @@
-setCssToHead(["@charset \x22UTF-8\x22;\n.",[1],"container .",[1],"main.",[1],"data-v-48920d91 { width: 100%; height: calc(100vh - ",[0,100],"); background: #F6F7F9; }\n",],undefined,{path:"./user/index/index.wxss"})();
-document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./user/index/index.wxml') } }));

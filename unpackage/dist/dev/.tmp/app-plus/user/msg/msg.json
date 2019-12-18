@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "haoheao-scroll": "/components/haoheao-scroll/haoheao-scroll",
-    "skeleton": "/components/skeleton/skeleton"
-  },
-  "component": true
-}

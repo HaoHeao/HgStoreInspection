@@ -42,6 +42,9 @@ let getMarketDeptList = (that) => {
 			let planQuestionDeptSendConfirm = that.$store.state.plan.questionSendConfirm;
 			planQuestionDeptSendConfirm = data.deptlist;
 			that.$store.commit("setQuestionDeptSendConfirm", planQuestionDeptSendConfirm);
+
+			// 计划巡检回复问题确认
+			uni.setStorageSync('planQuestionDeptSendConfirm', data.deptlist);
 		} else {
 			uni.showToast({
 				icon: "none",
@@ -76,6 +79,9 @@ let getMarketUserList = (that) => {
 			let planQuestionUserSendConfirm = that.$store.state.plan.questionSend.userlist;
 			planQuestionUserSendConfirm = data;
 			that.$store.commit("setQuestionUserSendConfirm", planQuestionUserSendConfirm);
+
+			// 计划巡检回复问题确认
+			uni.setStorageSync('setQuestionUserSendConfirm', data);
 		} else {
 			uni.showToast({
 				icon: "none",
@@ -200,7 +206,7 @@ let seePicture = (list, index) => {
 
 // 时间大小补充
 let timeMake = (date) => {
-	date < 10 ? date =  '0' + date : date;
+	date < 10 ? date = '0' + date : date;
 	return date;
 }
 
@@ -212,11 +218,12 @@ let timerDateString = (data, _this) => {
 		// 时间戳对比
 		let value = (new Date().getTime() - data.getTime()) / 1000;
 		// 今天已过去的时间
-		let nextDate = new Date(new Date().getTime() + 24*60*60*1000); //后一天
-		let nextDateTime = new Date(new Date(nextDate).getFullYear() + '-' + (new Date(nextDate).getMonth()+1) + '-' + new Date(nextDate).getDate() + ' 00:00:00')
-		let passAwayTime = 86400 - ((nextDateTime.getTime() - new Date().getTime())/1000);
+		let nextDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000); //后一天
+		let nextDateTime = new Date(new Date(nextDate).getFullYear() + '-' + (new Date(nextDate).getMonth() + 1) + '-' + new Date(
+			nextDate).getDate() + ' 00:00:00')
+		let passAwayTime = 86400 - ((nextDateTime.getTime() - new Date().getTime()) / 1000);
 		// 年简化
-		
+
 		if (value < passAwayTime && new Date().getDate() == data.getDate()) {
 			item.insertdate1 = "今天 " + timeMake(data.getHours()) + ":" + timeMake(data.getMinutes());
 		} else if (value > passAwayTime && value < (passAwayTime + 86400)) {
@@ -232,21 +239,21 @@ let timerDateString = (data, _this) => {
 
 
 // 获取用户权限
-let getModelList = (usernumber,that)=>{
+let getModelList = (usernumber, that) => {
 	api.getModelPower({
-		usernumber
-	})
-	.then(data=>{
-		let [err,res] = data;
-		console.log("用户权限获取",err,res)
-		if(err == null){
-			that.$store.commit("setUserModel", res.data.data.menulist);
-		}else{
-			uni.showModal({
-				title:"权限获取失败,请检查网络!"
-			})
-		}
-	})
+			usernumber
+		})
+		.then(data => {
+			let [err, res] = data;
+			console.log("用户权限获取", err, res)
+			if (err == null) {
+				that.$store.commit("setUserModel", res.data.data.menulist);
+			} else {
+				uni.showModal({
+					title: "权限获取失败,请检查网络!"
+				})
+			}
+		})
 }
 
 export {

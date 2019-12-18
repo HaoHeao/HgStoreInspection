@@ -28,7 +28,7 @@
 					<view :class="['status-round',option.data.status == 1?'solve':'']"></view>
 					<view class="status-title" v-if="option.data.status == 0">待解决...</view>
 					<view class="status-title" v-if="option.data.status == 1">问题已解决</view>
-					<view class="confirm-question" v-if="option.data.status == 0 && option.data.usernumber == usernumber" @click="confirmQuestion(option.data)">确认已解决</view>
+					<view class="confirm-question" v-if="option.data.status == 0 && option.data.usernumber == usernumber || option.data.showRightIs" @click="confirmQuestion(option.data)">确认已解决</view>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
@@ -41,7 +41,7 @@
 					<view class="content">{{option.data.question}}</view>
 				</view>
 				<view class="info-list" v-if="option.data.mapplaninspectiondept.length">
-					<view class="left">通知部门</view>
+					<view class="left">整改部门</view>
 					<view class="content">
 						<text>
 							<block>{{option.data.mapplaninspectiondept[0].deptname}}</block>
@@ -50,11 +50,21 @@
 					</view>
 				</view>
 				<view class="info-list" v-if="option.data.mapplaninspectionuser.length">
-					<view class="left">通知人员</view>
+					<view class="left">整改人员</view>
 					<view class="content">
 						<text>
 							<block>{{option.data.mapplaninspectionuser[0].username}}</block>
 							<block v-for="(ite,ind) of option.data.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
+						</text>
+					</view>
+				</view>
+				<!-- 确认部门或人员 -->
+				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
+					<view class="left">确认人员或部门</view>
+					<view class="content">
+						<text>
+							<block>{{option.data.planinspectionsolveuser[0].itemname}}</block>
+							<block v-for="(ite,ind) of option.data.planinspectionsolveuser" :key="ind" v-if="ind != 0">{{'、' + ite.itemname}}</block>
 						</text>
 					</view>
 				</view>
@@ -119,7 +129,7 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<view class="replay-btn" v-if="option.data.status == 0" @click="thatReply()">反馈</view>
+		<view class="replay-btn" v-if="option.data.status == 0 || option.data.showRightIs" @click="thatReply()">反馈</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
 			<view class="popup-reply">
@@ -179,6 +189,18 @@
 			}
 		},
 		methods: {
+			// 当前登录人权限判断
+			showRightIs(data) {
+				let user = uni.getStorageSync('userinfo');
+				for (let item of data) {
+					if (item.itemno == user.usernumber) {
+						return true;
+					}
+					if(item.itemno == user.setuserid){
+						return true;
+					}
+				}
+			},
 			onPullDown(done) { // 下拉刷新
 				this.getDetail(this.option.id,this.option.reply_id);
 				console.log("下拉刷新")
@@ -243,7 +265,9 @@
 					
 					// HTML标签过滤
 					var str = this.detailInfo.content.replace(/<.*?>/ig, "");
-					this.detailInfo.content = str
+					this.detailInfo.content = str;
+					
+					this.option.data.showRightIs = this.showRightIs(this.option.data.planinspectionsolveuser);
 					
 					console.log("detailInfo:",this.detailInfo);
 					console.log("option",this.option);
@@ -499,7 +523,9 @@
 				margin-bottom:5rpx;
 				
 				.left{
-					width:125rpx;
+					width:105rpx;
+					padding-right:10rpx;
+					margin-right:10rpx;
 				}
 				
 				.content{

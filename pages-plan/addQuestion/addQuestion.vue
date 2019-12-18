@@ -22,6 +22,7 @@
             </view>
             <view class="item-title">整改人员</view>
             <view class="item-view label-add">
+				<view class="item-true fadeIn" v-for="(item,index) of userList.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(2)">+</view>
             </view>
@@ -30,7 +31,10 @@
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of deptListConfirm" :key="index" v-if="item.select == true">{{item.deptname}}</view>
 				<view class="item-true fadeIn" v-for="(item,index) of userListConfirm.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
-				<view class="item-true fadeIn" v-for="(item,index) of userListOnceConfirm" :key="index" v-if="item.select == true">{{item.username}}</view>
+				<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
+					<view class="item-true fadeIn" v-for="(item,index) of item.userlist" :key="index" v-if="item.select == true">{{item.username}}</view>
+				</block>
+				
                 <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
             </view>
             <view class="item-title">添加图片</view>
@@ -69,11 +73,11 @@
 			<view v-if="selectForm == 2" class="popup-from">
 				<view scroll-y="true" class="popup depart user">
 					<view class="title">主要领导：</view>
-					<block v-for="(item,index) of userList.leaderlist" :key="index">
-						<view class="item-list">
+					<view class="item-list">
+						<block v-for="(item,index) of userList.leaderlist" :key="index">
 							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:2,item})">{{item.username}}</view>
-						</view>
-					</block>
+						</block>
+					</view>
 					
 					<block v-for="(item,index) of userList.deptuserlist" :key="index">
 						<view class="title">{{item.deptname}}</view>
@@ -133,7 +137,7 @@
 				</view>
 				<view class="control">
 					<view class="center"></view>
-					<view class="reset-from" @click="resetFrom(false)">重置</view>
+					<view class="reset-from" @click="resetFromConfirm()">重置</view>
 					<view class="confirm" @click="openSelect(0)">确定</view>
 				</view>
 				<view class="close-btn" @click="openSelect(0)">×</view>
@@ -163,15 +167,14 @@
 				imgNumber:9,
 				upImgIndex:0,
 				upImgList:[],
+				deptList:this.$store.state.plan.questionSend.deptlist,
+				userList:this.$store.state.plan.questionSend.userlist,
+				deptListConfirm:uni.getStorageSync('planQuestionDeptSendConfirm'),
+				userListConfirm:uni.getStorageSync('setQuestionUserSendConfirm'),
+				// userListOnceConfirm:this.userListOnceConfirm1(this.userListConfirm)
             }
         },
         computed: {
-            deptList(){
-                return this.$store.state.plan.questionSend.deptlist;
-            },
-            userList(){
-                return this.$store.state.plan.questionSend.userlist;
-            },
             userListOnce(){
                 let person = this.$store.state.plan.questionSend.userlist;
                 let leaderlist = person.leaderlist,
@@ -187,31 +190,8 @@
                 }
                 return allPerson;
             },
-            deptListConfirm(){
-                return this.$store.state.plan.questionSendConfirm.deptlist;
-            },
-            userListConfirm(){
-                return this.$store.state.plan.questionSendConfirm.userlist;
-            },
-            userListOnceConfirm(){
-                let person = this.$store.state.plan.questionSendConfirm.userlist;
-                let leaderlist = person.leaderlist,
-                    deptuserlist = person.deptuserlist,
-                    allPerson = [];
-                for(let item of deptuserlist){
-                    for(let ite of item.userlist){
-                        allPerson.push(ite)
-                    }
-                }
-                for(let item of deptuserlist){
-                    allPerson.push(item)
-                }
-                return allPerson;
-            },
         },
 		onLoad:function(option){
-			console.log(this.deptListConfirm)
-			console.log(this.userListConfirm)
 			console.log(option)
 			this.option = option
 		},
@@ -219,6 +199,20 @@
 			this.resetOption();
 		},
         methods: {
+			userListOnceConfirm1:function(person){
+				let leaderlist = person.leaderlist,
+			        deptuserlist = person.deptuserlist,
+			        allPerson = [];
+			    for(let item of deptuserlist){
+			        for(let ite of item.userlist){
+			            allPerson.push(ite)
+			        }
+			    }
+			    for(let item of deptuserlist){
+			        allPerson.push(item)
+			    }
+			    return allPerson;
+			},
             popupChange:function(e){
                 this.popup = !this.popup;
             },
@@ -248,7 +242,6 @@
                             }
                         }
                     }
-                    this.$store.commit("setQuestionDeptSend", deptList);
                 } else if (option.type == 2) {
                     let userList = this.userList;
                     let leaderlist = userList.leaderlist,
@@ -279,8 +272,6 @@
                         leaderlist,
                         deptuserlist
                     }
-					console.log(userList)
-                    this.$store.commit("setQuestionUserSend", userList);
                 }else if(option.type == 3) {
                     console.log(this.deptList);
                     let deptList = this.deptListConfirm;
@@ -293,12 +284,13 @@
                             }
                         }
                     }
-                    this.$store.commit("setQuestionDeptSendConfirm", deptList);
+					this.deptListConfirm = deptList;
                 } else if (option.type == 4) {
                     let userList = this.userListConfirm;
                     let leaderlist = userList.leaderlist,
                         deptuserlist = userList.deptuserlist;
                     // leader
+					console.log(leaderlist)
                     for (let index in leaderlist) {
                         if (leaderlist[index].userid == option.item.userid) {
                             if (leaderlist[index].select == true) {
@@ -324,8 +316,7 @@
                         leaderlist,
                         deptuserlist
                     }
-					console.log(userList)
-                    this.$store.commit("setQuestionUserSendConfirm", userList);
+					this.userListConfirm = userList;
                 }
                 this.$forceUpdate();
 			},
@@ -407,12 +398,23 @@
 							deptid:0,//通知人的部门id
 							deptname:"",//通知人的部门名称
 							insertdate
-						}]
+						}],
+						planinspectionsolveuser:[{
+							solveid:0,
+							planquestionid:0,
+							solvetype:1,//1为部门，2为人员
+							itemno:'',
+							itemname:'',
+							status:1000,
+							insertdate: "2019-08-29 09:50:37",
+							lstupdatedate:"2019-08-29 09:50:37"
+						}],
 					}
 				};
 				option.planinspectionquestion.mapplaninspectiondept = [];
 				option.planinspectionquestion.mapplaninspectionuser = [];
 				option.planinspectionquestion.planinspectionquestionImg = [];
+				option.planinspectionquestion.planinspectionsolveuser = [];
 				// 部门写入
 				for(let item of this.deptList){
 					if(item.select == true){
@@ -427,6 +429,22 @@
 					}
 				}
 				// 人员写入
+				for(let item of this.userList.leaderlist){
+					if(item.select == true){
+						let it = {
+							mpiuid:0,
+							planquestionid:0,
+							userid:item.userid,//通知人的id
+							usernumber:item.usernumber,//通知人的工号
+							username:item.username,//通知人的姓名
+							mobile:'',//通知人的手机号
+							deptid:item.deptid,//通知人的部门id
+							deptname:item.deptname,//通知人的部门名称
+							insertdate
+						}
+						option.planinspectionquestion.mapplaninspectionuser.push(it);
+					}
+				}
 				for(let item of this.userListOnce){
 					if(item.select == true){
 						let it = {
@@ -443,6 +461,64 @@
 						option.planinspectionquestion.mapplaninspectionuser.push(it);
 					}
 				}
+				
+				// 整改部门整改人员必须选择一个
+				if(!(option.planinspectionquestion.mapplaninspectiondept.length || option.planinspectionquestion.mapplaninspectionuser.length)){
+					uni.showToast({
+						icon:"none",
+						title:"请选择整改部门或整改人员!"
+					});
+					return;
+				}
+				// 确认部门和人员写入
+				for(let item of this.deptListConfirm){
+					if(item.select == true){
+						let it = {
+							solveid:0,
+							planquestionid:0,
+							solvetype:1,//1为部门，2为人员
+							itemno:item.setuserid,
+							itemname:item.deptname,
+							status:1000,
+							insertdate: "2019-08-29 09:50:37",
+							lstupdatedate:"2019-08-29 09:50:37"
+						}
+						option.planinspectionquestion.planinspectionsolveuser.push(it);
+					}
+				}
+				for(let item of this.userListConfirm.leaderlist){
+					if(item.select == true){
+						let it = {
+							solveid:0,
+							planquestionid:0,
+							solvetype:2,//1为部门，2为人员
+							itemno:item.usernumber,
+							itemname:item.username,
+							status:1000,
+							insertdate: "2019-08-29 09:50:37",
+							lstupdatedate:"2019-08-29 09:50:37"
+						}
+						option.planinspectionquestion.planinspectionsolveuser.push(it);
+					}
+				}
+				for(let item of this.userListConfirm.deptuserlist){
+					for(let itm of item.userlist){
+						if(itm.select == true){
+							let it = {
+								solveid:0,
+								planquestionid:0,
+								solvetype:2,//1为部门，2为人员
+								itemno:itm.usernumber,
+								itemname:itm.username,
+								status:1000,
+								insertdate: "2019-08-29 09:50:37",
+								lstupdatedate:"2019-08-29 09:50:37"
+							}
+							option.planinspectionquestion.planinspectionsolveuser.push(it);
+						}
+					}
+				}
+				console.log(option.planinspectionquestion.planinspectionsolveuser)
 				// 图片写入
 				for(let item of this.upImgList){
 					let obj = {
@@ -478,6 +554,10 @@
 			},
 			delImg:function(index){
 				utils.delImg(index,this);
+			},
+			resetFromConfirm:function(){
+				this.deptListConfirm = uni.getStorageSync('planQuestionDeptSendConfirm');
+				this.userListConfirm = uni.getStorageSync('setQuestionUserSendConfirm');
 			},
 			resetFrom:function(type){
 				// 部门

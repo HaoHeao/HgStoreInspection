@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack:///E:/hbuilder-project/北京汉光巡检系统 - project/main.js"],"names":["createPage","Page"],"mappings":";;;;;;;;;;kDAAA;;AAEA;AACA,gM;AACAA,UAAU,CAACC,YAAD,CAAV,C","file":"msg/msg.js","sourcesContent":["import 'uni-pages';\n\nimport Vue from 'vue'            \nimport Page from './msg/msg.vue'\ncreatePage(Page)"],"sourceRoot":""}

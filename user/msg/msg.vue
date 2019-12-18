@@ -153,6 +153,9 @@
 			getMsg(pageindex, done) {
 				// console.log(pageindex)
 				// done下拉刷新结束
+				uni.showLoading({
+				    title: '加载中'
+				});
 				let option = {
 					usernumber: uni.getStorageSync("userinfo").usernumber,
 					deptid: uni.getStorageSync("userinfo").deptid,
@@ -180,6 +183,7 @@
 							duration: 3000
 						});
 					};
+					uni.hideLoading();
 				})
 			}
 		}

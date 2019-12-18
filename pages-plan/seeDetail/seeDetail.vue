@@ -72,7 +72,7 @@
 								<block v-for="(ite,ind) of infoDetail.itemdeptlist" :key="ind" v-if="ind != 0">{{'、' + ite}}</block>
 							</text>
 						</view>
-						<view class="content" v-if="!infoDetail.itemdeptlist.length">无通知部门</view>
+						<view class="content" v-if="!infoDetail.itemdeptlist.length">无整改部门</view>
 					</view>
 					<view class="detail-item person">
 						<view class="item">参与人员</view>
@@ -82,7 +82,7 @@
 								<block v-for="(ite,ind) of infoDetail.itempersonlist" :key="ind" v-if="ind != 0">{{'、' + ite}}</block>
 							</text>
 						</view>
-						<view class="content" v-if="!infoDetail.itempersonlist.length">无通知人员</view>
+						<view class="content" v-if="!infoDetail.itempersonlist.length">无整改人员</view>
 					</view>
 					<view class="detail-item describe">
 						<view class="item">检查重点</view>
@@ -126,7 +126,7 @@
 										<view class="content"><text>{{item.question}}</text></view>
 									</view>
 									<view class="li" v-if="item.mapplaninspectiondept.length">
-										<view class="left">通知部门</view>
+										<view class="left">整改部门</view>
 										<view class="content">
 											<text>
 												<block>{{item.mapplaninspectiondept[0].deptname}}</block>
@@ -135,7 +135,7 @@
 										</view>
 									</view>
 									<view class="li" v-if="item.mapplaninspectionuser.length">
-										<view class="left">通知人员</view>
+										<view class="left">整改人员</view>
 										<view class="content">
 											<text>
 												<block>{{item.mapplaninspectionuser[0].username}}</block>
@@ -157,8 +157,9 @@
 									<view class="reply-view">
 										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条反馈</view>
 										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂无反馈</view>
-										<view :class="['reply-button confirm', item.usernumber == usernumber && item.status == 0?'right':'']" @click.stop="confirmQuestion(item)" v-if="item.usernumber == usernumber && item.status == 0">已解决</view>
-										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0?'left':'']" v-if="item.status == 0">反馈</view>
+										<view :class="['reply-button confirm', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'right':'']"
+										 @click.stop="confirmQuestion(item)" v-if="item.usernumber == usernumber && item.status == 0 || item.showRightIs">解决</view>
+										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'left':'']" v-if="item.status == 0 || item.showRightIs">反馈</view>
 										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0?'left':'']" v-if="item.status == 1 && item.planinspectionfeedback.length">查看</view>
 										<!-- <view class="reply-button right">确认</view> -->
 									</view>
@@ -248,10 +249,22 @@
 				// 操作权限判断
 				postThereTrue: false,
 				// 巡检单状态
-				status: 0
+				status: 0,
 			}
 		},
 		methods: {
+			// 当前登录人权限判断
+			showRightIs(data) {
+				let user = uni.getStorageSync('userinfo');
+				for (let item of data) {
+					if (item.itemno == user.usernumber) {
+						return true;
+					}
+					if(item.itemno == user.setuserid){
+						return true;
+					}
+				}
+			},
 			// 复制内容
 			copy: function(data) {
 				app.copy(data)
@@ -287,6 +300,14 @@
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
+							
+							
+							
+							for(let item of this.infoDetail.planinspectionquestion){
+								if(this.showRightIs(item.planinspectionsolveuser)){
+									item.showRightIs = true;
+								}
+							}
 							console.log("巡检单详细信息2", this.infoDetail)
 							// 回复内容过滤
 							if (done) done();
@@ -322,9 +343,9 @@
 						})
 					} else {
 						uni.showToast({
-							icon:"none",
-							title:"此问题已解决,无反馈信息",
-							duration:2000
+							icon: "none",
+							title: "此问题已解决,无反馈信息",
+							duration: 2000
 						})
 						return;
 					}
@@ -674,7 +695,7 @@
 							.content {
 								color: #647484;
 								white-space: pre-wrap;
-								word-break:break-word;
+								word-break: break-word;
 								flex: 2;
 							}
 
@@ -759,16 +780,19 @@
 									color: #fff;
 								}
 							}
+
 							.reply-button.left {
-								border-top-left-radius:0;
-								border-bottom-left-radius:0;
+								border-top-left-radius: 0;
+								border-bottom-left-radius: 0;
 							}
+
 							.reply-button.right {
-								border-top-right-radius:0;
-								border-bottom-right-radius:0;
+								border-top-right-radius: 0;
+								border-bottom-right-radius: 0;
 							}
-							.reply-button.confirm{
-								border-right:0;
+
+							.reply-button.confirm {
+								border-right: 0;
 							}
 
 							// .reply-text.del-raply {
