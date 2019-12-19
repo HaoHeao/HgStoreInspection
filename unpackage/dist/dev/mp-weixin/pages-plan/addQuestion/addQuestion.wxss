@@ -42,6 +42,7 @@
     position: fixed;
     left: 20rpx;
     bottom: 20rpx;
+    margin-bottom: env(safe-area-inset-bottom);
 }
 .container .confirm-btn.data-v-10a69994:active {
       opacity: 0.9;
@@ -55,6 +56,7 @@
     padding: 0rpx 30rpx;
     padding-bottom: env(safe-area-inset-bottom);
     margin-bottom: 120rpx;
+    padding-bottom: 40rpx;
 }
 .container .main .item-title.data-v-10a69994 {
       font-size: 28rpx;

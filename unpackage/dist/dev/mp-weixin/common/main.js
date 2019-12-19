@@ -102,7 +102,7 @@ var config = {
 {
   globalData: {
     system: {
-      version: "0.6.3",
+      version: "0.6.4",
       // 北京汉光巡检系统
       systemName: "北京汉光巡检系统",
       appId: "wx252743e71090a061"

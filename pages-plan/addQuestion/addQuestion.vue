@@ -26,17 +26,6 @@
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(2)">+</view>
             </view>
-			
-            <view class="item-title">确认部门或人员</view>
-            <view class="item-view label-add">
-				<view class="item-true fadeIn" v-for="(item,index) of deptListConfirm" :key="index" v-if="item.select == true">{{item.deptname}}</view>
-				<view class="item-true fadeIn" v-for="(item,index) of userListConfirm.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
-				<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
-					<view class="item-true fadeIn" v-for="(item,index) of item.userlist" :key="index" v-if="item.select == true">{{item.username}}</view>
-				</block>
-				
-                <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
-            </view>
             <view class="item-title">添加图片</view>
             <view class="item-view label-add">
                 <view class="item-img-true fadeIn" v-for="(item,index) of upImgList" :key="index" @click="delImg(index)">
@@ -47,6 +36,17 @@
                     <view class="icon">+</view>
                     <view class="text">添加图片</view>
                 </view>
+            </view>
+			
+            <view class="item-title">复核部门或人员</view>
+            <view class="item-view label-add">
+				<view class="item-true fadeIn" v-for="(item,index) of deptListConfirm" :key="index" v-if="item.select == true">{{item.deptname}}</view>
+				<view class="item-true fadeIn" v-for="(item,index) of userListConfirm.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
+				<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
+					<view class="item-true fadeIn" v-for="(item,index) of item.userlist" :key="index" v-if="item.select == true">{{item.username}}</view>
+				</block>
+				
+                <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
             </view>
         </view>
         <view class="confirm-btn" @click="sendQuestion()">提交</view>
@@ -105,7 +105,7 @@
 			</view>
 			<view v-if="selectForm == 3" class="popup-from">
 				<view scroll-y="true" class="popup depart user">
-					<view class="title">确认部门：</view>
+					<view class="title">复核部门：</view>
 					<view class="item-list">
 						<block v-for="(item,index) of deptListConfirm" :key="index">
 							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:3,item})">{{item.deptname}}</view>
@@ -652,6 +652,7 @@
 			position:fixed;
 			left:20rpx;
 			bottom:20rpx;
+			margin-bottom: env(safe-area-inset-bottom);
 			
 			&:active{
 				opacity:0.9;
@@ -667,6 +668,7 @@
             padding:0rpx 30rpx;
             padding-bottom: env(safe-area-inset-bottom);
 			margin-bottom:120rpx;
+			padding-bottom:40rpx;
             
             .item-title{
                 font-size:28rpx;
