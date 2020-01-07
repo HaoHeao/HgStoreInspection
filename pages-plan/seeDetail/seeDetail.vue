@@ -82,7 +82,7 @@
 								<block v-for="(ite,ind) of infoDetail.itempersonlist" :key="ind" v-if="ind != 0">{{'、' + ite}}</block>
 							</text>
 						</view>
-						<view class="content" v-if="!infoDetail.itempersonlist.length">无整改人员</view>
+						<view class="content" v-if="!infoDetail.itempersonlist.length">未指定人员</view>
 					</view>
 					<view class="detail-item describe">
 						<view class="item">检查重点</view>
@@ -155,11 +155,11 @@
 										</view>
 									</view>
 									<view class="reply-view">
-										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条反馈</view>
-										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂无反馈</view>
+										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条整改反馈</view>
+										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂无整改反馈</view>
 										<view :class="['reply-button confirm', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'right':'']"
-										 @click.stop="confirmQuestion(item)" v-if="item.usernumber == usernumber && item.status == 0 || item.showRightIs">解决</view>
-										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'left':'']" v-if="item.status == 0 || item.showRightIs">反馈</view>
+										 @click.stop="confirmQuestion(item)" v-if="item.usernumber == usernumber && item.status == 0 || item.showRightIs">整改复核</view>
+										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'left':'']" v-if="item.status == 0 || item.showRightIs">整改反馈</view>
 										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0?'left':'']" v-if="item.status == 1 && item.planinspectionfeedback.length">查看</view>
 										<!-- <view class="reply-button right">确认</view> -->
 									</view>
@@ -181,7 +181,7 @@
             </view> -->
 				<view class="replay-null" v-if="!infoDetail.planinspectionquestion.length">
 					<view class="none">
-						<view class="txt">暂无问题回复</view>
+						<view class="txt">暂无巡检问题</view>
 						<view class="line"></view>
 					</view>
 				</view>

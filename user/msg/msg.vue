@@ -92,6 +92,9 @@
 				this.getMsg(this.pageindex);
 			}
 		},
+		onHide() {
+			uni.hideLoading();
+		},
 		methods: {
 			onPullDown(done) { // 下拉刷新
 				this.pageindex = 1;

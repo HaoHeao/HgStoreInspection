@@ -103,7 +103,7 @@ let getMarketUserList = (that) => {
 // 选择图片
 let choiceImgList = () => {
 	return uni.chooseImage({
-		sizeType: ['original', 'compressed'],
+		sizeType: ['compressed'],
 		sourceType: ['camera', 'album'],
 		count: 9,
 	});

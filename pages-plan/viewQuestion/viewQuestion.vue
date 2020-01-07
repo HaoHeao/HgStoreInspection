@@ -28,7 +28,7 @@
 					<view :class="['status-round',option.data.status == 1?'solve':'']"></view>
 					<view class="status-title" v-if="option.data.status == 0">待解决...</view>
 					<view class="status-title" v-if="option.data.status == 1">问题已解决</view>
-					<view class="confirm-question" v-if="option.data.status == 0 && option.data.usernumber == usernumber || option.data.showRightIs" @click="confirmQuestion(option.data)">确认已解决</view>
+					<view class="confirm-question" v-if="option.data.status == 0 && option.data.usernumber == usernumber || option.data.showRightIs" @click="confirmQuestion(option.data)">整改复核</view>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
@@ -60,7 +60,7 @@
 				</view>
 				<!-- 确认部门或人员 -->
 				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
-					<view class="left">确认人员或部门</view>
+					<view class="left">复核人员或部门</view>
 					<view class="content">
 						<text>
 							<block>{{option.data.planinspectionsolveuser[0].itemname}}</block>

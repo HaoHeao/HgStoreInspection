@@ -2,7 +2,7 @@
 	<view class="container">
 		<screen :current="current" index="3" isScreen="true" @transfer="getCurrent" @filter="getFilter"></screen>
 		<view class="main">
-			<swiper class="swiper" circular="true" :autoplay="false" duration="300" :current="current" @change="swiperChange">
+			<swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
 					<data-list-item :dataList="dataList0" state="0" @again="getState" @againMore="againMore"></data-list-item>
 				</swiper-item>
