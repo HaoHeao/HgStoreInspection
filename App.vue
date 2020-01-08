@@ -6,7 +6,7 @@
 	export default {
 		globalData: {
 			system: {
-				version: "0.6.7",
+				version: "0.7.3",
 				// 北京汉光巡检系统
 				systemName: "北京汉光巡检系统",
 				appId: "wx252743e71090a061",

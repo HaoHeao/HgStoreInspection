@@ -157,8 +157,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 var globalData = getApp().globalData;
 var utils = __webpack_require__(/*! @/util/utils.js */ 24);
@@ -175,10 +173,12 @@ var request = utils.api;var _default =
   },
   methods: {
     login: function login() {var _this2 = this;
-      uni.showLoading({
-        title: "正在登录,请稍后",
-        mask: false });
+      if (!uni.getStorageSync('userinfo')) {
+        uni.showLoading({
+          title: "正在登录,请稍后",
+          mask: false });
 
+      }
       this.loading = false;
       var _this = this;
       uni.login().then(function (data) {var _data = _slicedToArray(
@@ -213,7 +213,6 @@ var request = utils.api;var _default =
               data, 2),err = _data3[0],res = _data3[1];
               console.log("openid登录", err, res);
               uni.hideLoading();
-              _this.loading = true;
               if (err == null && res.data.success) {
                 globalData.userinfo = res.data.data.userinfo;
                 utils.getModelList(globalData.userinfo.usernumber, _this2);
@@ -223,6 +222,9 @@ var request = utils.api;var _default =
                 uni.redirectTo({
                   url: '../index/index' });
 
+                _this.loading = true;
+              } else {
+                _this.loading = true;
               }
             });
           } else {
@@ -321,18 +323,20 @@ var request = utils.api;var _default =
       });
     } },
 
-  onShow: function onShow() {
-    if (uni.getStorageSync('userinfo')) {
+  onShow: function onShow() {var _this5 = this;
+    // if(uni.getStorageSync('userinfo')){
 
-      globalData.userinfo = uni.getStorageSync('userinfo');
-      utils.getModelList(globalData.userinfo.usernumber, this);
-      uni.redirectTo({
-        url: '../index/index' });
-
-      return;
-    }
+    // globalData.userinfo = uni.getStorageSync('userinfo');
+    // utils.getModelList(globalData.userinfo.usernumber,this);
+    // uni.redirectTo({
+    // 	url: '../index/index'
+    // });
+    // return;
+    // }
     // 静默登录
-    this.login();
+    this.login().then(function () {
+      utils.getModelList(globalData.userinfo.usernumber, _this5);
+    });
 
   },
   // 分享

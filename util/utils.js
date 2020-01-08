@@ -249,6 +249,7 @@ let getModelList = (usernumber, that) => {
 			if (err == null) {
 				that.$store.commit("setUserModel", res.data.data.menulist);
 			} else {
+				uni.hideLoading();
 				uni.showModal({
 					title: "权限获取失败,请检查网络!"
 				})

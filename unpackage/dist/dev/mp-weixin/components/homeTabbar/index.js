@@ -221,7 +221,7 @@ var request = utils.api;var _default =
         uni.reLaunch({
           url: '/pages/index/index' });
 
-      } else if (type == 6) {
+      } else if (type == 2) {
         uni.reLaunch({
           url: '/pages-plan/index/index' });
 

@@ -251,6 +251,7 @@ var request = utils.request;var _default =
         pageindex: pageindex };
 
       console.log("问题列表数据请求参数:", data);
+      console.log("问题列表数据请求参数:", JSON.stringify(data));
       request.getQuestionList(data).then(function (data) {var _data = _slicedToArray(
         data, 2),err = _data[0],res = _data[1];
         console.log("问题页列表数据：", err, res);

@@ -344,7 +344,6 @@ var request = utils.request;var _default =
             // console.log(item)
             // console.log(user)
             // console.log(user.deptid)
-            // setuserid
             if (item.itemno == user.usernumber) {
               return true;
             }

@@ -267,13 +267,15 @@ var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return _
         // if (item.msgtype == 1) {
         console.log("计划巡检-回复");
         uni.navigateTo({
-          url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid + "&previs=" + 'true' + "&room=" + 'msg' });
+          url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +
+          "&previs=" + 'true' + "&room=" + 'msg' });
 
       }
     },
     getMsg: function getMsg(pageindex, done) {var _this2 = this;
       // console.log(pageindex)
       // done下拉刷新结束
+      uni.hideLoading();
       uni.showLoading({
         title: '加载中' });
 
@@ -297,6 +299,7 @@ var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return _
             _this2.pagenum = data.data.pagenum;
           }
           _this2.pageindex = _this2.pageindex + 1;
+          uni.hideLoading();
         } else {
           uni.showToast({
             icon: 'none',
@@ -304,6 +307,8 @@ var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return _
             duration: 3000 });
 
         };
+        uni.hideLoading();
+      }).then(function () {
         uni.hideLoading();
       });
     } } };exports.default = _default;

@@ -28,7 +28,7 @@
 					</view> -->
 					<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
 						<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
-						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 6"></image>
+						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
 						<view class="txt">{{item.mname}}</view>
 					</view>
 				</view>
@@ -103,7 +103,7 @@
 					uni.reLaunch({
 						url: '/pages/index/index'
 					})
-				} else if (type == 6) {
+				} else if (type == 2) {
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})

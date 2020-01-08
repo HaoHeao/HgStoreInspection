@@ -9356,6 +9356,7 @@ exports.timerDateString = timerDateString;var getModelList = function getModelLi
     if (err == null) {
       that.$store.commit("setUserModel", res.data.data.menulist);
     } else {
+      uni.hideLoading();
       uni.showModal({
         title: "权限获取失败,请检查网络!" });
 
@@ -9374,12 +9375,12 @@ exports.timerDateString = timerDateString;var getModelList = function getModelLi
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.getModelPower = exports.setMsgSee = exports.getMsg = exports.revisePwd = exports.revisePhoneNumber = exports.loginout = exports.loginOpenid = exports.login = exports.getOpenId = exports.api = exports.root = void 0; // 汉光测试
-var root = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/';exports.root = root;
-var api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/';
+// const root = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/'
+// const api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/'
 
 // 汉光正式
-// const root = 'https://vipapi.hanguangbaihuo.com/hgInspection/'
-// const api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/'
+var root = 'https://vipapi.hanguangbaihuo.com/hgInspection/';exports.root = root;
+var api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/';
 
 // const root = 'https://mobile.huaweihotel.com/hwhoteladoc/'
 // const api = 'https://mobile.huaweihotel.com/hwhoteladoc/storeapi/'

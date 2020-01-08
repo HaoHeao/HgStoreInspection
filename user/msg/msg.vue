@@ -149,15 +149,17 @@
 					// if (item.msgtype == 1) {
 					console.log("计划巡检-回复")
 					uni.navigateTo({
-						url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid + "&previs=" + 'true' + "&room=" + 'msg'
+						url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +
+							"&previs=" + 'true' + "&room=" + 'msg'
 					});
 				}
 			},
 			getMsg(pageindex, done) {
 				// console.log(pageindex)
 				// done下拉刷新结束
+				uni.hideLoading();
 				uni.showLoading({
-				    title: '加载中'
+					title: '加载中'
 				});
 				let option = {
 					usernumber: uni.getStorageSync("userinfo").usernumber,
@@ -179,6 +181,7 @@
 							this.pagenum = data.data.pagenum
 						}
 						this.pageindex = this.pageindex + 1;
+						uni.hideLoading();
 					} else {
 						uni.showToast({
 							icon: 'none',
@@ -186,6 +189,8 @@
 							duration: 3000
 						});
 					};
+					uni.hideLoading();
+				}).then(() => {
 					uni.hideLoading();
 				})
 			}
@@ -225,16 +230,16 @@
 					margin-right: 10rpx;
 					display: flex;
 					align-items: center;
-					position:relative;
-					
-					.status{
-						width:18rpx;
-						height:18rpx;
-						background:#D56C68;
-						border-radius:30rpx;
-						position:absolute;
-						right:0;
-						top:0;
+					position: relative;
+
+					.status {
+						width: 18rpx;
+						height: 18rpx;
+						background: #D56C68;
+						border-radius: 30rpx;
+						position: absolute;
+						right: 0;
+						top: 0;
 					}
 
 					.img {
