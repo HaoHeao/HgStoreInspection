@@ -605,14 +605,14 @@ var moment = utils.moment;var _default =
 
         return;
       }
-      // 确认部门和人员写入
+      // 审核部门和人员写入
       var _iteratorNormalCompletion12 = true;var _didIteratorError12 = false;var _iteratorError12 = undefined;try {for (var _iterator12 = this.deptListConfirm[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {var _item6 = _step12.value;
           if (_item6.select == true) {
             var _it3 = {
               solveid: 0,
               planquestionid: 0,
               solvetype: 1, //1为部门，2为人员
-              itemno: _item6.setuserid,
+              itemno: _item6.deptno,
               itemname: _item6.deptname,
               status: 1000,
               insertdate: "2019-08-29 09:50:37",
@@ -635,7 +635,8 @@ var moment = utils.moment;var _default =
 
             option.planinspectionquestion.planinspectionsolveuser.push(_it4);
           }
-        }} catch (err) {_didIteratorError13 = true;_iteratorError13 = err;} finally {try {if (!_iteratorNormalCompletion13 && _iterator13.return != null) {_iterator13.return();}} finally {if (_didIteratorError13) {throw _iteratorError13;}}}var _iteratorNormalCompletion14 = true;var _didIteratorError14 = false;var _iteratorError14 = undefined;try {
+        }} catch (err) {_didIteratorError13 = true;_iteratorError13 = err;} finally {try {if (!_iteratorNormalCompletion13 && _iterator13.return != null) {_iterator13.return();}} finally {if (_didIteratorError13) {throw _iteratorError13;}}}
+      console.log(option.planinspectionquestion.planinspectionsolveuser);var _iteratorNormalCompletion14 = true;var _didIteratorError14 = false;var _iteratorError14 = undefined;try {
         for (var _iterator14 = this.userListConfirm.deptuserlist[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {var _item8 = _step14.value;var _iteratorNormalCompletion16 = true;var _didIteratorError16 = false;var _iteratorError16 = undefined;try {
             for (var _iterator16 = _item8.userlist[Symbol.iterator](), _step16; !(_iteratorNormalCompletion16 = (_step16 = _iterator16.next()).done); _iteratorNormalCompletion16 = true) {var itm = _step16.value;
               if (itm.select == true) {

@@ -255,6 +255,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var app = getApp().$vm;var haoheaoScroll = function haoheaoScroll() {return __webpack_require__.e(/*! import() | components/haoheao-scroll/haoheao-scroll */ "components/haoheao-scroll/haoheao-scroll").then(__webpack_require__.bind(null, /*! @/components/haoheao-scroll/haoheao-scroll.vue */ 174));};var popup = function popup() {return __webpack_require__.e(/*! import() | components/uni-popup/uni-popup */ "components/uni-popup/uni-popup").then(__webpack_require__.bind(null, /*! @/components/uni-popup/uni-popup.vue */ 181));};
 
@@ -307,14 +328,29 @@ var request = utils.request;var _default =
   },
   methods: {
     // 当前登录人权限判断
-    showRightIs: function showRightIs(data) {
+    showRightIs: function showRightIs(data, type) {
+      if (!data) return false;
       var user = uni.getStorageSync('userinfo');var _iteratorNormalCompletion = true;var _didIteratorError = false;var _iteratorError = undefined;try {
         for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {var item = _step.value;
-          if (item.itemno == user.usernumber) {
-            return true;
-          }
-          if (item.itemno == user.setuserid) {
-            return true;
+          if (type == 1) {
+            if (item.deptid == user.deptid) {
+              return true;
+            }
+          } else if (type == 2) {
+            if (item.usernumber == user.usernumber) {
+              return true;
+            }
+          } else if (type == 3) {
+            // console.log(item)
+            // console.log(user)
+            // console.log(user.deptid)
+            // setuserid
+            if (item.itemno == user.usernumber) {
+              return true;
+            }
+            if (item.itemno == user.deptno) {
+              return true;
+            }
           }
         }} catch (err) {_didIteratorError = true;_iteratorError = err;} finally {try {if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}} finally {if (_didIteratorError) {throw _iteratorError;}}}
     },
@@ -352,14 +388,19 @@ var request = utils.request;var _default =
             // 回复内容时间过滤
           } catch (err) {_didIteratorError2 = true;_iteratorError2 = err;} finally {try {if (!_iteratorNormalCompletion2 && _iterator2.return != null) {_iterator2.return();}} finally {if (_didIteratorError2) {throw _iteratorError2;}}}utils.timerDateString(_this2.infoDetail.planinspectionquestion, _this2);
           var str = _this2.infoDetail.content.replace(/<.*?>/ig, "");
-          _this2.infoDetail.content = str;var _iteratorNormalCompletion3 = true;var _didIteratorError3 = false;var _iteratorError3 = undefined;try {
+          _this2.infoDetail.content = str;
 
 
 
+          console.log(_this2.infoDetail.planinspectionquestion);var _iteratorNormalCompletion3 = true;var _didIteratorError3 = false;var _iteratorError3 = undefined;try {
             for (var _iterator3 = _this2.infoDetail.planinspectionquestion[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {var item = _step3.value;
-              if (_this2.showRightIs(item.planinspectionsolveuser)) {
-                item.showRightIs = true;
-              }
+              console.log(item);
+              // 整改部门反馈
+              item.showFeedbackDept = _this2.showRightIs(item.mapplaninspectiondept, 1);
+              // 整改人员反馈
+              item.showFeedbackUser = _this2.showRightIs(item.mapplaninspectionuser, 2);
+              // 确认核验权限
+              item.showRightIs = _this2.showRightIs(item.planinspectionsolveuser, 3);
             }} catch (err) {_didIteratorError3 = true;_iteratorError3 = err;} finally {try {if (!_iteratorNormalCompletion3 && _iterator3.return != null) {_iterator3.return();}} finally {if (_didIteratorError3) {throw _iteratorError3;}}}
           console.log("巡检单详细信息2", _this2.infoDetail);
           // 回复内容过滤
@@ -424,7 +465,6 @@ var request = utils.request;var _default =
       utils.seePicture(list, index);
     },
     confirmQuestion: function confirmQuestion(item) {var _this3 = this;
-      // console.log(item);
       uni.showModal({
         title: "确认该问题已解决？",
         success: function success(res) {

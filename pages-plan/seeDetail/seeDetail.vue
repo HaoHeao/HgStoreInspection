@@ -43,7 +43,6 @@
 				<view class="module info fadeIn">
 					<view class="top-view">
 						<view class="state" v-if="infoDetail.status == 1000">
-							<!-- resolved -->
 							执行中
 						</view>
 						<view class="state resolved" v-if="infoDetail.status == 2000">
@@ -149,19 +148,41 @@
 										<view class="left">位置</view>
 										<view class="content">{{item.inspectionplace}}</view>
 									</view>
+										<!-- {{item.showFeedbackUser}} - {{item.showFeedbackDept}} - {{item.showRightIs}} -->
 									<view class="li li-imgs" v-if="item.planinspectionquestionimg.length">
 										<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="index" @tap.stop="seePicture(item.planinspectionquestionimg,ind)">
 											<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
 										</view>
+
 									</view>
 									<view class="reply-view">
 										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条整改反馈</view>
 										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂无整改反馈</view>
-										<view :class="['reply-button confirm', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'right':'']"
-										 @click.stop="confirmQuestion(item)" v-if="item.usernumber == usernumber && item.status == 0 || item.showRightIs">整改复核</view>
-										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0 || item.showRightIs?'left':'']" v-if="item.status == 0 || item.showRightIs">整改反馈</view>
-										<view :class="['reply-button', item.usernumber == usernumber && item.status == 0?'left':'']" v-if="item.status == 1 && item.planinspectionfeedback.length">查看</view>
+
+										<block v-if="item.planinspectionsolveuser.length">
+											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'right':'']"
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)">整改复核</view>
+										</block>
+										<block v-if="!item.planinspectionsolveuser.length">
+											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber)?'right':'']"
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber)">整改复核</view>
+										</block>
+
+										<block v-if="item.mapplaninspectionuser.length">
+											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="item.status == 0 && (item.showFeedbackUser)">整改反馈</view>
+											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="item.status == 0 && (!item.showFeedbackUser)">查看</view>
+										</block>
+										<block v-if="!item.mapplaninspectionuser.length">
+											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="item.status == 0 && (item.showFeedbackDept)">整改反馈</view>
+											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="item.status == 0 && (!item.showFeedbackDept)">查看</view>
+										</block>
+
 										<!-- <view class="reply-button right">确认</view> -->
+
 									</view>
 									<view class="line"></view>
 									<!-- 
@@ -254,14 +275,29 @@
 		},
 		methods: {
 			// 当前登录人权限判断
-			showRightIs(data) {
+			showRightIs(data, type) {
+				if (!data) return false;
 				let user = uni.getStorageSync('userinfo');
 				for (let item of data) {
-					if (item.itemno == user.usernumber) {
-						return true;
-					}
-					if(item.itemno == user.setuserid){
-						return true;
+					if (type == 1) {
+						if (item.deptid == user.deptid) {
+							return true;
+						}
+					} else if (type == 2) {
+						if (item.usernumber == user.usernumber) {
+							return true;
+						}
+					} else if (type == 3) {
+						// console.log(item)
+						// console.log(user)
+						// console.log(user.deptid)
+						// setuserid
+						if (item.itemno == user.usernumber) {
+							return true;
+						}
+						if (item.itemno == user.deptno) {
+							return true;
+						}
 					}
 				}
 			},
@@ -300,13 +336,18 @@
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
-							
-							
-							
-							for(let item of this.infoDetail.planinspectionquestion){
-								if(this.showRightIs(item.planinspectionsolveuser)){
-									item.showRightIs = true;
-								}
+
+
+
+							console.log(this.infoDetail.planinspectionquestion)
+							for (let item of this.infoDetail.planinspectionquestion) {
+								console.log(item)
+								// 整改部门反馈
+								item.showFeedbackDept = this.showRightIs(item.mapplaninspectiondept, 1)
+								// 整改人员反馈
+								item.showFeedbackUser = this.showRightIs(item.mapplaninspectionuser, 2)
+								// 确认核验权限
+								item.showRightIs = this.showRightIs(item.planinspectionsolveuser,3);
 							}
 							console.log("巡检单详细信息2", this.infoDetail)
 							// 回复内容过滤
@@ -371,7 +412,6 @@
 				utils.seePicture(list, index);
 			},
 			confirmQuestion(item) {
-				// console.log(item);
 				uni.showModal({
 					title: "确认该问题已解决？",
 					success: (res) => {

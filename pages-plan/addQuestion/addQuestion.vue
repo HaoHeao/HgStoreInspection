@@ -470,14 +470,14 @@
 					});
 					return;
 				}
-				// 确认部门和人员写入
+				// 审核部门和人员写入
 				for(let item of this.deptListConfirm){
 					if(item.select == true){
 						let it = {
 							solveid:0,
 							planquestionid:0,
 							solvetype:1,//1为部门，2为人员
-							itemno:item.setuserid,
+							itemno:item.deptno,
 							itemname:item.deptname,
 							status:1000,
 							insertdate: "2019-08-29 09:50:37",
@@ -501,6 +501,7 @@
 						option.planinspectionquestion.planinspectionsolveuser.push(it);
 					}
 				}
+						console.log(option.planinspectionquestion.planinspectionsolveuser)
 				for(let item of this.userListConfirm.deptuserlist){
 					for(let itm of item.userlist){
 						if(itm.select == true){

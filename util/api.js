@@ -1,6 +1,10 @@
-// 汉光正式
+// 汉光测试
 const root = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/'
 const api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/'
+
+// 汉光正式
+// const root = 'https://vipapi.hanguangbaihuo.com/hgInspection/'
+// const api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/'
 
 // const root = 'https://mobile.huaweihotel.com/hwhoteladoc/'
 // const api = 'https://mobile.huaweihotel.com/hwhoteladoc/storeapi/'

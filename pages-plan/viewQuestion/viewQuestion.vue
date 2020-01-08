@@ -28,7 +28,13 @@
 					<view :class="['status-round',option.data.status == 1?'solve':'']"></view>
 					<view class="status-title" v-if="option.data.status == 0">待解决...</view>
 					<view class="status-title" v-if="option.data.status == 1">问题已解决</view>
-					<view class="confirm-question" v-if="option.data.status == 0 && option.data.usernumber == usernumber || option.data.showRightIs" @click="confirmQuestion(option.data)">整改复核</view>
+					<block v-if="option.data.planinspectionsolveuser.length">
+						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
+						 @click="confirmQuestion(option.data)">整改复核</view>
+					</block>
+					<block v-if="!option.data.planinspectionsolveuser.length">
+						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber)" @click="confirmQuestion(option.data)">整改复核</view>
+					</block>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
@@ -129,7 +135,12 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<view class="replay-btn" v-if="option.data.status == 0 || option.data.showRightIs" @click="thatReply()">反馈</view>
+		<block v-if="option.data.mapplaninspectionuser.length">
+			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackUser)" @click="thatReply()">反馈</view>
+		</block>
+		<block v-if="!option.data.mapplaninspectionuser.length">
+			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept)" @click="thatReply()">反馈</view>
+		</block>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
 			<view class="popup-reply">
@@ -190,14 +201,28 @@
 		},
 		methods: {
 			// 当前登录人权限判断
-			showRightIs(data) {
+			showRightIs(data,type) {
 				let user = uni.getStorageSync('userinfo');
 				for (let item of data) {
-					if (item.itemno == user.usernumber) {
-						return true;
-					}
-					if(item.itemno == user.setuserid){
-						return true;
+					if (type == 1) {
+						if (item.deptid == user.deptid) {
+							return true;
+						}
+					} else if (type == 2) {
+						if (item.usernumber == user.usernumber) {
+							return true;
+						}
+					} else if (type == 3) {
+						console.log(item)
+						// console.log(user)
+						// console.log(user.deptid)
+						// setuserid
+						if (item.itemno == user.usernumber) {
+							return true;
+						}
+						if (item.itemno == user.deptno) {
+							return true;
+						}
 					}
 				}
 			},
@@ -267,7 +292,9 @@
 					var str = this.detailInfo.content.replace(/<.*?>/ig, "");
 					this.detailInfo.content = str;
 					
-					this.option.data.showRightIs = this.showRightIs(this.option.data.planinspectionsolveuser);
+					this.option.data.showFeedbackDept = this.showRightIs(this.option.data.mapplaninspectiondept,1);
+					this.option.data.showFeedbackUser = this.showRightIs(this.option.data.mapplaninspectionuser,2);
+					this.option.data.showRightIs = this.showRightIs(this.option.data.planinspectionsolveuser,3);
 					
 					console.log("detailInfo:",this.detailInfo);
 					console.log("option",this.option);

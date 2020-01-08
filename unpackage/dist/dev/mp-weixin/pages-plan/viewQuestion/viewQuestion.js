@@ -297,6 +297,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+
+
+
+
+
+
+
+
 var utils = __webpack_require__(/*! @/util/utils.js */ 24);
 var moment = utils.moment;
 var request = utils.request;var _default =
@@ -327,14 +338,28 @@ var request = utils.request;var _default =
   },
   methods: {
     // 当前登录人权限判断
-    showRightIs: function showRightIs(data) {
+    showRightIs: function showRightIs(data, type) {
       var user = uni.getStorageSync('userinfo');var _iteratorNormalCompletion = true;var _didIteratorError = false;var _iteratorError = undefined;try {
         for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {var item = _step.value;
-          if (item.itemno == user.usernumber) {
-            return true;
-          }
-          if (item.itemno == user.setuserid) {
-            return true;
+          if (type == 1) {
+            if (item.deptid == user.deptid) {
+              return true;
+            }
+          } else if (type == 2) {
+            if (item.usernumber == user.usernumber) {
+              return true;
+            }
+          } else if (type == 3) {
+            console.log(item);
+            // console.log(user)
+            // console.log(user.deptid)
+            // setuserid
+            if (item.itemno == user.usernumber) {
+              return true;
+            }
+            if (item.itemno == user.deptno) {
+              return true;
+            }
           }
         }} catch (err) {_didIteratorError = true;_iteratorError = err;} finally {try {if (!_iteratorNormalCompletion && _iterator.return != null) {_iterator.return();}} finally {if (_didIteratorError) {throw _iteratorError;}}}
     },
@@ -404,7 +429,9 @@ var request = utils.request;var _default =
         } catch (err) {_didIteratorError3 = true;_iteratorError3 = err;} finally {try {if (!_iteratorNormalCompletion3 && _iterator3.return != null) {_iterator3.return();}} finally {if (_didIteratorError3) {throw _iteratorError3;}}}var str = _this2.detailInfo.content.replace(/<.*?>/ig, "");
         _this2.detailInfo.content = str;
 
-        _this2.option.data.showRightIs = _this2.showRightIs(_this2.option.data.planinspectionsolveuser);
+        _this2.option.data.showFeedbackDept = _this2.showRightIs(_this2.option.data.mapplaninspectiondept, 1);
+        _this2.option.data.showFeedbackUser = _this2.showRightIs(_this2.option.data.mapplaninspectionuser, 2);
+        _this2.option.data.showRightIs = _this2.showRightIs(_this2.option.data.planinspectionsolveuser, 3);
 
         console.log("detailInfo:", _this2.detailInfo);
         console.log("option", _this2.option);
