@@ -95,7 +95,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components
+var components = {
+  screen: () =>
+    __webpack_require__.e(/*! import() | components/screen/screen */ "components/screen/screen").then(__webpack_require__.bind(null, /*! @/components/screen/screen.vue */ 188))
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -151,7 +154,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 var utils = __webpack_require__(/*! @/util/utils.js */ 24);
-var request = utils.request;var screen = function screen() {return __webpack_require__.e(/*! import() | components/planScreen/planScreen */ "components/planScreen/planScreen").then(__webpack_require__.bind(null, /*! @/components/planScreen/planScreen */ 188));};var dataListItem = function dataListItem() {return __webpack_require__.e(/*! import() | components/planPageDataList/index */ "components/planPageDataList/index").then(__webpack_require__.bind(null, /*! @/components/planPageDataList */ 195));};var _default =
+var request = utils.request;var screen = function screen() {return __webpack_require__.e(/*! import() | components/planScreen/planScreen */ "components/planScreen/planScreen").then(__webpack_require__.bind(null, /*! @/components/planScreen/planScreen */ 195));};var dataListItem = function dataListItem() {return __webpack_require__.e(/*! import() | components/planPageDataList/index */ "components/planPageDataList/index").then(__webpack_require__.bind(null, /*! @/components/planPageDataList */ 202));};var _default =
 
 
 {

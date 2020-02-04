@@ -78,7 +78,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components
+var components = {
+  "haoheao-scroll": () =>
+    __webpack_require__.e(/*! import() | components/haoheao-scroll/haoheao-scroll */ "components/haoheao-scroll/haoheao-scroll").then(__webpack_require__.bind(null, /*! @/components/haoheao-scroll/haoheao-scroll.vue */ 174))
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -187,7 +190,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var utils = __webpack_require__(/*! @/util/utils.js */ 24);
 var request = utils.api;
-var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return __webpack_require__.e(/*! import() | components/haoheao-scroll/haoheao-scroll */ "components/haoheao-scroll/haoheao-scroll").then(__webpack_require__.bind(null, /*! @/components/haoheao-scroll/haoheao-scroll.vue */ 174));};var skeleton = function skeleton() {return __webpack_require__.e(/*! import() | components/skeleton/skeleton */ "components/skeleton/skeleton").then(__webpack_require__.bind(null, /*! @/components/skeleton/skeleton.vue */ 202));};var _default =
+var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return __webpack_require__.e(/*! import() | components/haoheao-scroll/haoheao-scroll */ "components/haoheao-scroll/haoheao-scroll").then(__webpack_require__.bind(null, /*! @/components/haoheao-scroll/haoheao-scroll.vue */ 174));};var skeleton = function skeleton() {return __webpack_require__.e(/*! import() | components/skeleton/skeleton */ "components/skeleton/skeleton").then(__webpack_require__.bind(null, /*! @/components/skeleton/skeleton.vue */ 209));};var _default =
 
 
 {
@@ -207,6 +210,7 @@ var moment = utils.moment;var haoheaoScroll = function haoheaoScroll() {return _
     reflesh: function reflesh(news, old) {
       this.pageindex = 1;
       this.msgList = [];
+      // 获取信息
       this.getMsg(this.pageindex);
     } },
 

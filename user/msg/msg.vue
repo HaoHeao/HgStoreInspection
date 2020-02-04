@@ -89,6 +89,7 @@
 			reflesh(news, old) {
 				this.pageindex = 1;
 				this.msgList = [];
+				// 获取信息
 				this.getMsg(this.pageindex);
 			}
 		},

@@ -30,7 +30,7 @@
 					<view class="status-title" v-if="option.data.status == 1">问题已解决</view>
 					<block v-if="option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
-						 @click="confirmQuestion(option.data)">整改复核</view>
+						 @click="confirmQuestion(option.data)">复核</view>
 					</block>
 					<block v-if="!option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber)" @click="confirmQuestion(option.data)">整改复核</view>
@@ -244,7 +244,8 @@
 			// 关闭回复框并且清空详细信息
 			thatReplyClose:function(){
 				this.replyTxt = "";
-				this.$refs['popup'].close()
+				this.upImgList = [];
+				this.$refs['popup'].close();
 			},
 			// 获取巡检数据
 			getDetail: function(id,reply_id) {

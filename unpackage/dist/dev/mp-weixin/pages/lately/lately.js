@@ -78,7 +78,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
-var components
+var components = {
+  screen: () =>
+    __webpack_require__.e(/*! import() | components/screen/screen */ "components/screen/screen").then(__webpack_require__.bind(null, /*! @/components/screen/screen.vue */ 188))
+}
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
@@ -116,7 +119,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance");}function _iterableToArrayLimit(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}var dataListItem = function dataListItem() {return __webpack_require__.e(/*! import() | components/pageDataList/index */ "components/pageDataList/index").then(__webpack_require__.bind(null, /*! @/components/pageDataList */ 209));};var screen = function screen() {return __webpack_require__.e(/*! import() | components/screen/screen */ "components/screen/screen").then(__webpack_require__.bind(null, /*! @/components/screen/screen */ 216));};
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _slicedToArray(arr, i) {return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();}function _nonIterableRest() {throw new TypeError("Invalid attempt to destructure non-iterable instance");}function _iterableToArrayLimit(arr, i) {var _arr = [];var _n = true;var _d = false;var _e = undefined;try {for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {_arr.push(_s.value);if (i && _arr.length === i) break;}} catch (err) {_d = true;_e = err;} finally {try {if (!_n && _i["return"] != null) _i["return"]();} finally {if (_d) throw _e;}}return _arr;}function _arrayWithHoles(arr) {if (Array.isArray(arr)) return arr;}var dataListItem = function dataListItem() {return __webpack_require__.e(/*! import() | components/pageDataList/index */ "components/pageDataList/index").then(__webpack_require__.bind(null, /*! @/components/pageDataList */ 216));};var screen = function screen() {return __webpack_require__.e(/*! import() | components/screen/screen */ "components/screen/screen").then(__webpack_require__.bind(null, /*! @/components/screen/screen */ 188));};
 
 
 
