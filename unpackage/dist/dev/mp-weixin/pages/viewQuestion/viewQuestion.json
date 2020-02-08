@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "问题讨论",
-  "usingComponents": {
-    "haoheao-scroll": "/components/haoheao-scroll/haoheao-scroll",
-    "uni-popup": "/components/uni-popup/uni-popup"
-  }
-}

@@ -1,7 +1,0 @@
-{
-  "navigationBarTitleText": "查看巡检记录",
-  "usingComponents": {
-    "haoheao-scroll": "/components/haoheao-scroll/haoheao-scroll",
-    "popup": "/components/uni-popup/uni-popup"
-  }
-}
