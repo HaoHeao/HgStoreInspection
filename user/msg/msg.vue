@@ -17,6 +17,7 @@
 							<!-- <text class="type status" v-if="!item.logmsgview.length">[ 未读 ]</text> -->
 							<text class="type" v-if="item.msgtype == 1">[@您]</text>
 							<text class="type" v-if="item.msgtype == 2">[回复]</text>
+							<text class="type" v-if="item.msgtype == 3">[新的巡检]</text>
 							{{item.msg}}
 						</view>
 					</view>
@@ -115,7 +116,7 @@
 				utils.getMarketDeptList(this);
 				utils.getMarketUserList(this);
 				console.log("查看信息参数", item);
-				let insertdate = moment().format('yyyy-MM-dd hh:mm:ss');
+				let insertdate = moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
 				let setMsg = {
 					msgviewid: 0,
 					imlogid: item.imlogid,
@@ -174,6 +175,12 @@
 				request.getMsg(option).then(res => {
 					let [err, data] = res;
 					console.log("消息请求成功：", err, data.data);
+					// for (let item of data.data.data) {
+					// 	console.log(item)
+					// 	if (item.msgtype == 3) {
+					// 		console.log(item.msg.substring(item.msg.length - 10))
+					// 	}
+					// }
 					if (done) done();
 					if (err == null) {
 						utils.timerDateString(data.data.data);

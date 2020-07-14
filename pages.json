@@ -67,7 +67,7 @@
 			{
 				"path": "viewQuestion/viewQuestion",
 				"style": {
-					"navigationBarTitleText": "问题反馈"
+					"navigationBarTitleText": "巡检问题"
 				}
 			}
 		]

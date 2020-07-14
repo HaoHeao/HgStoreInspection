@@ -20,12 +20,12 @@
 				<view class="item-true fadeIn" v-for="(item,index) of deptList" :key="index" v-if="item.select == true">{{item.deptname}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(1)">+</view>
             </view>
-            <view class="item-title">整改人员</view>
+            <!-- <view class="item-title">整改人员</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of userList.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(2)">+</view>
-            </view>
+            </view> -->
             <view class="item-title">添加图片</view>
             <view class="item-view label-add">
                 <view class="item-img-true fadeIn" v-for="(item,index) of upImgList" :key="index" @click="delImg(index)">

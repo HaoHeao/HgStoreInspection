@@ -26,6 +26,7 @@
 						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
 						<view class="txt">计划巡检</view>
 					</view> -->
+					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->	
 					<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
 						<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
 						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
@@ -98,6 +99,7 @@
 			work_go: function(type) {
 				utils.getMarketDeptList(this);
 				utils.getMarketUserList(this);
+				/* 正式和测试  测试1,6  正式1,2 */
 				if (type == 1) {
 					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({

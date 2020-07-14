@@ -35,6 +35,7 @@
 					<block v-if="!option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber)" @click="confirmQuestion(option.data)">整改复核</view>
 					</block>
+					<view class="del" @click="delPlanQuestion()" v-if="username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">撤回</view>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
@@ -55,7 +56,7 @@
 						</text>
 					</view>
 				</view>
-				<view class="info-list" v-if="option.data.mapplaninspectionuser.length">
+				<!-- <view class="info-list" v-if="option.data.mapplaninspectionuser.length">
 					<view class="left">整改人员</view>
 					<view class="content">
 						<text>
@@ -63,7 +64,7 @@
 							<block v-for="(ite,ind) of option.data.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
 						</text>
 					</view>
-				</view>
+				</view> -->
 				<!-- 确认部门或人员 -->
 				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
 					<view class="left">复核人员或部门</view>
@@ -84,7 +85,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">问题反馈</view>
+			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">整改回复</view>
 			<view class="discuss-list">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
 					<view class="info">
@@ -136,10 +137,10 @@
 			</view>
 		</haoheao-scroll>
 		<block v-if="option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackUser)" @click="thatReply()">反馈</view>
+			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackUser)" @click="thatReply()">整改</view>
 		</block>
 		<block v-if="!option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept)" @click="thatReply()">反馈</view>
+			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept)" @click="thatReply()">整改</view>
 		</block>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
@@ -182,6 +183,7 @@
 		data() {
 			return {
 				usernumber:uni.getStorageSync('userinfo').usernumber,
+				username:uni.getStorageSync('userinfo').username,
                 bottomHeight:'20rpx',
 				keyBoardHeight:"",
 				option: {},
@@ -200,6 +202,41 @@
 			}
 		},
 		methods: {
+			// 撤回巡检
+			delPlanQuestion(){
+				uni.showModal({
+					title: "确认撤回？",
+					success: (res) => {
+						if (res.confirm) {
+							let user = uni.getStorageSync('userinfo');
+							console.log(this.option)
+							console.log({
+								planquestionid:this.option.data.planquestionid,
+								usernumber:user.usernumber
+							})
+							console.log(request.delPlanQuestion)
+							request.delPlanQuestion({
+								planquestionid:this.option.data.planquestionid,
+								usernumber:user.usernumber
+							}).then(data=>{
+								let [err, res] = data;
+								console.log(err, res)
+								if(res.data.success){
+									console.log("撤回成功")
+									uni.navigateBack({
+										delta: 1
+									});
+								}else{
+									uni.showToast({
+										icon:'none',
+										title:"撤回失败：" + res.data.errmsg
+									})
+								}
+							})
+						}
+					}
+				})
+			},
 			// 当前登录人权限判断
 			showRightIs(data,type) {
 				let user = uni.getStorageSync('userinfo');
@@ -525,6 +562,15 @@
 						 background:#1BA1F3;
 						 color:#fff;
 					 }
+				}
+				.del{
+					marign-right:10rpx;
+					color:#27A6F4;
+					padding: 3px 6px;
+					border-radius: 2px;
+					&:hover{
+						background: #f2f2f2;
+					}
 				}
 			}
 

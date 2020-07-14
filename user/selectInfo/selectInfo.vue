@@ -4,7 +4,7 @@
             <view class="title">原手机号</view>
             <input type="number" class="input-view" v-model="oldPhone" placeholder="请填写原手机号">
             <view class="title">新手机号</view>
-            <input type="number" class="input-view" v-model="newPhone" placeholder="请填写原手机号">
+            <input type="number" class="input-view" v-model="newPhone" placeholder="请填写新手机号">
             <view class="confirm-btn" @click="confirmSelectPhone()">确认修改</view>
         </view>
         <view v-if="type == 2">

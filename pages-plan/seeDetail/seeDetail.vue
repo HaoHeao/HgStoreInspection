@@ -42,11 +42,13 @@
 			<block v-if="infoDetail.status">
 				<view class="module info fadeIn">
 					<view class="top-view">
-						<view class="state" v-if="infoDetail.status == 1000">
+						<view class="state" v-if="infoDetail.status == 1000 && infoDetail.notStarted">
 							执行中
 						</view>
+						<view class="state not-started" v-if="infoDetail.status == 1000 && !infoDetail.notStarted">
+							未开始
+						</view>
 						<view class="state resolved" v-if="infoDetail.status == 2000">
-							<!-- resolved -->
 							已完成
 						</view>
 						<view class="center"></view>
@@ -133,7 +135,7 @@
 											</text>
 										</view>
 									</view>
-									<view class="li" v-if="item.mapplaninspectionuser.length">
+									<!-- <view class="li" v-if="item.mapplaninspectionuser.length">
 										<view class="left">整改人员</view>
 										<view class="content">
 											<text>
@@ -141,45 +143,52 @@
 												<block v-for="(ite,ind) of item.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
 											</text>
 										</view>
-									</view>
+									</view> -->
 									<div v-if="item.shopAds == !null" class="commodity_introduce">{{item.shopAds}}</div>
 									<div v-if="item.shopAds == null" class="commodity_introduce">{{item.shop_add}}</div>
-									<view class="li place" v-if="item.inspectionplace">
+									<view :class="['li',item.status == 0?'place':'']" v-if="item.inspectionplace">
 										<view class="left">位置</view>
 										<view class="content">{{item.inspectionplace}}</view>
 									</view>
-										<!-- {{item.showFeedbackUser}} - {{item.showFeedbackDept}} - {{item.showRightIs}} -->
+									<view class="li" v-if="item.status == 1">
+										<view class="left">复核人</view>
+										<view class="content">{{item.confirmuserid}}</view>
+									</view>
+									<view :class="['li',item.status == 1?'place':'']" v-if="item.status == 1">
+										<view class="left">复核时间</view>
+										<view class="content">{{item.confirmdate}}</view>
+									</view>
+									<!-- {{item.showFeedbackUser}} - {{item.showFeedbackDept}} - {{item.showRightIs}} -->
 									<view class="li li-imgs" v-if="item.planinspectionquestionimg.length">
 										<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="index" @tap.stop="seePicture(item.planinspectionquestionimg,ind)">
 											<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
 										</view>
-
 									</view>
 									<view class="reply-view">
-										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条整改反馈</view>
-										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂无整改反馈</view>
-
+										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条</view>
+										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂未整改</view>
 										<block v-if="item.planinspectionsolveuser.length">
 											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'right':'']"
-											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)">整改复核</view>
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
 										</block>
 										<block v-if="!item.planinspectionsolveuser.length">
 											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber)?'right':'']"
-											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber)">整改复核</view>
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber)">复核</view>
 										</block>
 
 										<block v-if="item.mapplaninspectionuser.length">
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
-											 v-if="item.status == 0 && (item.showFeedbackUser)">整改反馈</view>
+											 v-if="item.status == 0 && (item.showFeedbackUser)">整改</view>
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
 											 v-if="item.status == 0 && (!item.showFeedbackUser)">查看</view>
 										</block>
 										<block v-if="!item.mapplaninspectionuser.length">
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
-											 v-if="item.status == 0 && (item.showFeedbackDept)">整改反馈</view>
+											 v-if="item.status == 0 && (item.showFeedbackDept)">整改</view>
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
 											 v-if="item.status == 0 && (!item.showFeedbackDept)">查看</view>
 										</block>
+										<!-- BUG：当问题已复核且有反馈时查看按钮不显示 -->
 
 										<!-- <view class="reply-button right">确认</view> -->
 
@@ -214,7 +223,7 @@
 				</view>
 			</block>
 		</haoheao-scroll>
-		<block v-if="infoDetail.status">
+		<block v-if="infoDetail.status && infoDetail.notStarted">
 			<view class="replay-btn" @click="reply()">提出巡检问题</view>
 		</block>
 		<block v-if="!infoDetail.status">
@@ -317,6 +326,11 @@
 							// 时间过滤
 							this.infoDetail.sdate1 = this.infoDetail.sdate.slice(0, 10).replace(/-/g, ".");
 							this.infoDetail.edate1 = this.infoDetail.edate.slice(0, 10).replace(/-/g, ".");
+							if (this.moment(new Date(this.infoDetail.sdate)).date.getTime() > this.moment(new Date()).date.getTime()) {
+								this.infoDetail.notStarted = false
+							} else {
+								this.infoDetail.notStarted = true
+							}
 
 							// 部门人员过滤
 							this.infoDetail.itemdeptlist = [];
@@ -330,15 +344,12 @@
 							}
 
 							// 问题列表项目人员过滤
-
 							// 回复内容时间过滤
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
 
-
-
-							console.log(this.infoDetail.planinspectionquestion)
+							// console.log(this.infoDetail.planinspectionquestion)
 							for (let item of this.infoDetail.planinspectionquestion) {
 								console.log(item)
 								// 整改部门反馈
@@ -346,7 +357,7 @@
 								// 整改人员反馈
 								item.showFeedbackUser = this.showRightIs(item.mapplaninspectionuser, 2)
 								// 确认核验权限
-								item.showRightIs = this.showRightIs(item.planinspectionsolveuser,3);
+								item.showRightIs = this.showRightIs(item.planinspectionsolveuser, 3);
 							}
 							console.log("巡检单详细信息2", this.infoDetail)
 							// 回复内容过滤
@@ -510,6 +521,10 @@
 
 				.state.resolved {
 					background: #7ED58C;
+				}
+
+				.state.not-started {
+					background: #d2d2d2;
 				}
 
 				.center {

@@ -212,6 +212,16 @@ const confirmPlanQuestion = (data) => {
 	})
 }
 
+// 计划巡检问题撤回
+const delPlanQuestion = (data) => {
+	console.log(data)
+	return uni.request({
+		url: `${api}plan/question/del`,
+		method: "POST",
+		data
+	})
+}
+
 export {
 	// 获取部门列表
 	getMarketDeptList,
@@ -260,4 +270,6 @@ export {
 	sendQuestionReply,
 	// 确认计划巡检问题已解决
 	confirmPlanQuestion,
+	// 计划巡检问题撤回
+	delPlanQuestion
 }
