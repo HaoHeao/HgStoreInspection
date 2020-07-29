@@ -71,6 +71,14 @@
 				}
 			}
 		]
+	}, {
+		"root": "meeting",
+		"pages": [{
+			"path": "index/index",
+			"style": {
+				"navigationBarTitleText": "会议预定"
+			}
+		}]
 	}],
 	"preloadRule": {
 		"pages/index/index": {

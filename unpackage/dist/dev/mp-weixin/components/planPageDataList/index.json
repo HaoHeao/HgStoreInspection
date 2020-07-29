@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "haoheao-scroll": "/components/haoheao-scroll/haoheao-scroll"
+  }
+}

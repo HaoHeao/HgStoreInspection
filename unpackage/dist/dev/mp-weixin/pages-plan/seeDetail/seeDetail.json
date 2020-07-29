@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "计划巡检内容",
+  "usingComponents": {
+    "haoheao-scroll": "/components/haoheao-scroll/haoheao-scroll",
+    "popup": "/components/uni-popup/uni-popup"
+  }
+}

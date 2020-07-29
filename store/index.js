@@ -4,6 +4,7 @@ import tabbar from "./modules/tabbar.js"
 import market from "./modules/market.js"
 import plan from "./modules/plan.js"
 import usermodel from "./userModel.js"
+import metting from "./modules/metting.js"
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -41,7 +42,8 @@ const store = new Vuex.Store({
         tabbar,
         market,
 		plan,
-		usermodel
+		usermodel,
+		metting
     }
 });
 export default store;

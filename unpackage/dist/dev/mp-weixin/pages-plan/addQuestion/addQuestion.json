@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "提出巡检问题",
+  "usingComponents": {
+    "popup": "/components/uni-popup/uni-popup"
+  }
+}

@@ -7,19 +7,14 @@
 		globalData: {
 			system: {
 				version: "0.7.8",
+				lastmodified: "2020/07/29",
 				systemName: "北京汉光巡检系统",
 				appId: "wx252743e71090a061"
 			},
 			openId: "",
 			serverTime: "",
-		},
-		data() {
-			return {
-
-			}
-		},
-		onLaunch: function() {
-			// console.log((!(~+[]) + {})[--[~+""][+[]] * [~+[]] + ~~!+[]] + ({} + [])[[~!+[]] * ~+[]]);
+			/* 会议时预订 */
+			max_booking_date: 14 // 最多可预订至多少天后
 		},
 		onShow: function() {
 			this.upApp();
@@ -42,15 +37,15 @@
 			trim: function(str) {
 				return str.replace(/(\s*$)/g, "");
 			},
-			/**
-			 * 检测当前的小程序
-			 * 是否是最新版本，是否需要下载、更新
-			 */
 			upApp: function() {
+				/**
+				 * 检测当前的小程序
+				 * 是否是最新版本，是否需要下载、更新
+				 */
 				const updateManager = uni.getUpdateManager();
 				updateManager.onCheckForUpdate(function(res) {
 					// 请求完新版本信息的回调
-					console.log(res.hasUpdate);
+					console.log('请求完新版本信息的回调', res);
 				});
 				updateManager.onUpdateReady(function(res) {
 					uni.showModal({
@@ -65,7 +60,6 @@
 					});
 
 				});
-
 				updateManager.onUpdateFailed(function(res) {
 					console.log("新版本下载失败")
 					uni.showModal({

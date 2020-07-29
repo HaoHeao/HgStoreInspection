@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "screen": "/components/screen/screen",
+    "data-list-item": "/components/pageDataList/index"
+  }
+}

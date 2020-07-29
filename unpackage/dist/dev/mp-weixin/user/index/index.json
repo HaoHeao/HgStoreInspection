@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "tabbar": "/components/homeTabbar/index",
+    "msg": "/user/msg/msg",
+    "mine": "/user/mine/mine"
+  }
+}

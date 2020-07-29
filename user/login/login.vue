@@ -35,7 +35,7 @@
 			}
 		},
 		methods: {
-			login: async function() {
+			login: function() {
 				if (!uni.getStorageSync('userinfo')) {
 					uni.showLoading({
 						title: "正在登录,请稍后",
@@ -44,7 +44,7 @@
 				}
 				this.loading = false;
 				let _this = this;
-				await uni.login().then(data => {
+				uni.login().then(data => {
 					let [err, res] = data;
 					console.log("微信自动登录：", err, res, globalData.system.appId);
 					if (err) {
@@ -186,18 +186,17 @@
 					})
 			}
 		},
-		async onShow() {
-			// if(uni.getStorageSync('userinfo')){
-
-			// globalData.userinfo = uni.getStorageSync('userinfo');
-			// utils.getModelList(globalData.userinfo.usernumber,this);
-			// uni.redirectTo({
-			// 	url: '../index/index'
-			// });
-			// return;
+		onShow() {
+			// if (uni.getStorageSync('userinfo')) {
+			// 	globalData.userinfo = uni.getStorageSync('userinfo');
+			// 	utils.getModelList(globalData.userinfo.usernumber, this);
+			// 	uni.redirectTo({
+			// 		url: '../index/index'
+			// 	});
+			// 	return;
 			// }
 			// 静默登录
-			await this.login()
+			this.login()
 			// utils.getModelList(globalData.userinfo.usernumber, this);
 		},
 		// 分享

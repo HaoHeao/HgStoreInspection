@@ -17,24 +17,26 @@
 			<view class="content">
 				<view class="mark fadeIn500" @click="work_show()"></view>
 				<view class="module_list fadeIn" v-if="userModelList.length">
-				<!-- <view class="module_list fadeIn"> -->
 					<!-- <view class="item item1" @click="work_go(1)">
 						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
-						<view class="txt">卖场巡检</view>
-					</view>
-					<view class="item item2" @click="work_go(6)">
-						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
-						<view class="txt">计划巡检</view>
+						<view class="txt">卖场巡检1</view>
 					</view> -->
-					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->	
+					<!-- <view class="item item2" @click="work_go(6)">
+						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
+						<view class="txt">计划巡检2</view>
+					</view> -->
+					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
 					<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
 						<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
 						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
 						<view class="txt">{{item.mname}}</view>
 					</view>
+					<view class="item item1" @click="work_go(3)">
+						<image src="../../static/module4.svg" mode="widthFix" class="img"></image>
+						<view class="txt">会议预定</view>
+					</view>
 				</view>
 				<view class="no-model" v-if="!userModelList.length">
-				<!-- <view class="no-model"> -->
 					<view class="tips">您没有任何权限！</view>
 					<view class="refresh" @click="refreshModel()">重新获取权限</view>
 				</view>
@@ -79,7 +81,7 @@
 				} else if (index == 1) {
 					// 加载查看权限
 					// console.log("加载查看用户权限",this.$store.state.usermodel.modelList)
-					utils.getModelList(uni.getStorageSync('userinfo').usernumber,this);
+					utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 					this.work_view = !this.work_view;
 					// uni.setNavigationBarTitle({
 					// 	title: "巡检入口"
@@ -109,10 +111,14 @@
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})
+				} else if (type == 3) {
+					uni.reLaunch({
+						url: '/meeting/index/index'
+					})
 				}
 			},
-			refreshModel:function(){
-				utils.getModelList(uni.getStorageSync('userinfo').usernumber,this);
+			refreshModel: function() {
+				utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 			}
 		}
 	}
@@ -149,7 +155,7 @@
 			background: #fff;
 			opacity: 0.95;
 			// margin-bottom: env(safe-area-inset-bottom);
-			z-index:999;
+			z-index: 999;
 			// backdrop-filter: saturate(180%) blur(3px);
 			// background-color: rgba(255,255,255,0.7);
 			// transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1);
@@ -208,7 +214,7 @@
 					width: 100%;
 					display: flex;
 					justify-content: flex-start;
-					flex-wrap: wrap;
+					flex-wrap: wrap-reverse;
 					padding: 20rpx 60rpx;
 					box-sizing: border-box;
 					position: absolute;
@@ -274,9 +280,9 @@
 						}
 					}
 				}
-				
+
 				// 无权限
-				.no-model{
+				.no-model {
 					width: 100%;
 					display: flex;
 					justify-content: flex-start;
@@ -290,19 +296,19 @@
 					background: #fff;
 					opacity: 0.95;
 					padding-bottom: 70rpx;
-					
-					.tips{
-						width:100%;
-						height:30rpx;
-						text-align:center;
-						line-height:200rpx;
-						font-size:30rpx;
-						color:#647484;
-						font-weight:700;
+
+					.tips {
+						width: 100%;
+						height: 30rpx;
+						text-align: center;
+						line-height: 200rpx;
+						font-size: 30rpx;
+						color: #647484;
+						font-weight: 700;
 						padding-bottom: 70px;
 					}
-					
-					.refresh{
+
+					.refresh {
 						font-size: 26rpx;
 						color: #999;
 						font-weight: 700;
@@ -311,9 +317,9 @@
 						border-radius: 10rpx;
 						text-decoration: underline;
 
-						
-						&:active{
-							background:#f2f2f2;
+
+						&:active {
+							background: #f2f2f2;
 						}
 					}
 				}

@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "卖场巡检",
+  "usingComponents": {
+    "tabbar": "/components/tabbar/index",
+    "question": "/pages/question/question",
+    "lately": "/pages/lately/lately",
+    "whole": "/pages/whole/whole",
+    "mine": "/user/mine/mine"
+  }
+}
