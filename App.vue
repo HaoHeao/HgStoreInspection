@@ -7,7 +7,7 @@
 		globalData: {
 			system: {
 				version: "0.7.8",
-				lastmodified: "2020/07/29",
+				lastmodified: "2020/08/05",
 				systemName: "北京汉光巡检系统",
 				appId: "wx252743e71090a061"
 			},

@@ -8,42 +8,44 @@ import metting from "./modules/metting.js"
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-    state: {
-        homeTabbar: [{
-                "pagePath": "msg",
-                "text": "消息",
-                "iconPath": "/static/tabbar/msg_select.png",
-                "selectedIconPath": "/static/tabbar/msg.png",
-                "index": 0
-            },
-            {
-                "pagePath": "work",
-                "text": "工作",
-                "iconPath": "/static/tabbar/work_select.png",
-                "selectedIconPath": "/static/tabbar/work.png",
-                "index": 1
-            },
-            {
-                "pagePath": "mine",
-                "text": "我的",
-                "iconPath": "/static/tabbar/homeMine_select.png",
-                "selectedIconPath": "/static/tabbar/homeMine.png",
-                "index": 2
-            }
-        ],
-        homeIndex: 0
-    },
-    mutations: {
-        changeHomeTabbar(state, index) {
-            state.homeIndex = index
-        }
-    },
-    modules: {
-        tabbar,
-        market,
+	state: {
+		// 是否测试
+		test: true,
+		homeTabbar: [{
+				"pagePath": "msg",
+				"text": "消息",
+				"iconPath": "/static/tabbar/msg_select.png",
+				"selectedIconPath": "/static/tabbar/msg.png",
+				"index": 0
+			},
+			{
+				"pagePath": "work",
+				"text": "工作",
+				"iconPath": "/static/tabbar/work_select.png",
+				"selectedIconPath": "/static/tabbar/work.png",
+				"index": 1
+			},
+			{
+				"pagePath": "mine",
+				"text": "我的",
+				"iconPath": "/static/tabbar/homeMine_select.png",
+				"selectedIconPath": "/static/tabbar/homeMine.png",
+				"index": 2
+			}
+		],
+		homeIndex: 0
+	},
+	mutations: {
+		changeHomeTabbar(state, index) {
+			state.homeIndex = index
+		}
+	},
+	modules: {
+		tabbar,
+		market,
 		plan,
 		usermodel,
 		metting
-    }
+	}
 });
 export default store;

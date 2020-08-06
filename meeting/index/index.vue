@@ -8,80 +8,34 @@
 				<view class="date-info">{{item.info}}</view>
 			</view>
 		</scroll-view>
-		<view class="data-view">
-			<view class="item">
-				<view class="meeting">
-					<view class="name">会议室名称1</view>
-					<view class="label">人数：23人</view>
-					<view class="label">设备：设备：投影仪、激光笔、水、椅子×23、羽毛×6、空调</view>
-					<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
-				</view>
-				<view class="meeting-list">
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
-						</view>
-						<view class="control"></view>
+		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
+			<view class="data-view">
+				<view class="item" v-for="(item,index) of roomReserveList" :key="index">
+					<view class="meeting" @click="reserve(item)">
+						<view class="name">{{item.roomname}}</view>
+						<view class="label" v-if="item.peoplelimit">人数：{{item.peoplelimit}}人</view>
+						<view class="label" v-if="item.fixedEquipment">设备：{{item.fixedEquipment}}</view>
+						<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
 					</view>
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
+					<view class="meeting-list">
+						<view class="item">
+							<view class="info">
+								<view class="time">13:00 ~ 17:00</view>
+								<view class="depart">物业部 - 李信</view>
+							</view>
+							<view class="control"></view>
 						</view>
-						<view class="control"></view>
-					</view>
-				</view>
-			</view>
-			<view class="item">
-				<view class="meeting">
-					<view class="name">会议室名称1</view>
-					<view class="label">人数：23人</view>
-					<view class="label">设备：设备：投影仪、激光笔、水、椅子×23、羽毛×6、空调</view>
-					<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
-				</view>
-				<view class="meeting-list">
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
+						<view class="item">
+							<view class="info">
+								<view class="time">13:00 ~ 17:00</view>
+								<view class="depart">物业部 - 李信</view>
+							</view>
+							<view class="control"></view>
 						</view>
-						<view class="control"></view>
-					</view>
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
-						</view>
-						<view class="control"></view>
-					</view>
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
-						</view>
-						<view class="control"></view>
 					</view>
 				</view>
 			</view>
-			<view class="item">
-				<view class="meeting">
-					<view class="name">会议室名称1</view>
-					<view class="label">人数：23人</view>
-					<view class="label">设备：设备：投影仪、激光笔、水、椅子×23、羽毛×6、空调设备：投影仪、激光笔、水、椅子×23、羽毛×6、空调</view>
-					<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
-				</view>
-				<view class="meeting-list">
-					<view class="item">
-						<view class="info">
-							<view class="time">13:00 ~ 17:00</view>
-							<view class="depart">物业部 - 李信</view>
-						</view>
-						<view class="control"></view>
-					</view>
-				</view>
-			</view>
-		</view>
+		</haoheao-scroll>
 	</view>
 </template>
 
@@ -89,8 +43,12 @@
 	export default {
 		data() {
 			return {
+				// 日期列表
 				bookedDateList: '',
-				activeBookedDate: ''
+				// 选中的日期
+				activeBookedDate: '',
+				// 房间列表+房间预约列表
+				roomReserveList: ''
 			}
 		},
 		computed: {
@@ -99,6 +57,24 @@
 			}
 		},
 		methods: {
+			reserve(item) {
+				if (item.status != 1000) {
+					uni.showToast({
+						icon: "none",
+						title: '会议室停用，暂时不可预约',
+						position: 'bottom'
+					});
+					return
+				}
+				uni.navigateTo({
+					url: `/meeting/reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
+				});
+			},
+			async onPullDown(done) {
+				await this.getRoomList();
+				await this.getDayReservationList(this.activeBookedDate);
+				done();
+			},
 			getBookedDateList() {
 				let arr = [],
 					date = new Date().getTime()
@@ -121,28 +97,35 @@
 				// 获取天预约列表
 				this.activeBookedDate = item
 				try {
-					uni.showLoading();
 					let data = await uni.request({
 						method: 'POST',
-						url: 'http://192.168.128.66:8081/MeetingRoom/api/appointment/query',
+						url: this.api.meeting_getDayReservationList,
 						data: {
 							MeetingdateStart: this.moment(new Date(item.day)).format('YYYY-MM-DD hh:mm:ss'),
 							MeetingdateEnd: this.moment(new Date(item.day)).format('YYYY-MM-DD hh:mm:ss')
 						}
 					})
-					setTimeout(() => {
-						uni.hideLoading();
-					}, 2000)
 					console.log(data)
-				} catch (e) {
-					console.log(e)
-					uni.hideLoading();
-				}
-			}
+				} catch (e) {}
+			},
+			async getRoomList() {
+				// 获取房间列表
+				try {
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.meeting_getRoomList,
+					})
+					if (data[1] && data[1].data.success) {
+						this.roomReserveList = data[1].data.data.roomlist
+					}
+				} catch (e) {}
+			},
+
 		},
 		onShow: async function() {
-			await this.getBookedDateList()
-			this.getDayReservationList(this.activeBookedDate)
+			await this.getBookedDateList();
+			await this.getRoomList();
+			this.getDayReservationList(this.activeBookedDate);
 		}
 	}
 </script>
@@ -151,6 +134,9 @@
 	.container {
 		min-height: 100vh;
 		background: #F6F7F9;
+		/* IOS XR */
+		padding-bottom: env(safe-area-inset-bottom);
+		/* ------ */
 
 		.date-view {
 			width: 100%;
@@ -211,11 +197,12 @@
 				margin-bottom: 10rpx;
 				display: flex;
 				box-sizing: border-box;
+				transition: .3s;
 
 				.meeting {
 					background: #fff;
 					border-radius: 6rpx;
-					max-width: 270rpx;
+					width: 270rpx;
 					min-height: 180rpx;
 					position: relative;
 					padding: 20rpx;

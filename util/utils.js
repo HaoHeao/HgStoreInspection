@@ -257,6 +257,10 @@ let getModelList = (usernumber, that) => {
 		})
 }
 
+let getUserInfo = ()=>{
+	console.log(uni)
+}
+
 export {
 	api,
 	request,

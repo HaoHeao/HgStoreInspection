@@ -76,7 +76,17 @@
 		"pages": [{
 			"path": "index/index",
 			"style": {
-				"navigationBarTitleText": "会议预定"
+				"navigationBarTitleText": "会议室预约"
+			}
+		}, {
+			"path": "reserva/index",
+			"style": {
+				"navigationBarTitleText": "预约"
+			}
+		}, {
+			"path": "detail/index",
+			"style": {
+				"navigationBarTitleText": "预约信息"
 			}
 		}]
 	}],
