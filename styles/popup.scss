@@ -1,0 +1,59 @@
+
+/* popup */
+.popup {
+	background: #fff;
+	border-top-left-radius: 20rpx;
+	border-top-right-radius: 20rpx;
+	/* IOS XR */
+	padding-bottom: env(safe-area-inset-bottom);
+	/* ------ */
+	max-height: 65vh;
+	overflow-y: scroll;
+	// 标题
+	>.title{
+		color: #647484;
+		padding: 0 10rpx;
+		margin-bottom: 20rpx;
+	}
+	// 底部控制
+	.bottom-control{
+		display: flex;
+		align-items: center;
+		.left{
+			margin-right: 20rpx;
+		}
+		.content{
+			flex: 2;
+			display: flex;
+			align-items: center;
+			justify-content: flex-end;
+			.close{
+				line-height: 70rpx;
+				color: #D56C68;
+				transition: .2s;
+				padding: 0px 20rpx;
+				&:active{
+					opacity: 0.8;
+				}
+			}
+			.item{
+				display: flex;
+				align-items: center;
+				color: #fff;
+				padding: 0 40rpx;
+				line-height: 70rpx;
+				border-radius: 70rpx;
+				background: #647484;
+				margin-left: 20rpx;
+				&:active{
+					opacity: 0.8;
+				}
+				.icon{
+					width: 40rpx;
+					height: 40rpx;
+					margin-right: 10rpx;
+				}
+			}
+		}
+	}
+}

@@ -46,7 +46,8 @@ import App from './App'
 import store from './store'
 Vue.prototype.$store = store;
 
-import installComponent from '@/components/index';
+import installComponent from '@/components/index.js';
+console.log(installComponent)
 Vue.use(installComponent);
 
 const moment = require('@/util/moment.js');

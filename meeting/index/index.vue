@@ -18,20 +18,20 @@
 						<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
 					</view>
 					<view class="meeting-list">
-						<view class="item">
+						<navigator class="item" url="../detail/index" hover-class="navigator-hover">
 							<view class="info">
 								<view class="time">13:00 ~ 17:00</view>
 								<view class="depart">物业部 - 李信</view>
 							</view>
 							<view class="control"></view>
-						</view>
-						<view class="item">
+						</navigator>
+						<navigator class="item" url="../detail/index" hover-class="navigator-hover">
 							<view class="info">
 								<view class="time">13:00 ~ 17:00</view>
 								<view class="depart">物业部 - 李信</view>
 							</view>
 							<view class="control"></view>
-						</view>
+						</navigator>
 					</view>
 				</view>
 			</view>
