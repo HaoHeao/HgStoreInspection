@@ -257,8 +257,8 @@ let getModelList = (usernumber, that) => {
 		})
 }
 
-let getUserInfo = ()=>{
-	console.log(uni)
+let getUserInfo = (_uni) => {
+	return _uni.getStorageSync('userinfo');
 }
 
 export {
@@ -277,5 +277,7 @@ export {
 	seePicture,
 	// 时间日期格式字符化过滤
 	timerDateString,
-	getModelList
+	getModelList,
+	// 获取用户信息
+	getUserInfo
 }

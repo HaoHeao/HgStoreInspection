@@ -1,151 +1,91 @@
+<!-- 界面展示信息 -->
 <template>
 	<view class="container detail">
 		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
-			<view class="view-item">
+			<view class="view-item fadeIn" v-if="reserveInfo">
 				<view class="detail-control">
-					<view class="state">会议正在进行</view>
+					<view :class="['state',reserveInfo.meeting_state == 2?'active':'']">{{reserveInfo.meeting_state == 1?'会议未开始':reserveInfo.meeting_state == 2?'会议正在进行':reserveInfo.meeting_state == 3?'会议已结束':''}}</view>
 				</view>
-				<view class="title">会议主题会议主题会议主题会议主题会议主题会议主题会议主题会议主题会议。</view>
+				<view class="title">{{reserveInfo.title}}</view>
 				<view class="item">
 					<view class="title">会议室</view>
-					<view class="content">会议室11</view>
+					<view class="content">{{reserveInfo.roomname}}</view>
 				</view>
 				<view class="item">
 					<view class="title">开会日期</view>
-					<view class="content">2020-07-15 13:00 ~ 2020-07-15 17:00</view>
+					<view class="content">{{moment(new Date(reserveInfo.meetingdate)).format("MM-DD ") + reserveInfo.timeslotstart}}
+						~ {{moment(new Date(reserveInfo.meetingdate)).format("MM-DD ") + reserveInfo.timeslotend}}</view>
 				</view>
 				<view class="item">
 					<view class="title">参会人数</view>
-					<view class="content">12人1</view>
+					<view class="content">{{reserveInfo.peoplecount}}人</view>
 				</view>
 				<view class="item">
 					<view class="title">预约人员</view>
-					<view class="content">物业部 - 李欣</view>
+					<view class="content">{{reserveInfo.deptname + ' - ' + reserveInfo.optusername}}</view>
 				</view>
 			</view>
 			<view class="view-item">
 				<view class="item">
 					<view class="title">位置</view>
-					<view class="content">会议室位置会议室位置</view>
+					<view class="content">{{reserveInfo.t_MeetingRoom.location}}</view>
 				</view>
 				<view class="item">
 					<view class="title">房间密码</view>
-					<view class="content">123456</view>
+					<view class="content">{{reserveInfo.t_MeetingRoom.password?reserveInfo.t_MeetingRoom.password:'无密码'}}</view>
 				</view>
 			</view>
-			<view class="view-item">
+			<view class="view-item" v-if="roomInfo.fixedEquipment.length">
 				<view class="item">
 					<view class="title">固定设备</view>
 				</view>
 				<!-- 固定设备 -->
 				<view class="equip-list">
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
+					<view class="item" v-for="(item,index) of roomInfo.fixedEquipment" :key="index">
+						<image class='icon' :src="iconurl + item.goodsitem.icon" mode="widthFix"></image>
+						<view class="title">{{item.goodsname}}</view>
 					</view>
 				</view>
 			</view>
-			<view class="view-item">
+			<view class="view-item" v-if="detailInfo.mobileEquipmentChoose.length">
 				<view class="item">
 					<view class="title">移动设备</view>
 				</view>
 				<view class="equip-list">
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
-					</view>
-					<view class="item">
-						<image class='icon' src="@/static/images/radio.svg" mode="widthFix"></image>
-						<view class="title">收音机</view>
-						<view class="num">×2</view>
+					<view class="item" v-for="(item,index) of detailInfo.mobileEquipmentChoose" :key="index">
+						<image class='icon' :src="iconurl + item.icon" mode="widthFix"></image>
+						<view class="title">{{item.goodsname}}</view>
+						<view class="num">×{{item.usecount}}</view>
 					</view>
 				</view>
 			</view>
+			<view class="view-item control-list" v-if="reserveInfo.meeting_state == 1">
+				<view class="item del" @click="controlTap(1)">
+					<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>取消
+				</view>
+				<view class="item" @click="controlTap(2)" v-if="maxDelayTimeList.length">
+					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
+				</view>
+				<view class="item" @click="controlTap(3)">
+					<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>置换
+				</view>
+			</view>
 		</haoheao-scroll>
-		<view class="control-list">
-			<view class="item del" @click="controlTap(1)">
-				<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>取消
-			</view>
-			<view class="item" @click="controlTap(2)">
-				<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
-			</view>
-			<view class="item" @click="controlTap(3)">
-				<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>置换
-			</view>
-		</view>
 		<popup ref="loading_time" type="bottom" :maskClick="false">
 			<view class="popup">
 				<view class="item-view select">
 					<image src="@/static/images/date.svg" class="icon" mode="widthFix"></image>
-					<view class="title">07-15 17:00 散会</view>
-					<picker :class="['content',meetingEndtime == '延时至'?'':'active']" mode="time" :value="meetingEndtime" @change="bindTimeChange">
-						{{meetingEndtime}}
+					<view class="title">{{moment(new Date(reserveInfo.meetingdate)).format("MM-DD ") + reserveInfo.timeslotend}} 散会</view>
+					<picker class="content" mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex"
+					 :range="[maxDelayTimeList]">
+						延时至:{{maxDelayTimeList[multiIndex]}}
 					</picker>
 				</view>
 				<view class="bottom-control">
-					<view class="left">您最多可延时2小时至18:30</view>
+					<view class="left">您最多可延时{{maxDelayTimeList.length/2}}小时至{{maxDelayTimeList[maxDelayTimeList.length - 1]}}</view>
 					<view class="content">
-						<view class="close" @click="$refs['loading_time'].close()">取消</view>
-						<view class="item">
+						<view class="close" @click="multiIndex = 0;$refs['loading_time'].close()">取消</view>
+						<view class="item" @click="changeReserveTime()">
 							<image src="@/static/images/loading_time.svg" class="icon" mode="widthFix"></image>延时
 						</view>
 					</view>
@@ -161,6 +101,29 @@
 						{{replaceIndex === null?'请选择会议室':replaceList[replaceIndex]}}
 					</picker>
 					<image src="@/static/images/right.svg" :class="['icon select-icon',replaceIndex === null?'':'active']" mode="widthFix"></image>
+				</view>
+				<view class="meeting-list">
+					<view class="item">
+						<view class="left">
+							<view class="time">15:30 ~ 18:30</view>
+							<view class="name">财务部 - 贾约</view>
+						</view>
+						<radio class="radio" value="" color="#647484" />
+					</view>
+					<view class="item">
+						<view class="left">
+							<view class="time">15:30 ~ 18:30</view>
+							<view class="name">财务部 - 贾约</view>
+						</view>
+						<radio class="radio" value="" color="#647484" />
+					</view>
+					<view class="item">
+						<view class="left">
+							<view class="time">15:30 ~ 18:30</view>
+							<view class="name">财务部 - 贾约</view>
+						</view>
+						<radio class="radio" value="" color="#647484" />
+					</view>
 				</view>
 				<view class="bottom-control">
 					<view class="content">
@@ -183,26 +146,120 @@
 		},
 		data() {
 			return {
-				// 选择散会日期
-				meetingEndtime: "延时至",
-				replaceIndex: null,
-				replaceList: ['中国', '美国', '巴西', '日本'],
+				iconurl: "https://hg-kaifa-test.oss-cn-beijing.aliyuncs.com/meetingroom/",
+				// 设备类型列表
+				typeEquipmentList: [],
+				// 选择延时日期
+				multiIndex: 0,
+				// 有效延时列表
+				maxDelayTimeList: [],
+				// 会议室信息
+				roomInfo: '',
+				// 预约信息
+				reserveInfo: '',
+				// 会议室预约详情
+				detailInfo: "",
 			}
 		},
 		computed: {
-
+			mettingSetting() {
+				return this.$store.state.metting
+			},
 		},
 		methods: {
+			// 延时时间修改
+			bindMultiPickerColumnChange: function(e) {
+				this.multiIndex = e.detail.value
+				this.$forceUpdate()
+			},
+			// 下拉
 			async onPullDown(done) {
+				await this.getReserveDetail()
+				this.meetingState()
 				done();
 			},
+			// 延时
+			async changeReserveTime() {
+				let userinfo = this.utils.getUserInfo(uni);
+				console.log(JSON.stringify({
+					Id: this.reserveInfo.id,
+					Reason: '',
+					Changetype: 5,
+					Timeslotdesc: '',
+					Timeslotstart: this.reserveInfo.timeslotstart.replace(/:/g, ''),
+					Timeslotend: this.maxDelayTimeList[this.multiIndex].replace(/:/g, ''),
+					Remark: '',
+					Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+				}))
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.meeting_changeReserveTime,
+						data: {
+							Id: this.reserveInfo.id,
+							Reason: '',
+							Changetype: 5,
+							Timeslotdesc: '',
+							Timeslotstart: this.reserveInfo.timeslotstart.replace(/:/g, ''),
+							Timeslotend: this.maxDelayTimeList[this.multiIndex].replace(/:/g, ''),
+							Remark: '',
+							Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+						}
+					})
+					let [err, success] = data
+					console.log(data)
+					if (success.data.success) {
+						uni.showToast({
+							title: '延时成功！',
+							icon: 'none',
+							position: 'bottom'
+						});
+						await this.getReserveDetail()
+						this.meetingState()
+						this.multiIndex = 0;
+						this.$refs['loading_time'].close()
+						return
+					}
+				} catch (e) {}
+			},
+			// 底部按钮操作
 			async controlTap(type) {
+				let _this = this;
+				let userinfo = this.utils.getUserInfo(uni);
 				if (type == 1) {
-					console.log('取消')
+					uni.showModal({
+						title: '确定取消此次会议吗？',
+						success: async function(res) {
+							if (res.confirm) {
+								console.log('取消会议')
+								console.log(JSON.stringify({
+									Id: _this.reserveInfo.id,
+									Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+								}))
+								let data = await uni.request({
+									method: 'POST',
+									url: _this.api.meeting_delreserve,
+									data: {
+										Id: _this.reserveInfo.id,
+										Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+									}
+								})
+								let [err, success] = data
+								console.log(success)
+								if (success.data.success) {
+									uni.showToast({
+										title: '已取消此次会议',
+										icon: 'none'
+									});
+									await _this.delay(1000)
+									uni.navigateBack();
+								}
+							}
+						}
+					});
 				} else if (type == 2) {
 					console.log('延时')
 					// 选择散会日期
-					this.meetingEndtime = "延时至"
 					this.$refs['loading_time'].open()
 				} else if (type == 3) {
 					console.log('置换')
@@ -210,26 +267,136 @@
 					this.$refs['replacement'].open()
 				}
 			},
-			async bindTimeChange(e) {
-				this.meetingEndtime = e.target.value
-			},
+			// 置换会议室修改
 			bindPickerChange: function(e) {
 				console.log('picker发送选择改变，携带值为', e.target.value)
-				this.index = e.target.value
+				this.replaceIndex = e.target.value
+			},
+			// 获取设备类型
+			async getGoodsTypeList() {
+				try {
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.meeting_getGoodsTypeList
+					})
+					let [err, success] = data
+					this.typeEquipmentList = success.data.data.typelist
+				} catch (e) {}
+			},
+			// 移动设备信息添加
+			async getFixedEquipmentList() {
+				await this.getGoodsTypeList()
+				for (let item of this.typeEquipmentList) {
+					for (let itm of this.roomInfo.fixedEquipment) {
+						if (item.goodstypeid == itm.goodstypeid) {
+							itm.goodsitem = item
+						}
+					}
+				}
+			},
+			// 获取预约详细信息
+			async getReserveDetail() {
+				await this.getGoodsTypeList()
+				try {
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.meeting_reserveDetail,
+						data: {
+							id: this.reserveInfo.id
+						}
+					})
+					let [err, success] = data
+					for (let item of this.typeEquipmentList) {
+						for (let itm of success.data.data.detailInfo.mobileEquipmentChoose) {
+							if (item.goodstypeid == itm.goodstypeid) {
+								itm.goodsitem = item
+							}
+						}
+					}
+					this.detailInfo = success.data.data.detailInfo
+					console.log('会议预约详情-------->>>', this.detailInfo)
+				} catch (e) {}
+			},
+			// 会议状态判断
+			meetingState() {
+				if (new Date().getTime() < new Date(this.moment(new Date(this.reserveInfo.meetingdate)).format("YYYY/MM/DD ").replace(/-/g, '/') +
+						this.reserveInfo.timeslotstart).getTime()) {
+					// 未开始
+					this.reserveInfo.meeting_state = 1
+				} else if (new Date().getTime() > new Date(this.moment(new Date(this.reserveInfo.meetingdate)).format("YYYY/MM/DD ").replace(/-/g, '/') +
+						this.reserveInfo.timeslotstart).getTime() && new Date().getTime() < new Date(this.moment(new Date(this.reserveInfo
+						.meetingdate)).format("YYYY/MM/DD ") + this.reserveInfo.timeslotend).getTime()) {
+					// 正在进行
+					this.reserveInfo.meeting_state = 2
+				} else if (new Date().getTime() > new Date(this.moment(new Date(this.reserveInfo.meetingdate)).format("YYYY/MM/DD ").replace(/-/g, '/') +
+						this.reserveInfo.timeslotend).getTime()) {
+					// 已结束
+					this.reserveInfo.meeting_state = 3
+				}
+			},
+			// 计算可延长最大时段
+			getMaxDelayTimeList() {
+				let interval_time = 86400 / this.mettingSetting.interval * 1000
+				let time_list = []
+				for (var index = 1; index <= this.mettingSetting.interval; index++) {
+					let time_item = this.moment(
+						new Date(
+							new Date(this.moment().format("YYYY/MM/DD 00:00:00"))
+						).getTime() + interval_time * index
+					).format('YYYY/MM/DD hh:mm:ss')
+					// 同一天同一会议室多个预定
+					if (this.reserveInfo.nextreserve != null) {
+						if (new Date(time_item).getTime() > new Date(this.moment().format(`YYYY/MM/DD ${this.reserveInfo.timeslotend}:00`))
+							.getTime() && new Date(time_item).getTime() <= new Date(this.moment()
+								.format(`YYYY/MM/DD ${this.reserveInfo.nextreserve.timeslotend}:00`)).getTime()) {
+							time_list.push(this.moment(time_item).format('hh:mm'))
+						}
+					} else {
+						if (new Date(time_item).getTime() > new Date(this.moment().format(
+								`YYYY/MM/DD ${this.reserveInfo.timeslotend}:00`)).getTime()) {
+							time_list.push(this.moment(time_item).format('hh:mm'))
+						}
+					}
+				}
+				this.maxDelayTimeList = time_list
+				console.log('计算可延长最大时段时间列表------>>>', this.maxDelayTimeList)
 			},
 		},
-		onLoad: function(option) {
-			console.log('详细信息 option', option)
+		onLoad: async function(option) {
+			this.roomInfo = JSON.parse(option.options)[0]
+			this.reserveInfo = JSON.parse(option.options)[1]
+			this.meetingState()
+			console.log('会议室信息------>>>', this.roomInfo)
+			console.log('预约信息------>>>', this.reserveInfo)
+			await this.getFixedEquipmentList()
+			await this.getReserveDetail()
+			this.getMaxDelayTimeList()
 		},
-		onShow: function() {
-
-		}
+		onShow: function() {}
 	}
 </script>
 
 <style lang="scss" scoped>
 	@import '@/styles/detail.scss';
 	@import '@/styles/popup.scss';
+
+	.container.detail .view-item .detail-control {
+		.state {
+			background: #999;
+
+			&.active {
+				background: #D56C68;
+			}
+		}
+	}
+
+	.container.detail {
+		.control-list {
+			position: static;
+			background: transparent;
+			padding: 0;
+		}
+	}
 
 	.popup {
 		padding: 30rpx;
@@ -261,7 +428,7 @@
 				.content {
 					line-height: 80rpx;
 					padding: 0 20rpx;
-					color: #B6C6D6;
+					color: #647484;
 					background: #F3F5F7;
 					border-radius: 10rpx;
 
@@ -286,7 +453,51 @@
 			}
 		}
 
+		// 会议室预约列表
+		.meeting-list {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+
+			.item {
+				display: flex;
+				align-items: center;
+				background: #F3F5F7;
+				border-radius: 10rpx;
+				width: calc(100%/2 - 15rpx);
+				margin-bottom: 20rpx;
+				padding: 10px 10px;
+				box-sizing: border-box;
+				font-size: 26rpx;
+
+				.left {
+					flex: 2;
+				}
+
+				.time {
+					font-weight: 900;
+					color: #647484;
+				}
+
+				.name {
+					font-size: 24rpx;
+					color: #ccc;
+				}
+
+				.radio {
+					zoom: 0.8;
+				}
+
+				>.state {
+					font-size: 24rpx;
+					color: #ccc;
+				}
+			}
+		}
+
 		.bottom-control {
+			position: static;
+
 			.left {
 				color: #CCCCCC;
 				font-size: 26rpx;

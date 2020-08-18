@@ -16,7 +16,8 @@
 		<view class="work_view" v-if="work_view">
 			<view class="content">
 				<view class="mark fadeIn500" @click="work_show()"></view>
-				<view class="module_list fadeIn" v-if="userModelList.length">
+				<!-- <view class="module_list fadeIn" v-if="userModelList.length"> -->
+				<view class="module_list fadeIn">
 					<!-- <view class="item item1" @click="work_go(1)">
 						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
 						<view class="txt">卖场巡检1</view>
@@ -26,20 +27,22 @@
 						<view class="txt">计划巡检2</view>
 					</view> -->
 					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
-					<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
-						<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
-						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
-						<view class="txt">{{item.mname}}</view>
-					</view>
+					<block v-if="userModelList.length">
+						<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
+							<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
+							<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
+							<view class="txt">{{item.mname}}</view>
+						</view>
+					</block>
 					<view class="item item1" @click="work_go(3)">
 						<image src="../../static/module4.svg" mode="widthFix" class="img"></image>
-						<view class="txt">会议预定</view>
+						<view class="txt">会议预约</view>
 					</view>
 				</view>
-				<view class="no-model" v-if="!userModelList.length">
+				<!-- <view class="no-model" v-if="!userModelList.length">
 					<view class="tips">您没有任何权限！</view>
 					<view class="refresh" @click="refreshModel()">重新获取权限</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 	</view>

@@ -2,7 +2,7 @@
 	<view class="container">
 		<scroll-view class="date-view" scroll-x="true">
 			<view v-for="(item,index) of bookedDateList" :key="index" :class="['item',item.index == activeBookedDate.index?'active':'']"
-			 @click="getDayReservationList(item)">
+			 @click="selectDay(item)">
 				<view class="date-day">{{item.text}}</view>
 				<view class="date-week">{{item.week}}</view>
 				<view class="date-info">{{item.info}}</view>
@@ -10,28 +10,36 @@
 		</scroll-view>
 		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
 			<view class="data-view">
-				<view class="item" v-for="(item,index) of roomReserveList" :key="index">
+				<view class="item fadeIn" v-for="(item,index) of roomReserveList" :key="index">
 					<view class="meeting" @click="reserve(item)">
 						<view class="name">{{item.roomname}}</view>
 						<view class="label" v-if="item.peoplelimit">人数：{{item.peoplelimit}}人</view>
-						<view class="label" v-if="item.fixedEquipment">设备：{{item.fixedEquipment}}</view>
+						<view class="label" v-if="item.location">位置：{{item.location}}</view>
+						<view class="label" v-if="item.fixedEquipment.length">
+							设备：
+							<block v-for="(itm,ind) of item.fixedEquipment" :key="ind">
+								<block v-if="ind == 0">{{itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
+								<block v-if="ind != 0">{{'、' + itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
+							</block>
+						</view>
 						<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
 					</view>
 					<view class="meeting-list">
-						<navigator class="item" url="../detail/index" hover-class="navigator-hover">
+						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
 							<view class="info">
-								<view class="time">13:00 ~ 17:00</view>
-								<view class="depart">物业部 - 李信</view>
+								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
+								<view class="depart">{{itm.deptname + ' - ' + itm.optusername}}</view>
 							</view>
-							<view class="control"></view>
-						</navigator>
-						<navigator class="item" url="../detail/index" hover-class="navigator-hover">
-							<view class="info">
-								<view class="time">13:00 ~ 17:00</view>
-								<view class="depart">物业部 - 李信</view>
+							<view class="control" v-if="utils.getUserInfo(uni).usernumber == itm.optusernumber">
+								<!-- <view class="control"> -->
+								<view class="item fadeIn" @click.stop="showPassword(itm)">
+									<view class="hand">
+										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
+									</view>
+									<view :class="['info',itm.showPassword?'active':'']">{{itm.t_MeetingRoom.password?itm.t_MeetingRoom.password:'无密码'}}</view>
+								</view>
 							</view>
-							<view class="control"></view>
-						</navigator>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -43,6 +51,7 @@
 	export default {
 		data() {
 			return {
+				uni,
 				// 日期列表
 				bookedDateList: '',
 				// 选中的日期
@@ -57,12 +66,30 @@
 			}
 		},
 		methods: {
+			// 显示密码
+			showPassword(option) {
+				option.showPassword = !option.showPassword
+			},
+			// 查看详情
+			goDetail(options) {
+				let userinfo = this.utils.getUserInfo(uni);
+				if (userinfo.usernumber != options.reserveInfo.optusernumber) {
+					uni.showToast({
+						icon: "none",
+						duration: 2000,
+						title: '您不能查看此会议'
+					});
+					return
+				}
+				uni.navigateTo({
+					url: `/meeting/detail/index?options=[${JSON.stringify(options.roomInfo)},${JSON.stringify(options.reserveInfo)}]`
+				});
+			},
 			reserve(item) {
 				if (item.status != 1000) {
 					uni.showToast({
 						icon: "none",
-						title: '会议室停用，暂时不可预约',
-						position: 'bottom'
+						title: '会议室停用，暂时不可预约'
 					});
 					return
 				}
@@ -70,11 +97,20 @@
 					url: `/meeting/reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
 				});
 			},
+			// 下拉刷新
 			async onPullDown(done) {
+				await this.getBookedDateList();
 				await this.getRoomList();
 				await this.getDayReservationList(this.activeBookedDate);
 				done();
 			},
+			// 切换日期
+			async selectDay(item) {
+				console.log('请求日期信息------>>>',item)
+				await this.getRoomList();
+				await this.getDayReservationList(item);
+			},
+			// 渲染可预约天列表
 			getBookedDateList() {
 				let arr = [],
 					date = new Date().getTime()
@@ -91,41 +127,84 @@
 					date += 24 * 60 * 60 * 1000
 				}
 				this.bookedDateList = arr;
-				this.activeBookedDate = arr[0];
 			},
+			// 获取预约列表
 			async getDayReservationList(item) {
-				// 获取天预约列表
 				this.activeBookedDate = item
 				try {
 					let data = await uni.request({
 						method: 'POST',
 						url: this.api.meeting_getDayReservationList,
 						data: {
-							MeetingdateStart: this.moment(new Date(item.day)).format('YYYY-MM-DD hh:mm:ss'),
-							MeetingdateEnd: this.moment(new Date(item.day)).format('YYYY-MM-DD hh:mm:ss')
+							MeetingdateStart: this.moment(new Date(item.day.replace(/-/g, '/'))).format('YYYY-MM-DD 00:00:00'),
+							MeetingdateEnd: this.moment(new Date(item.day.replace(/-/g, '/'))).format('YYYY-MM-DD 00:00:00')
 						}
 					})
-					console.log(data)
-				} catch (e) {}
+					let [err, success] = data
+					for (let index in success.data.data) {
+						for (let ind in success.data.data[index]) {
+							let item = success.data.data[index][ind]
+							item.showPassword = false
+							item.optusername = item.optuser.replace("/", " - ").split(' - ')[1];
+							item.optusernumber = item.optuser.replace("/", " - ").split(' - ')[0];
+							item.optuser = item.optuser.replace("/", " - ");
+							item.timeslotend = this.insert_flg(item.timeslotend, ':', 2)
+							item.timeslotstart = this.insert_flg(item.timeslotstart, ':', 2)
+							success.data.data[index][Number(ind) + 1] ? item.nextreserve = success.data.data[index][Number(ind) + 1] : item.nextreserve = null
+						}
+					}
+					for (let item of this.roomReserveList) {
+						for (let index in success.data.data) {
+							if (item.roomid == index) {
+								item.reserveRoomList = success.data.data[index]
+							}
+						}
+					}
+					this.$forceUpdate()
+					console.log('预约列表------>>>', success.data.data)
+					console.log('会议室列表-------->>>', this.roomReserveList)
+				} catch (e) {
+					console.log(e)
+				}
 			},
+			// 获取房间列表
 			async getRoomList() {
-				// 获取房间列表
 				try {
 					let data = await uni.request({
 						method: 'GET',
 						url: this.api.meeting_getRoomList,
 					})
-					if (data[1] && data[1].data.success) {
-						this.roomReserveList = data[1].data.data.roomlist
+					let [err, success] = data
+					if (success && success.data.success) {
+						for (let item of success.data.data.roomlist) {
+							item.reserveRoomList = []
+						}
+						this.roomReserveList = success.data.data.roomlist
 					}
-				} catch (e) {}
+				} catch (e) {
+					console.log(e)
+				}
 			},
-
+			// 字符串插入操作
+			insert_flg(str, flg, sn) {
+				var newstr = "";
+				for (var i = 0; i < str.length; i += sn) {
+					var tmp = str.substring(i, i + sn);
+					newstr += tmp + flg;
+				}
+				newstr = newstr.substring(0, newstr.length - 1);
+				return newstr
+			}
+		},
+		onLoad: async function() {
+			await this.getBookedDateList();
+			this.activeBookedDate = this.bookedDateList[0];
+			await this.getRoomList();
+			await this.getDayReservationList(this.activeBookedDate);
 		},
 		onShow: async function() {
-			await this.getBookedDateList();
 			await this.getRoomList();
-			this.getDayReservationList(this.activeBookedDate);
+			await this.getDayReservationList(this.activeBookedDate);
 		}
 	}
 </script>
@@ -188,8 +267,12 @@
 		}
 
 		.data-view {
-			height: 2000rpx;
 			padding: 10rpx;
+			transition: .3s;
+
+			&:last-child {
+				padding-bottom: 0;
+			}
 
 			>.item {
 				background: #f2f2f2f2;
@@ -203,7 +286,7 @@
 					background: #fff;
 					border-radius: 6rpx;
 					width: 270rpx;
-					min-height: 180rpx;
+					min-height: 190rpx;
 					position: relative;
 					padding: 20rpx;
 					margin-right: 10rpx;
@@ -234,7 +317,7 @@
 				.meeting-list {
 					flex: 2;
 
-					.item {
+					>.item {
 						min-height: 90rpx;
 						display: flex;
 						align-items: center;
@@ -243,21 +326,71 @@
 						padding-left: 14rpx;
 						box-sizing: border-box;
 						margin-bottom: 10rpx;
+						position: relative;
 
 						&:last-child {
 							margin: 0;
 						}
 
-						.time {
-							font-size: 26rpx;
-							color: #647484;
-							font-weight: 800;
+						>.info {
+
+							.time {
+								font-size: 26rpx;
+								color: #647484;
+								font-weight: 800;
+							}
+
+							.depart {
+								font-size: 20rpx;
+								color: #ccc;
+								margin-top: 2rpx;
+							}
 						}
 
-						.depart {
-							font-size: 20rpx;
-							color: #ccc;
-							margin-top: 2rpx;
+						.control {
+							position: absolute;
+							top: 0;
+							right: 0;
+							display: flex;
+							align-items: center;
+							z-index: 998;
+
+							.item {
+								line-height: 90rpx;
+								// min-width: 45rpx;
+								display: flex;
+								align-items: center;
+
+								&:active {
+									background: #e2e2e2;
+								}
+
+								>.hand {
+									display: flex;
+									align-items: center;
+									line-height: 90rpx;
+									min-width: 60rpx;
+									justify-content: center;
+
+									.icon {
+										height: 40rpx;
+										width: 40rpx;
+									}
+								}
+
+								>.info {
+									width: 0;
+									overflow: hidden;
+									transition: .3s;
+									font-size: 22rpx;
+									font-weight: 800;
+
+									&.active {
+										width: auto;
+										padding-right: 20rpx;
+									}
+								}
+							}
 						}
 					}
 				}
