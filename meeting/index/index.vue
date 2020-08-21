@@ -30,9 +30,9 @@
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
 								<view class="depart">{{itm.deptname + ' - ' + itm.optusername}}</view>
 							</view>
-							<view class="control" v-if="utils.getUserInfo(uni).usernumber == itm.optusernumber">
-								<!-- <view class="control"> -->
-								<view class="item fadeIn" @click.stop="showPassword(itm)">
+							<view class="control">
+								<view class="item fadeIn state" v-if="itm.isover">已结束</view>
+								<view class="item fadeIn" @click.stop="showPassword(itm)" v-if="utils.getUserInfo(uni).deptno == itm.deptid">
 									<view class="hand">
 										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
 									</view>
@@ -44,11 +44,45 @@
 				</view>
 			</view>
 		</haoheao-scroll>
+		<popup ref="tips" type="center" :maskClick="false">
+			<view class="popup">
+				<view class="head">会议室管理规定</view>
+				<view class="info-list">
+					<view class="title">一、线上预约</view>
+					<view class="content">1.会议室实行预约制度，可预约一周以内的会议室。</view>
+					<view class="content">2.会议申请人作为会议责任人，对会议室物品保管、用电安全、室内卫生负责。</view>
+					<view class="content">3.如会议取消，请及时在系统中取消会议室使用申请。</view>
+					<view class="content">4.需对调会议室时，请对调双方发起会议室置换。</view>
+					<view class="content">5.会议如需延长，请及时在系统发起，延长最大期限以下场会议开始时间为准。</view>
+					<view class="title">二、会议室使用</view>
+					<view class="content">1.开会期间，为避免影响其他部门，请勿大声喧哗。</view>
+					<view class="content">2.自觉爱惜会议室的设备设施，如出现设备设施损坏，请及时告知董办。</view>
+					<view class="content">3.自觉保持会议室卫生清洁，如出现液体洒漏，请及时清理或通知总务部。</view>
+					<view class="content">4.会议室内设备、工具、办公用品原则上不得拿出会议室作为他用。若确因需要借用，须征得董办同意后方可动用，事后归还原处并告知董办。</view>
+					<view class="content">5.会议室内严禁用餐，禁止吸烟。</view>
+					<view class="content">6.严禁坐、踏会议桌。</view>
+					<view class="content">7.如需使用公司公用电脑，请自行联系信息开发部的IT运维人员。归还电脑时，请确认设备内无机密、重要文件。</view>
+					<view class="content">8.会议室内矿泉水、纸巾、会议花等除专业设备以外的物品请自行准备。</view>
+					<view class="title">二、会议室使用</view>
+					<view class="content">1.会议结束应及时清理桌面、地面垃圾，将垃圾带至十层北货梯间并分类处理。</view>
+					<view class="content">2.会议室结束使用应及时断电（灯、空调、投影、电子白板），复位桌椅并锁好门窗。</view>
+				</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="item" @click="$refs['tips'].close()">确定</view>
+					</view>
+				</view>
+			</view>
+		</popup>
 	</view>
 </template>
 
 <script>
+	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
+		components: {
+			popup
+		},
 		data() {
 			return {
 				uni,
@@ -57,7 +91,9 @@
 				// 选中的日期
 				activeBookedDate: '',
 				// 房间列表+房间预约列表
-				roomReserveList: ''
+				roomReserveList: '',
+				// 置换列表
+				replacementList: ''
 			}
 		},
 		computed: {
@@ -73,7 +109,7 @@
 			// 查看详情
 			goDetail(options) {
 				let userinfo = this.utils.getUserInfo(uni);
-				if (userinfo.usernumber != options.reserveInfo.optusernumber) {
+				if (userinfo.deptno != options.reserveInfo.deptid) {
 					uni.showToast({
 						icon: "none",
 						duration: 2000,
@@ -100,14 +136,12 @@
 			// 下拉刷新
 			async onPullDown(done) {
 				await this.getBookedDateList();
-				await this.getRoomList();
 				await this.getDayReservationList(this.activeBookedDate);
 				done();
 			},
 			// 切换日期
 			async selectDay(item) {
-				console.log('请求日期信息------>>>',item)
-				await this.getRoomList();
+				console.log('请求日期信息------>>>', item)
 				await this.getDayReservationList(item);
 			},
 			// 渲染可预约天列表
@@ -131,16 +165,31 @@
 			// 获取预约列表
 			async getDayReservationList(item) {
 				this.activeBookedDate = item
+				await this.getRoomList();
+				// await this.getReplacementList();
 				try {
 					let data = await uni.request({
 						method: 'POST',
 						url: this.api.meeting_getDayReservationList,
 						data: {
-							MeetingdateStart: this.moment(new Date(item.day.replace(/-/g, '/'))).format('YYYY-MM-DD 00:00:00'),
-							MeetingdateEnd: this.moment(new Date(item.day.replace(/-/g, '/'))).format('YYYY-MM-DD 00:00:00')
+							MeetingdateStart: this.moment(item.day).format('YYYY/MM/DD 00:00:00'),
+							MeetingdateEnd: this.moment(item.day).format('YYYY/MM/DD 00:00:00')
 						}
 					})
 					let [err, success] = data
+					// 请求置换列表插入
+					// for (let item of this.replacementList) {
+					// 	for (let itm of Object.keys(success.data.data)) {
+					// 		for (let it of success.data.data[itm]) {
+					// 			it.replacementList = [];
+					// 			// 目标会议室开始结束时间比对
+					// 			if (item.targetroomid == it.roomid && item.targettimeslotstart == it.timeslotstart) {
+					// 				console.log(item, it)
+					// 				it.replacementList.push(item)
+					// 			}
+					// 		}
+					// 	}
+					// }
 					for (let index in success.data.data) {
 						for (let ind in success.data.data[index]) {
 							let item = success.data.data[index][ind]
@@ -150,9 +199,17 @@
 							item.optuser = item.optuser.replace("/", " - ");
 							item.timeslotend = this.insert_flg(item.timeslotend, ':', 2)
 							item.timeslotstart = this.insert_flg(item.timeslotstart, ':', 2)
-							success.data.data[index][Number(ind) + 1] ? item.nextreserve = success.data.data[index][Number(ind) + 1] : item.nextreserve = null
+							success.data.data[index][Number(ind) + 1] ? item.nextreserve = success.data.data[index][Number(ind) + 1] :
+								item
+								.nextreserve = null
+							// 会议状态 - 是否已结束
+							if (this.moment().format('YYYY/MM/DD') == this.moment(item.meetingdate).format('YYYY/MM/DD')) {
+								new Date() >= new Date(this.moment(item.meetingdate).format('YYYY/MM/DD ') + item.timeslotend + ':00') ? item.isover =
+									true : item.isover = false
+							}
 						}
 					}
+					// 插入会议室列表下
 					for (let item of this.roomReserveList) {
 						for (let index in success.data.data) {
 							if (item.roomid == index) {
@@ -163,11 +220,25 @@
 					this.$forceUpdate()
 					console.log('预约列表------>>>', success.data.data)
 					console.log('会议室列表-------->>>', this.roomReserveList)
+					console.log(this.moment())
+					// next-day
+					let next = new Date().getTime() + 86400000,
+						meetingMessageDate = uni.getStorageSync('meeting_meetingMessageDate');
+					if (meetingMessageDate) {
+						if (new Date(this.moment().format('YYYY/MM/DD')).getTime() == new Date(meetingMessageDate).getTime()) {
+							uni.setStorageSync('meeting_meetingMessageDate', this.moment(next).format('YYYY/MM/DD'));
+							this.$refs['tips'].open()
+						}
+					} else {
+						console.log(2)
+						uni.setStorageSync('meeting_meetingMessageDate', this.moment(next).format('YYYY/MM/DD'));
+						this.$refs['tips'].open()
+					}
 				} catch (e) {
 					console.log(e)
 				}
 			},
-			// 获取房间列表
+			// 获取会议室列表
 			async getRoomList() {
 				try {
 					let data = await uni.request({
@@ -181,6 +252,26 @@
 						}
 						this.roomReserveList = success.data.data.roomlist
 					}
+				} catch (e) {
+					console.log(e)
+				}
+			},
+			// 请求置换列表
+			async getReplacementList() {
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.meeting_replacementList,
+						data: {
+							MeetingdateStart: this.moment(this.activeBookedDate.day).format('YYYY-MM-DD'),
+							MeetingdateEnd: this.moment(this.activeBookedDate.day).format('YYYY-MM-DD'),
+						}
+					})
+					let [err, success] = data
+					if (success && success.data.success) {
+						this.replacementList = success.data.data.list
+					}
+					console.log('请求置换列表------>>>', this.replacementList)
 				} catch (e) {
 					console.log(e)
 				}
@@ -199,17 +290,17 @@
 		onLoad: async function() {
 			await this.getBookedDateList();
 			this.activeBookedDate = this.bookedDateList[0];
-			await this.getRoomList();
 			await this.getDayReservationList(this.activeBookedDate);
 		},
 		onShow: async function() {
-			await this.getRoomList();
 			await this.getDayReservationList(this.activeBookedDate);
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	@import '@/styles/popup.scss';
+
 	.container {
 		min-height: 100vh;
 		background: #F6F7F9;
@@ -221,7 +312,7 @@
 			width: 100%;
 			position: sticky;
 			top: 0;
-			z-index: 999;
+			z-index: 998;
 			background: #fff;
 			padding: 16rpx 10rpx;
 			height: 160rpx;
@@ -390,10 +481,67 @@
 										padding-right: 20rpx;
 									}
 								}
+
+								&.state {
+									color: #999;
+									font-size: 22rpx;
+									margin-right: 20rpx;
+
+									&:active {
+										background: transparent;
+									}
+								}
 							}
 						}
 					}
 				}
+			}
+		}
+
+		.popup {
+			width: 550rpx;
+			max-height: 800rpx;
+			border-radius: 20rpx;
+			display: flex;
+			flex-direction: column;
+
+			>.head {
+				line-height: 80rpx;
+				text-align: center;
+				background: #fff;
+				font-size: 30rpx;
+				font-weight: 900;
+			}
+
+			.info-list {
+				flex: 2;
+				overflow-y: auto;
+
+				.title {
+					font-size: 26rpx;
+					color: #333;
+					padding: 0 10rpx;
+					padding-left: 20rpx;
+					padding-bottom: 5rpx;
+					margin: 0;
+				}
+
+				.content {
+					font-size: 22rpx;
+					color: #647484;
+					text-indent: 46rpx;
+					padding: 0 10rpx;
+					// padding-left: 50rpx;
+					line-height: 28rpx;
+				}
+			}
+
+			.bottom-control {
+				width: 100%;
+				padding: 15rpx 10rpx;
+				background: #fff;
+				border-radius: 20rpx;
+				box-sizing: border-box;
 			}
 		}
 	}

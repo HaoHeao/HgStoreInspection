@@ -13,7 +13,10 @@
 			}
 		},
 		{
-			"path": "user/index/index"
+			"path": "user/index/index",
+			"style": {
+
+			}
 		}
 	],
 	"subPackages": [{
@@ -43,7 +46,10 @@
 				}
 			},
 			{
-				"path": "addSelect/addSelect"
+				"path": "addSelect/addSelect",
+				"style": {
+
+				}
 			}
 		]
 	}, {

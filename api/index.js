@@ -17,6 +17,10 @@ const meeting_reserveDetail = `${api}/hgInspection/meetingroomapi/appointment/de
 const meeting_delreserve = `${api}/hgInspection/meetingroomapi/appointment/delete`
 // 变更会议室预约时间
 const meeting_changeReserveTime = `${api}/hgInspection/meetingroomapi/appointment/addchange`
+// 会议室请求置换
+const meeting_newReplacement = `${api}/hgInspection/meetingroomapi/appointment/addswap`
+// 会议置换请求列表
+const meeting_replacementList = `${api}/hgInspection/meetingroomapi/appointment/queryswap`
 
 export {
 	api,
@@ -37,4 +41,8 @@ export {
 	meeting_delreserve,
 	// 变更会议室预约时间
 	meeting_changeReserveTime,
+	// 会议室请求置换
+	meeting_newReplacement,
+	// 会议置换请求列表
+	meeting_replacementList,
 }

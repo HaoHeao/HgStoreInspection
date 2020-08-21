@@ -17,6 +17,10 @@ const meeting_reserveDetail = `${api}/MeetingRoom/api/appointment/detailInfo`
 const meeting_delreserve = `${api}/MeetingRoom/api/appointment/delete`
 // 变更会议室预约时间
 const meeting_changeReserveTime = `${api}/MeetingRoom/api/appointment/addchange`
+// 新增会议室请求置换
+const meeting_newReplacement = `${api}/MeetingRoom/api/appointment/addswap`
+// 会议置换请求列表
+const meeting_replacementList = `${api}/MeetingRoom/api/appointment/queryswap`
 
 export {
 	api,
@@ -37,4 +41,8 @@ export {
 	meeting_delreserve,
 	// 变更会议室预约时间
 	meeting_changeReserveTime,
+	// 会议室请求置换
+	meeting_newReplacement,
+	// 会议置换请求列表
+	meeting_replacementList,
 }

@@ -75,7 +75,7 @@
 			</view>
 		</view>
 		<!-- 移动设备 -->
-		<view class="view-item input equip">
+		<!-- <view class="view-item input equip">
 			<view class="input-item">
 				<view class="title">移动设备</view>
 				<view class="content">
@@ -90,7 +90,7 @@
 					<view class="del" @click="selectMobileEquipment({type:'delItem',item})">×</view>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		<popup ref="mobile_popup" type="bottom" :maskClick="false">
 			<view class="popup mobile-equipment">
 				<view class="title">软件设备</view>
