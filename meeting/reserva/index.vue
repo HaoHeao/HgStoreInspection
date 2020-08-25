@@ -38,7 +38,7 @@
 					<view class="gray-txt">今日已预约</view>
 					<view class="item-booked" v-for="(item,index) of option_roominfo.reserveRoomList" :key="index">
 						<view class="time">{{item.timeslotstart}} ~ {{item.timeslotend}}</view>
-						<view class="gray-txt">{{item.deptname + ' - ' + item.optusername}}</view>
+						<view class="gray-txt" v-if="item.deptname && item.optusername">{{item.deptname + ' - ' + item.optusername}}</view>
 					</view>
 				</view>
 			</view>
@@ -64,9 +64,9 @@
 					<view class="view">×</view>
 				</view>
 			</view>
-			<view class="input-item teatarea">
+			<view class="input-item textarea">
 				<view class="title">会议主题</view>
-				<textarea v-if="!openMobilepopup" class="teatarea-view fadeIn" placeholder="会议主题" v-model="meetingTitle"
+				<textarea v-if="!openMobilepopup" class="textarea-view fadeIn" placeholder="会议主题" v-model="meetingTitle"
 				 auto-height />
 				<!-- <input type="text" value="" class="content" placeholder="会议主题" v-model="meetingTitle" /> -->
 				<view class="clear" @click="meetingTitle = ''" v-if="meetingTitle">
@@ -91,6 +91,12 @@
 				</view>
 			</view>
 		</view> -->
+		<!-- 所需设备说明 -->
+		<view class="view-item text">
+			<view class="title">所需设备说明：</view>
+			<view class="title">饮用水、纸巾、会议花等用品请自行准备。</view>
+			<view class="title">笔记本电脑等技术支持，请自行联系信息开发-IT运维。</view>
+		</view>
 		<popup ref="mobile_popup" type="bottom" :maskClick="false">
 			<view class="popup mobile-equipment">
 				<view class="title">软件设备</view>
@@ -141,7 +147,7 @@
 				// 已选择移动设备列表
 				selectMobileEquipmentList: [],
 				// 详细信息查看
-				openDetail: false,
+				openDetail: true,
 				// 预约时段间隔数
 				interval: 48,
 				startTime: '',
@@ -248,7 +254,8 @@
 					});
 					return
 				}
-				// this.reserveLoading = true
+				if(this.reserveLoading) return;
+				this.reserveLoading = true
 				let userinfo = this.utils.getUserInfo(uni);
 				let selectMobileEquipmentList = [];
 				for (let item of this.mobileEquipmentList) {
@@ -262,7 +269,7 @@
 					}
 				}
 				this.selectMobileEquipmentList = selectMobileEquipmentList
-				console.log('预约信息1----->>>', {
+				console.log('预约信息----->>>', {
 					Id: 0,
 					Roomid: this.option_roominfo.roomid,
 					Deptid: userinfo.deptno,
@@ -286,7 +293,6 @@
 					MeetingAppendix: [],
 					MobileEquipmentChoose: this.selectMobileEquipmentList
 				})
-				console.log(this.option_data.day.replace(/-/g, '/'))
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -324,6 +330,7 @@
 							icon: 'none'
 						});
 						await this.delay(1000)
+						this.reserveLoading = false
 						uni.navigateBack();
 					}else{
 						console.log(err?err:success.data.errmsg)
@@ -332,8 +339,11 @@
 							icon: 'none',
 							duration:3000
 						});
+						this.reserveLoading = false
 					}
-				} catch (e) {}
+				} catch (e) {
+					this.reserveLoading = false
+				}
 			},
 			// 获取设备类型
 			async getGoodsTypeList() {
@@ -431,53 +441,7 @@
 				console.log('预约结束时间列表------>>>', this.endTimeList)
 			},
 			bindMultiPickerColumnChange: function(e) {
-				console.log(e)
 				this.multiIndex[e.detail.column] = e.detail.value
-				// console.log('修改的列为：' + e.detail.column + '，值为：' + e.detail.value)
-				// this.multiIndex[e.detail.column] = e.detail.value
-				// switch (e.detail.column) {
-				// 	case 0: //拖动第1列
-				// 		console.log('拖动第1列')
-				// 		switch (this.multiIndex[0]) {
-				// 			case 0:
-				// 				this.multiArray[1] = ['中国', '日本']
-				// 				this.multiArray[2] = ['北京', '上海', '广州']
-				// 				break
-				// 			case 1:
-				// 				this.multiArray[1] = ['英国', '法国']
-				// 				this.multiArray[2] = ['伦敦', '曼彻斯特']
-				// 				break
-				// 		}
-				// 		this.multiIndex.splice(1, 1, 0)
-				// 		this.multiIndex.splice(2, 1, 0)
-				// 		break
-				// 	case 1: //拖动第2列
-				// 		console.log('拖动第2列')
-				// 		switch (this.multiIndex[0]) { //判断第一列是什么
-				// 			case 0:
-				// 				switch (this.multiIndex[1]) {
-				// 					case 0:
-				// 						this.multiArray[2] = ['北京', '上海', '广州']
-				// 						break
-				// 					case 1:
-				// 						this.multiArray[2] = ['东京','北海道']
-				// 						break
-				// 				}
-				// 				break
-				// 			case 1:
-				// 				switch (this.multiIndex[1]) {
-				// 					case 0:
-				// 						this.multiArray[2] = ['伦敦', '曼彻斯特']
-				// 						break
-				// 					case 1:
-				// 						this.multiArray[2] = ['巴黎', '马赛']
-				// 						break
-				// 				}
-				// 				break
-				// 		}
-				// 		this.multiIndex.splice(2, 1, 0)
-				// 		break
-				// }
 				this.$forceUpdate()
 			},
 		},
@@ -510,90 +474,6 @@
 		/* IOS XR */
 		padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
 		/* ------ */
-
-		.popup {
-			padding: 30rpx;
-			padding-right: 10rpx;
-			padding-bottom: 0;
-
-			&.mobile-equipment {
-				.bottom-control {
-					z-index: 999;
-					padding: 20rpx 20rpx;
-					position: sticky;
-					bottom: 0;
-					background: #fff;
-
-					.item {
-						line-height: 60rpx;
-					}
-				}
-			}
-
-			.item-view-list {
-				display: flex;
-				align-items: center;
-				flex-wrap: wrap;
-				color: #647484;
-				margin-bottom: 30rpx;
-
-				.item {
-					width: calc(100%/3 - 20rpx);
-					margin-right: 20rpx;
-					margin-bottom: 20rpx;
-					background: #F3F5F7;
-					text-align: center;
-					border-radius: 10rpx;
-
-					&:nth-child(3n + 3) {
-						margin-right: 0px;
-					}
-
-					>.icon {
-						width: 60rpx;
-						height: 60rpx;
-						margin-top: 20rpx;
-						margin-bottom: 10rpx;
-					}
-
-					.name {
-						font-size: 22rpx;
-						margin-bottom: 14rpx;
-					}
-
-					.num-view {
-						border-top: 1rpx solid #fff;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-
-						.btn {
-							display: flex;
-							justify-content: center;
-							align-items: center;
-							padding: 20rpx;
-
-							&:active {
-								opacity: 0.6;
-								background: #e2e2e2;
-							}
-
-							>.icon {
-								width: 32rpx;
-								height: 32rpx;
-							}
-						}
-
-						.num {
-							text-align: center;
-							flex: 2;
-							line-height: 32rpx;
-						}
-					}
-				}
-			}
-		}
-
 		.view-item {
 			margin: 20rpx;
 			background: #fff;
@@ -732,6 +612,7 @@
 
 					&.active {
 						padding: 10rpx;
+						margin-bottom: 10rpx;
 						border: 1px dashed #CCCCCC;
 					}
 
@@ -760,75 +641,6 @@
 				display: flex;
 				padding: 10rpx;
 				padding-right: 20rpx;
-				padding-bottom: 20rpx;
-			}
-
-			// 输入
-			&.input {
-				.input-item {
-					height: 80rpx;
-					display: flex;
-					align-items: center;
-					color: #647484;
-					position: relative;
-
-					.title {
-						line-height: 80rpx;
-						min-width: 130rpx;
-						font-size: 28rpx;
-						margin-right: 20rpx;
-						text-align: right;
-					}
-
-					.content {
-						height: 100%;
-						line-height: 80rpx;
-						flex: 2;
-						border-bottom: 1px solid #E0E0E0;
-						display: flex;
-
-						&::placeholder {
-							color: #ccc;
-						}
-					}
-
-					.clear {
-						width: 80rpx;
-						height: 80rpx;
-						position: absolute;
-						top: 0;
-						right: 0;
-						z-index: 1;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						transition: .3s;
-
-						.view {
-							line-height: 30rpx;
-							text-align: center;
-							width: 30rpx;
-							height: 30rpx;
-							font-size: 28rpx;
-							color: #647484;
-						}
-					}
-
-					&:last-child {
-						.content {
-							border-bottom: 0;
-						}
-					}
-					&.teatarea{
-						padding-right: 80rpx;
-						height: auto;
-						align-items: flex-start;
-						.teatarea-view{
-							padding: 14rpx 0;
-							margin: 10rpx 0;
-						}
-					}
-				}
 			}
 
 			// 时间选择
@@ -864,8 +676,76 @@
 					}
 				}
 			}
+			
+			// 输入
+			&.input {
+				.input-item {
+					height: 80rpx;
+					display: flex;
+					align-items: center;
+					color: #647484;
+					position: relative;
 
-			// 添加可移动设备vc
+					.title {
+						line-height: 80rpx;
+						min-width: 130rpx;
+						font-size: 28rpx;
+						margin-right: 20rpx;
+						text-align: right;
+					}
+
+					.content {
+						height: 100%;
+						line-height: 80rpx;
+						flex: 2;
+						border-bottom: 1px solid #E0E0E0;
+						display: flex;
+
+						&::placeholder {
+							color: #ccc;
+						}
+					}
+
+					.clear {
+						width: 80rpx;
+						height: 80rpx;
+						position: absolute;
+						top: calc(50% - 40rpx);
+						right: 0;
+						z-index: 1;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						transition: .3s;
+
+						.view {
+							line-height: 30rpx;
+							text-align: center;
+							width: 30rpx;
+							height: 30rpx;
+							font-size: 28rpx;
+							color: #647484;
+						}
+					}
+
+					&:last-child {
+						.content {
+							border-bottom: 0;
+						}
+					}
+					&.textarea{
+						padding-right: 80rpx;
+						height: auto;
+						align-items: center;
+						min-height: 80rpx;
+						.textarea-view{
+							padding: 24rpx 0rpx;
+						}
+					}
+				}
+			}
+
+			// 添加可移动设备
 			&.equip {
 				.input-item {
 
@@ -945,6 +825,14 @@
 					}
 				}
 			}
+			
+			&.text{
+				padding: 20rpx;
+				color: #647484;
+				.title{
+					font-size: 26rpx;
+				}
+			}
 		}
 
 		.mh-btn {
@@ -966,6 +854,89 @@
 
 			&:active {
 				opacity: 0.75;
+			}
+		}
+
+		.popup {
+			padding: 30rpx;
+			padding-right: 10rpx;
+			padding-bottom: 0;
+
+			&.mobile-equipment {
+				.bottom-control {
+					z-index: 999;
+					padding: 20rpx 20rpx;
+					position: sticky;
+					bottom: 0;
+					background: #fff;
+
+					.item {
+						line-height: 60rpx;
+					}
+				}
+			}
+
+			.item-view-list {
+				display: flex;
+				align-items: center;
+				flex-wrap: wrap;
+				color: #647484;
+				margin-bottom: 30rpx;
+
+				.item {
+					width: calc(100%/3 - 20rpx);
+					margin-right: 20rpx;
+					margin-bottom: 20rpx;
+					background: #F3F5F7;
+					text-align: center;
+					border-radius: 10rpx;
+
+					&:nth-child(3n + 3) {
+						margin-right: 0px;
+					}
+
+					>.icon {
+						width: 60rpx;
+						height: 60rpx;
+						margin-top: 20rpx;
+						margin-bottom: 10rpx;
+					}
+
+					.name {
+						font-size: 22rpx;
+						margin-bottom: 14rpx;
+					}
+
+					.num-view {
+						border-top: 1rpx solid #fff;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+
+						.btn {
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							padding: 20rpx;
+
+							&:active {
+								opacity: 0.6;
+								background: #e2e2e2;
+							}
+
+							>.icon {
+								width: 32rpx;
+								height: 32rpx;
+							}
+						}
+
+						.num {
+							text-align: center;
+							flex: 2;
+							line-height: 32rpx;
+						}
+					}
+				}
 			}
 		}
 	}

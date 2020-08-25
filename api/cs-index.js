@@ -21,6 +21,10 @@ const meeting_changeReserveTime = `${api}/MeetingRoom/api/appointment/addchange`
 const meeting_newReplacement = `${api}/MeetingRoom/api/appointment/addswap`
 // 会议置换请求列表
 const meeting_replacementList = `${api}/MeetingRoom/api/appointment/queryswap`
+// 拒绝会议置换申请
+const meeting_refusereplacement = `${api}/MeetingRoom/api/appointment/refuseswap`
+// 同意会议置换申请
+const meeting_agreereplacement = `${api}/MeetingRoom/api/appointment/checkswap`
 
 export {
 	api,
@@ -45,4 +49,8 @@ export {
 	meeting_newReplacement,
 	// 会议置换请求列表
 	meeting_replacementList,
+	// 拒绝会议置换申请
+	meeting_refusereplacement,
+	// 同意会议置换申请
+	meeting_agreereplacement,
 }

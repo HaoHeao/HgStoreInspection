@@ -18,7 +18,7 @@
 				<view class="mark fadeIn500" @click="work_show()"></view>
 				<!-- <view class="module_list fadeIn" v-if="userModelList.length"> -->
 				<view class="module_list fadeIn">
-					<!-- <view class="item item1" @click="work_go(1)">
+					<!-- <view class="item" @click="work_go(1)">
 						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
 						<view class="txt">卖场巡检1</view>
 					</view> -->
@@ -28,16 +28,17 @@
 					</view> -->
 					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
 					<block v-if="userModelList.length">
-						<view class="item item1" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
+						<view class="item" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
 							<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
 							<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
+							<image src="../../static/module4.svg" mode="widthFix" class="img" v-if="item.menuid == 4"></image>
 							<view class="txt">{{item.mname}}</view>
 						</view>
 					</block>
-					<view class="item item1" @click="work_go(3)">
+					<!-- <view class="item" @click="work_go(3)">
 						<image src="../../static/module4.svg" mode="widthFix" class="img"></image>
 						<view class="txt">会议预约</view>
-					</view>
+					</view> -->
 				</view>
 				<!-- <view class="no-model" v-if="!userModelList.length">
 					<view class="tips">您没有任何权限！</view>
@@ -114,7 +115,7 @@
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})
-				} else if (type == 3) {
+				} else if (type == 4) {
 					uni.reLaunch({
 						url: '/meeting/index/index'
 					})

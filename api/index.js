@@ -21,6 +21,10 @@ const meeting_changeReserveTime = `${api}/hgInspection/meetingroomapi/appointmen
 const meeting_newReplacement = `${api}/hgInspection/meetingroomapi/appointment/addswap`
 // 会议置换请求列表
 const meeting_replacementList = `${api}/hgInspection/meetingroomapi/appointment/queryswap`
+// 拒绝会议置换申请
+const meeting_refusereplacement = `${api}/hgInspection/meetingroomapi/appointment/refuseswap`
+// 同意会议置换申请
+const meeting_agreereplacement = `${api}/hgInspection/meetingroomapi/appointment/checkswap`
 
 export {
 	api,
@@ -45,4 +49,8 @@ export {
 	meeting_newReplacement,
 	// 会议置换请求列表
 	meeting_replacementList,
+	// 拒绝会议置换申请
+	meeting_refusereplacement,
+	// 同意会议置换申请
+	meeting_agreereplacement,
 }

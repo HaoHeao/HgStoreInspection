@@ -28,10 +28,11 @@
 						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
 							<view class="info">
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
-								<view class="depart">{{itm.deptname + ' - ' + itm.optusername}}</view>
+								<view class="depart" v-if="itm.deptname && itm.optusername">{{itm.deptname + ' - ' + itm.optusername}}</view>
 							</view>
 							<view class="control">
 								<view class="item fadeIn state" v-if="itm.isover">已结束</view>
+								<view class="item fadeIn replacement" v-if="itm.replacementList.length">{{itm.replacementList.length}}</view>
 								<view class="item fadeIn" @click.stop="showPassword(itm)" v-if="utils.getUserInfo(uni).deptno == itm.deptid">
 									<view class="hand">
 										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
@@ -44,8 +45,9 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<popup ref="tips" type="center" :maskClick="false">
+		<popup ref="tips" type="center">
 			<view class="popup">
+				<view class="close" @click="$refs['tips'].close()">×</view>
 				<view class="head">会议室管理规定</view>
 				<view class="info-list">
 					<view class="title">一、线上预约</view>
@@ -66,10 +68,10 @@
 					<view class="title">二、会议室使用</view>
 					<view class="content">1.会议结束应及时清理桌面、地面垃圾，将垃圾带至十层北货梯间并分类处理。</view>
 					<view class="content">2.会议室结束使用应及时断电（灯、空调、投影、电子白板），复位桌椅并锁好门窗。</view>
-				</view>
-				<view class="bottom-control">
-					<view class="content">
-						<view class="item" @click="$refs['tips'].close()">确定</view>
+					<view class="bottom-control">
+						<view class="content">
+							<view class="item confirm fadeIn" @click="$refs['tips'].close()">确定</view>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -150,7 +152,7 @@
 					date = new Date().getTime()
 				for (let index = 0; index <= this.mettingSetting.maxDays; index++) {
 					arr.push({
-						day: this.moment(date).format('YYYY-MM-DD hh:mm:ss'),
+						day: this.moment(date).format('YYYY/MM/DD hh:mm:ss'),
 						text: this.moment(date).format('MM.DD'),
 						week: new Date(date).getDay() == 1 ? '一' : new Date(date).getDay() == 2 ? '二' : new Date(date).getDay() == 3 ?
 							'三' : new Date(date).getDay() == 4 ? '四' : new Date(date).getDay() == 5 ? '五' : new Date(date).getDay() == 6 ?
@@ -166,7 +168,7 @@
 			async getDayReservationList(item) {
 				this.activeBookedDate = item
 				await this.getRoomList();
-				// await this.getReplacementList();
+				await this.getReplacementList();
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -178,18 +180,17 @@
 					})
 					let [err, success] = data
 					// 请求置换列表插入
-					// for (let item of this.replacementList) {
-					// 	for (let itm of Object.keys(success.data.data)) {
-					// 		for (let it of success.data.data[itm]) {
-					// 			it.replacementList = [];
-					// 			// 目标会议室开始结束时间比对
-					// 			if (item.targetroomid == it.roomid && item.targettimeslotstart == it.timeslotstart) {
-					// 				console.log(item, it)
-					// 				it.replacementList.push(item)
-					// 			}
-					// 		}
-					// 	}
-					// }
+					for (let item of this.replacementList) {
+						for (let itm of Object.keys(success.data.data)) {
+							for (let it of success.data.data[itm]) {
+								it.replacementList = [];
+								// 目标会议室id比对
+								if (item.sourceappointmentid == it.id) {
+									it.replacementList.push(item)
+								}
+							}
+						}
+					}
 					for (let index in success.data.data) {
 						for (let ind in success.data.data[index]) {
 							let item = success.data.data[index][ind]
@@ -220,17 +221,15 @@
 					this.$forceUpdate()
 					console.log('预约列表------>>>', success.data.data)
 					console.log('会议室列表-------->>>', this.roomReserveList)
-					console.log(this.moment())
 					// next-day
 					let next = new Date().getTime() + 86400000,
 						meetingMessageDate = uni.getStorageSync('meeting_meetingMessageDate');
 					if (meetingMessageDate) {
-						if (new Date(this.moment().format('YYYY/MM/DD')).getTime() == new Date(meetingMessageDate).getTime()) {
+						if (new Date(this.moment().format('YYYY/MM/DD')).getTime() >= new Date(meetingMessageDate).getTime()) {
 							uni.setStorageSync('meeting_meetingMessageDate', this.moment(next).format('YYYY/MM/DD'));
 							this.$refs['tips'].open()
 						}
 					} else {
-						console.log(2)
 						uni.setStorageSync('meeting_meetingMessageDate', this.moment(next).format('YYYY/MM/DD'));
 						this.$refs['tips'].open()
 					}
@@ -268,10 +267,17 @@
 						}
 					})
 					let [err, success] = data
+					console.log('请求置换列表------>>>', success.data.data.list)
 					if (success && success.data.success) {
-						this.replacementList = success.data.data.list
+						let arr = []
+						for (let index in success.data.data.list) {
+							let status = success.data.data.list[index].status
+							if (status == 0) {
+								arr.push(success.data.data.list[index])
+							}
+						}
+						this.replacementList = arr
 					}
-					console.log('请求置换列表------>>>', this.replacementList)
 				} catch (e) {
 					console.log(e)
 				}
@@ -491,6 +497,18 @@
 										background: transparent;
 									}
 								}
+
+								&.replacement {
+									color: #fff;
+									background: #D56C68;
+									border-radius: 50%;
+									width: 30rpx;
+									height: 30rpx;
+									text-align: center;
+									line-height: 30rpx;
+									font-size: 22rpx;
+									justify-content: center;
+								}
 							}
 						}
 					}
@@ -499,26 +517,42 @@
 		}
 
 		.popup {
-			width: 550rpx;
-			max-height: 800rpx;
+			width: 650rpx;
+			max-height: 90vh;
 			border-radius: 20rpx;
 			display: flex;
 			flex-direction: column;
+			position: relative;
+			.close{
+				padding: 5px 10rpx;
+				background: #ff0036;
+				color: #fff;
+				width: 40rpx;
+				height: 28rpx;
+				line-height: 28rpx;
+				border-radius: 40rpx;
+				text-align: center;
+				position: absolute;
+				right: 20rpx;
+				top: 20rpx;
+			}
 
 			>.head {
 				line-height: 80rpx;
 				text-align: center;
 				background: #fff;
-				font-size: 30rpx;
+				font-size: 32rpx;
 				font-weight: 900;
 			}
 
 			.info-list {
 				flex: 2;
 				overflow-y: auto;
+				padding-bottom: 20rpx;
 
 				.title {
-					font-size: 26rpx;
+					line-height: 40rpx;
+					font-size: 28rpx;
 					color: #333;
 					padding: 0 10rpx;
 					padding-left: 20rpx;
@@ -526,22 +560,24 @@
 					margin: 0;
 				}
 
-				.content {
-					font-size: 22rpx;
+				>.content {
+					font-size: 28rpx;
 					color: #647484;
 					text-indent: 46rpx;
 					padding: 0 10rpx;
 					// padding-left: 50rpx;
-					line-height: 28rpx;
+					line-height: 38rpx;
 				}
 			}
 
 			.bottom-control {
-				width: 100%;
-				padding: 15rpx 10rpx;
-				background: #fff;
-				border-radius: 20rpx;
-				box-sizing: border-box;
+				position: static;
+				margin-top: 30rpx;
+				padding: 0 20rpx;
+
+				.item.confirm {
+					justify-content: center;
+				}
 			}
 		}
 	}
