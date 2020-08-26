@@ -53,8 +53,8 @@ Vue.use(installComponent);
 const moment = require('@/util/moment.js');
 Vue.prototype.moment = moment;
 
-const api = require('@/api/cs-index.js')
-// const api = require('@/api/index.js')
+// const api = require('@/api/cs-index.js')
+const api = require('@/api/index.js')
 Vue.prototype.api = api;
 console.log(api)
 
