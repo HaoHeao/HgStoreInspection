@@ -18,27 +18,27 @@
 				<view class="mark fadeIn500" @click="work_show()"></view>
 				<!-- <view class="module_list fadeIn" v-if="userModelList.length"> -->
 				<view class="module_list fadeIn">
-					<!-- <view class="item" @click="work_go(1)">
+					<!-- <view class="item" @click="work_go('store')">
 						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
 						<view class="txt">卖场巡检1</view>
 					</view> -->
-					<!-- <view class="item item2" @click="work_go(6)">
+					<!-- <view class="item item2" @click="work_go('plan')">
 						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
 						<view class="txt">计划巡检2</view>
 					</view> -->
-					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
-					<block v-if="userModelList.length">
-						<view class="item" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.menuid)">
-							<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.menuid == 1"></image>
-							<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.menuid == 2"></image>
-							<image src="../../static/module4.svg" mode="widthFix" class="img" v-if="item.menuid == 4"></image>
-							<view class="txt">{{item.mname}}</view>
-						</view>
-					</block>
-					<!-- <view class="item" @click="work_go(3)">
+					<!-- <view class="item" @click="work_go('meeting')">
 						<image src="../../static/module4.svg" mode="widthFix" class="img"></image>
 						<view class="txt">会议预约</view>
 					</view> -->
+					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
+					<block v-if="userModelList.length">
+						<view class="item" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.mcode)">
+							<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.mcode == 'store'"></image>
+							<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.mcode == 'plan'"></image>
+							<image src="../../static/module4.svg" mode="widthFix" class="img" v-if="item.mcode == 'meeting'"></image>
+							<view class="txt">{{item.mname}}</view>
+						</view>
+					</block>
 				</view>
 				<!-- <view class="no-model" v-if="!userModelList.length">
 					<view class="tips">您没有任何权限！</view>
@@ -106,16 +106,16 @@
 				utils.getMarketDeptList(this);
 				utils.getMarketUserList(this);
 				/* 正式和测试  测试1,6  正式1,2 */
-				if (type == 1) {
+				if (type == 'store') {
 					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({
 						url: '/pages/index/index'
 					})
-				} else if (type == 2) {
+				} else if (type == 'plan') {
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})
-				} else if (type == 4) {
+				} else if (type == 'meeting') {
 					uni.reLaunch({
 						url: '/meeting/index/index'
 					})

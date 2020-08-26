@@ -59,14 +59,14 @@
 					</view>
 				</view>
 			</view> -->
-			<view class="view-item control-list" v-if="detailInfo.meeting_state == 1">
-				<view class="item del" @click="controlTap(1)">
+			<view class="view-item control-list">
+				<view class="item del" @click="controlTap(1)" v-if="detailInfo.meeting_state == 1">
 					<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>取消
 				</view>
-				<view class="item" @click="controlTap(2)" v-if="maxDelayTimeList.length">
+				<view class="item" @click="controlTap(2)" v-if="detailInfo.meeting_state != 3 && maxDelayTimeList.length">
 					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
 				</view>
-				<view class="item" @click="controlTap(3)">
+				<view class="item" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
 					<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>
 					<view class="replacement" v-if="replacementList.length">{{replacementList.length}}</view>
 					置换

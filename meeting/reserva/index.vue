@@ -648,7 +648,7 @@
 				.input-item {
 
 					.title {
-						min-width: auto;
+						min-width: auto !important;
 						display: flex;
 						align-items: center;
 						margin: 0;

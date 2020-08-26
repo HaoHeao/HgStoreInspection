@@ -1,4 +1,4 @@
-const api = 'https://vipapi-cs.hanguangbaihuo.com'
+const api = 'https://vipapi.hanguangbaihuo.com'
 
 /* -----会议室预约meeting------ */
 // 获取全部房间列表

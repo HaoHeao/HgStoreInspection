@@ -22,7 +22,7 @@
 								<block v-if="ind != 0">{{'、' + itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
 							</block>
 						</view>
-						<image src="../../static/reservation.png" mode="widthFix" class="icon"></image>
+						<image src="../../static/reservation.png" mode="widthFix" class="icon" v-if="item.status != 2000"></image>
 					</view>
 					<view class="meeting-list">
 						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
@@ -32,7 +32,7 @@
 							</view>
 							<view class="control">
 								<view class="item fadeIn state" v-if="itm.isover">已结束</view>
-								<view class="item fadeIn replacement" v-if="itm.replacementList.length">{{itm.replacementList.length}}</view>
+								<view class="item fadeIn replacement" v-if="utils.getUserInfo(uni).deptno == itm.deptid && itm.replacementList.length">换</view>
 								<view class="item fadeIn" @click.stop="showPassword(itm)" v-if="utils.getUserInfo(uni).deptno == itm.deptid">
 									<view class="hand">
 										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
@@ -267,7 +267,7 @@
 						}
 					})
 					let [err, success] = data
-					console.log('请求置换列表------>>>', success.data.data.list)
+					console.log('请求置换列表------>>>', success)
 					if (success && success.data.success) {
 						let arr = []
 						for (let index in success.data.data.list) {
@@ -561,7 +561,7 @@
 				}
 
 				>.content {
-					font-size: 28rpx;
+					font-size: 26rpx;
 					color: #647484;
 					text-indent: 46rpx;
 					padding: 0 10rpx;
