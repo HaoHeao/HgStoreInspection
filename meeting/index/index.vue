@@ -11,7 +11,7 @@
 		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
 			<view class="data-view">
 				<view class="item fadeIn" v-for="(item,index) of roomReserveList" :key="index">
-					<view class="meeting" @click="reserve(item)">
+					<view :class="['meeting',item.status != 1000?'deactivate':'']" @click="reserve(item)">
 						<view class="name">{{item.roomname}}</view>
 						<view class="label" v-if="item.peoplelimit">人数：{{item.peoplelimit}}人</view>
 						<view class="label" v-if="item.location">位置：{{item.location}}</view>
@@ -22,9 +22,9 @@
 								<block v-if="ind != 0">{{'、' + itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
 							</block>
 						</view>
-						<image src="../../static/reservation.png" mode="widthFix" class="icon" v-if="item.status != 2000"></image>
+						<image src="../../static/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
 					</view>
-					<view class="meeting-list">
+					<view class="meeting-list" v-if="item.status == 1000">
 						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
 							<view class="info">
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
@@ -218,9 +218,6 @@
 							}
 						}
 					}
-					this.$forceUpdate()
-					console.log('预约列表------>>>', success.data.data)
-					console.log('会议室列表-------->>>', this.roomReserveList)
 					// next-day
 					let next = new Date().getTime() + 86400000,
 						meetingMessageDate = uni.getStorageSync('meeting_meetingMessageDate');
@@ -233,6 +230,9 @@
 						uni.setStorageSync('meeting_meetingMessageDate', this.moment(next).format('YYYY/MM/DD'));
 						this.$refs['tips'].open()
 					}
+					this.$forceUpdate()
+					console.log('预约列表------>>>', success.data.data)
+					console.log('会议室列表-------->>>', this.roomReserveList)
 				} catch (e) {
 					console.log(e)
 				}
@@ -249,6 +249,12 @@
 						for (let item of success.data.data.roomlist) {
 							item.reserveRoomList = []
 						}
+						// 会议室列表排序
+						success.data.data.roomlist = success.data.data.roomlist.filter(function(item) {
+							return item.status == 1000
+						}).concat(success.data.data.roomlist.filter(function(item) {
+							return item.status == 2000
+						}))
 						this.roomReserveList = success.data.data.roomlist
 					}
 				} catch (e) {
@@ -389,6 +395,12 @@
 					margin-right: 10rpx;
 					box-sizing: border-box;
 
+					&.deactivate {
+						background: #f2f2f2;
+						border: 1rpx dashed #647484;
+						box-sizing: border-box;
+					}
+
 					.name {
 						font-size: 26rpx;
 						color: #333;
@@ -523,7 +535,8 @@
 			display: flex;
 			flex-direction: column;
 			position: relative;
-			.close{
+
+			.close {
 				padding: 5px 10rpx;
 				background: #ff0036;
 				color: #fff;

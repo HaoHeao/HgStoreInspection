@@ -63,8 +63,7 @@ Vue.prototype.utils = utils;
 console.log(utils)
 
 // 同步延迟
-const delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
-Vue.prototype.delay = delay;
+Vue.prototype.delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
 
 Vue.config.productionTip = false;
 App.mpType = 'app'

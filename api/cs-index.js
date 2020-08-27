@@ -1,5 +1,4 @@
 const api = 'http://192.168.128.66:8081'
-// const api = 'https://vipapi-cs.hanguangbaihuo.com'
 
 /* -----会议室预约meeting------ */
 // 获取全部房间列表

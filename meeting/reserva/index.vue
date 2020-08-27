@@ -403,10 +403,18 @@
 					if (new Date(this.moment(this.option_data.day.replace(/-/g, '/')).format("YYYY/MM/DD 00:00:00").replace(/-/g, '/'))
 						.getTime() == new Date(this.moment().format("YYYY/MM/DD 00:00:00").replace(/-/g, '/')).getTime()) {
 						if (new Date().getTime() && new Date(time_item) > new Date()) {
-							time_list.push(this.moment(time_item).format('hh:mm'))
+							if (this.moment(time_item).format('hh:mm') == '00:00') {
+								time_list.push('24:00')
+							} else {
+								time_list.push(this.moment(time_item).format('hh:mm'))
+							}
 						}
 					} else {
-						time_list.push(this.moment(time_item).format('hh:mm'))
+							if (this.moment(time_item).format('hh:mm') == '00:00') {
+								time_list.push('24:00')
+							} else {
+								time_list.push(this.moment(time_item).format('hh:mm'))
+							}
 					}
 				}
 				time_list.pop()
@@ -426,17 +434,28 @@
 					if (new Date(this.moment(this.option_data.day.replace(/-/g, '/')).format("YYYY/MM/DD 00:00:00").replace(/-/g, '/'))
 						.getTime() == new Date(this.moment().format("YYYY/MM/DD 00:00:00").replace(/-/g, '/')).getTime()) {
 						if (new Date().getTime() && new Date(time_item) > new Date() + 1800000) {
-							time_list.push(this.moment(time_item).format('hh:mm'))
+							if (this.moment(time_item).format('hh:mm') == '00:00') {
+								time_list.push('24:00')
+							} else {
+								time_list.push(this.moment(time_item).format('hh:mm'))
+							}
 						}
 					} else {
-						time_list.push(this.moment(time_item).format('hh:mm'))
+						if (this.moment(time_item).format('hh:mm') == '00:00') {
+							time_list.push('24:00')
+						} else {
+							time_list.push(this.moment(time_item).format('hh:mm'))
+						}
 					}
 					if (new Date(time_item) > new Date().getTime() + 1800000) {
-						time_list.push(this.moment(time_item).format('hh:mm'))
+						if (this.moment(time_item).format('hh:mm') == '00:00') {
+							time_list.push('24:00')
+						} else {
+							time_list.push(this.moment(time_item).format('hh:mm'))
+						}
 					}
 				}
 				time_list.pop()
-				time_list.push('24:00')
 				this.endTimeList = time_list
 				console.log('预约结束时间列表------>>>', this.endTimeList)
 			},
@@ -450,6 +469,13 @@
 			this.option_data = JSON.parse(option.options)[1]
 			console.log('预约会议室信息------>>>', this.option_roominfo)
 			console.log('预约天信息------>>>', this.option_data)
+			// 去除已过期会议预约
+			let _this = this;
+			let new_date = new Date().getTime();
+			this.option_roominfo.reserveRoomList = this.option_roominfo.reserveRoomList.filter(function(item) {
+				return new Date(`${_this.moment(item.meetingdate).format('YYYY-MM-DD ')}${item.timeslotstart}:00`).getTime() >
+					new_date
+			});
 			await this.getFixedEquipment()
 			await this.getMobileEquipment()
 			await this.getReservaStratList()

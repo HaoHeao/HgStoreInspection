@@ -63,7 +63,7 @@
 				<view class="item del" @click="controlTap(1)" v-if="detailInfo.meeting_state == 1">
 					<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>取消
 				</view>
-				<view class="item" @click="controlTap(2)" v-if="detailInfo.meeting_state != 3 && maxDelayTimeList.length">
+				<view class="item" @click="controlTap(2)" v-if="detailInfo.meeting_state != 3">
 					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
 				</view>
 				<view class="item" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
@@ -78,8 +78,7 @@
 				<view class="item-view select">
 					<image src="@/static/images/date.svg" class="icon" mode="widthFix"></image>
 					<view class="title">{{moment(new Date(detailInfo.meetingdate)).format("MM-DD ") + detailInfo.timeslotendTime}} 散会</view>
-					<picker class="content" mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex"
-					 :range="[maxDelayTimeList]">
+					<picker class="content" mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="[maxDelayTimeList]">
 						延时至:{{maxDelayTimeList[multiIndex]}}
 					</picker>
 				</view>
@@ -130,7 +129,7 @@
 						<view class="left">
 							<view class="time">{{item.sourceroomname}}</view>
 							<view class="time">{{item.sourcetimeslotstart + ' ~ ' + item.sourcetimeslotend}}</view>
-							<view class="name">{{item.sourceoptuser}}</view>
+							<view class="name">{{item.sourceoptuser.replace('/', ' - ')}}</view>
 						</view>
 						<view class="refuse-text" v-if="item.status == 2000">已拒绝</view>
 						<radio class="radio" :value="item.swapid" color="#647484" />
@@ -192,7 +191,6 @@
 		methods: {
 			// 拒绝置换会议室
 			async refuseReplacement() {
-				console.log(this.radioReplacementListChangeCurrent)
 				if (!this.radioReplacementListChangeCurrent) {
 					uni.showToast({
 						title: '请选择会议',
@@ -229,7 +227,7 @@
 				});
 			},
 			// 同意置换会议室
-			async agreeReplacement(){
+			async agreeReplacement() {
 				if (!this.radioReplacementListChangeCurrent) {
 					uni.showToast({
 						title: '请选择会议',
@@ -267,15 +265,15 @@
 				});
 			},
 			// 置换会议室
-			radioChange: function(evt) {
+			radioChange(evt) {
 				this.radioChangeCurrent = evt.target.value.split(',')
 			},
 			radioReplacementListChange(evt) {
 				this.radioReplacementListChangeCurrent = evt.target.value
 			},
 			// 延时时间修改
-			bindMultiPickerColumnChange: function(e) {
-				this.multiIndex = e.detail.value
+			bindMultiPickerChange(e) {
+				this.multiIndex = e.detail.value[0];
 				this.$forceUpdate()
 			},
 			// 下拉
@@ -286,7 +284,6 @@
 			},
 			// 请求置换
 			async replacement() {
-				console.log(this.radioChangeCurrent)
 				if (!this.radioChangeCurrent) {
 					uni.showToast({
 						title: '请选择要置换的会议',
@@ -337,7 +334,6 @@
 			// 延时
 			async changeReserveTime() {
 				let userinfo = this.utils.getUserInfo(uni);
-				console.log(this.maxDelayTimeList[this.multiIndex])
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -374,6 +370,7 @@
 				let _this = this;
 				let userinfo = this.utils.getUserInfo(uni);
 				if (type == 1) {
+					// 取消
 					uni.showModal({
 						title: '确定取消此次会议吗？',
 						success: async function(res) {
@@ -392,7 +389,7 @@
 									}
 								})
 								let [err, success] = data
-								console.log(success)
+								console.log('已取消此次会议------>>>', success)
 								if (success.data.success) {
 									uni.showToast({
 										title: '已取消此次会议',
@@ -406,10 +403,27 @@
 					});
 				} else if (type == 2) {
 					// 延时
+					if (!this.maxDelayTimeList.length) {
+						uni.showToast({
+							title: '结束时间与下次预约开始时间相同，不可延时',
+							icon: 'none',
+							duration: 3000
+						});
+						return
+					}
 					this.multiIndex = '0'
 					this.getMaxDelayTimeList()
 					this.$refs['loading_time'].open()
 				} else if (type == 3) {
+					// 置换
+					if (!this.roomReserveList.length) {
+						uni.showToast({
+							title: '无可置换会议室',
+							icon: 'none',
+							duration: 3000
+						});
+						return
+					}
 					this.replacementList = ''
 					this.replaceIndex = null;
 					this.radioChangeCurrent = ""
@@ -421,7 +435,6 @@
 			},
 			// 置换会议室修改
 			bindPickerChange: function(e) {
-				console.log('picker发送选择改变，携带值为', e.target.value)
 				this.replaceIndex = e.target.value
 			},
 			// 获取设备类型
@@ -495,26 +508,30 @@
 			},
 			// 计算可延长最大时段
 			getMaxDelayTimeList() {
-				let interval_time = 86400 / this.mettingSetting.interval * 1000
+				let interval_time = 86400 / this.mettingSetting.interval * 1000; // 一天时间-毫秒
 				let time_list = []
-				for (var index = 1; index <= this.mettingSetting.interval; index++) {
+				for (var index = 1; index <= this.mettingSetting.interval /* vuex定义的天时间分割，没啥用，固定48 */ ; index++) {
 					let time_item = this.moment(
 						new Date(
 							new Date(this.moment().format("YYYY/MM/DD 00:00:00"))
 						).getTime() + interval_time * index
-					).format('YYYY/MM/DD hh:mm:ss')
+					).format('YYYY/MM/DD hh:mm:ss'); //现在往后半小时*时间分割下标
 					// 同一天同一会议室多个预定
 					if (this.reserveInfo.nextreserve != null) {
 						if (new Date(time_item).getTime() > new Date(this.moment().format(
 								`YYYY/MM/DD ${this.detailInfo.timeslotendTime}:00`))
 							.getTime() && new Date(time_item).getTime() <= new Date(this.moment()
-								.format(`YYYY/MM/DD ${this.reserveInfo.nextreserve.timeslotend}:00`)).getTime()) {
+								.format(`YYYY/MM/DD ${this.reserveInfo.nextreserve.timeslotstart}:00`)).getTime()) {
 							time_list.push(this.moment(time_item).format('hh:mm'))
 						}
 					} else {
 						if (new Date(time_item).getTime() > new Date(this.moment().format(
 								`YYYY/MM/DD ${this.detailInfo.timeslotendTime}:00`)).getTime()) {
-							time_list.push(this.moment(time_item).format('hh:mm'))
+							if (this.moment(time_item).format('hh:mm') == '00:00') {
+								time_list.push('24:00')
+							} else {
+								time_list.push(this.moment(time_item).format('hh:mm'))
+							}
 						}
 					}
 				}
@@ -547,23 +564,33 @@
 						method: 'POST',
 						url: this.api.meeting_getDayReservationList,
 						data: {
-							MeetingdateStart: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY-MM-DD 00:00:00').replace(
+							MeetingdateStart: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY/MM/DD 00:00:00').replace(
 								/-/g, '/'),
-							MeetingdateEnd: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY-MM-DD 00:00:00').replace(/-/g,
+							MeetingdateEnd: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY/MM/DD 00:00:00').replace(/-/g,
 								'/')
 						}
 					})
-					let [err, success] = data
+					let [err, success] = data,
+					_this = this;
 					for (let index in success.data.data) {
 						for (let ind in success.data.data[index]) {
 							let item = success.data.data[index][ind]
 							item.optusername = item.optuser.replace("/", " - ").split(' - ')[1];
 							item.optusernumber = item.optuser.replace("/", " - ").split(' - ')[0];
 							item.optuser = item.optuser.replace("/", " - ");
-							item.timeslotend = this.insert_flg(item.timeslotend, ':', 2)
-							item.timeslotstart = this.insert_flg(item.timeslotstart, ':', 2)
+							item.timeslotend = this.insert_flg(item.timeslotend, ':', 2);
+							item.timeslotstart = this.insert_flg(item.timeslotstart, ':', 2);
 						}
 					}
+					let new_date = new Date().getTime();
+					// 移除已过期会议预约
+					for (let index in success.data.data) {
+						success.data.data[index] = success.data.data[index].filter(function(itm) {
+							return new Date(`${_this.moment(itm.meetingdate).format('YYYY-MM-DD ')}${itm.timeslotstart}:00`).getTime() >
+								new_date && itm.id != _this.detailInfo.id
+						});
+					}
+					// 会议室插入对应会议预约
 					for (let item of this.roomReserveList) {
 						for (let index in success.data.data) {
 							if (item.roomid == index) {
@@ -571,11 +598,10 @@
 							}
 						}
 					}
-					for (let index in this.roomReserveList) {
-						if (!this.roomReserveList[index].reserveRoomList.length) {
-							this.roomReserveList.splice(index, index + 1)
-						}
-					}
+					// 删除没有会议预约的会议室
+					this.roomReserveList = this.roomReserveList.filter(function(item) {
+						return item.reserveRoomList.length
+					});
 					this.$forceUpdate()
 					console.log('预约列表------>>>', success.data.data)
 					console.log('会议室列表-------->>>', this.roomReserveList)
@@ -585,11 +611,6 @@
 			},
 			// 请求置换列表
 			async getReplacement() {
-				console.log('请求置换列表', {
-					MeetingdateStart: this.moment(this.detailInfo.meetingdate).format('YYYY-MM-DD'),
-					MeetingdateEnd: this.moment(this.detailInfo.meetingdate).format('YYYY-MM-DD'),
-					sourceappointmentid: this.detailInfo.id
-				})
 				try {
 					let data = await uni.request({
 						method: 'POST',
