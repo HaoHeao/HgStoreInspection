@@ -403,6 +403,7 @@
 					});
 				} else if (type == 2) {
 					// 延时
+					await this.getMaxDelayTimeList()
 					if (!this.maxDelayTimeList.length) {
 						uni.showToast({
 							title: '结束时间与下次预约开始时间相同，不可延时',
@@ -412,9 +413,18 @@
 						return
 					}
 					this.multiIndex = '0'
-					this.getMaxDelayTimeList()
 					this.$refs['loading_time'].open()
 				} else if (type == 3) {
+					this.replacementList = ''
+					this.replaceIndex = null;
+					this.radioChangeCurrent = ""
+					this.radioReplacementListChangeCurrent = ''
+					this.getReplacement()
+					uni.showLoading({
+						title: '加载中'
+					});
+					await this.getTodayReserveList()
+					uni.hideLoading();
 					// 置换
 					if (!this.roomReserveList.length) {
 						uni.showToast({
@@ -424,11 +434,6 @@
 						});
 						return
 					}
-					this.replacementList = ''
-					this.replaceIndex = null;
-					this.radioChangeCurrent = ""
-					this.radioReplacementListChangeCurrent = ''
-					this.getReplacement()
 					this.$refs['replacement'].open()
 					this.$forceUpdate()
 				}
@@ -586,7 +591,7 @@
 					// 移除已过期会议预约
 					for (let index in success.data.data) {
 						success.data.data[index] = success.data.data[index].filter(function(itm) {
-							return new Date(`${_this.moment(itm.meetingdate).format('YYYY-MM-DD ')}${itm.timeslotstart}:00`).getTime() >
+							return new Date(`${_this.moment(itm.meetingdate).format('YYYY/MM/DD ')}${itm.timeslotstart}:00`).getTime() >
 								new_date && itm.id != _this.detailInfo.id
 						});
 					}
@@ -616,8 +621,8 @@
 						method: 'POST',
 						url: this.api.meeting_replacementList,
 						data: {
-							MeetingdateStart: this.moment(this.detailInfo.meetingdate).format('YYYY-MM-DD'),
-							MeetingdateEnd: this.moment(this.detailInfo.meetingdate).format('YYYY-MM-DD'),
+							MeetingdateStart: this.moment(this.detailInfo.meetingdate).format('YYYY/MM/DD'),
+							MeetingdateEnd: this.moment(this.detailInfo.meetingdate).format('YYYY/MM/DD'),
 							sourceappointmentid: this.detailInfo.id
 						}
 					})
@@ -655,6 +660,9 @@
 			}
 		},
 		onLoad: async function(option) {
+			uni.showLoading({
+				title: '加载中'
+			});
 			this.roomInfo = JSON.parse(option.options)[0]
 			this.reserveInfo = JSON.parse(option.options)[1]
 			console.log('会议室信息------>>>', this.roomInfo)
@@ -664,6 +672,7 @@
 			this.getReplacement()
 			this.getMaxDelayTimeList()
 			this.getTodayReserveList()
+			uni.hideLoading();
 		},
 		onShow: function() {}
 	}

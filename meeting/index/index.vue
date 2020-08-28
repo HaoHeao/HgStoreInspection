@@ -268,8 +268,8 @@
 						method: 'POST',
 						url: this.api.meeting_replacementList,
 						data: {
-							MeetingdateStart: this.moment(this.activeBookedDate.day).format('YYYY-MM-DD'),
-							MeetingdateEnd: this.moment(this.activeBookedDate.day).format('YYYY-MM-DD'),
+							MeetingdateStart: this.moment(this.activeBookedDate.day).format('YYYY/MM/DD'),
+							MeetingdateEnd: this.moment(this.activeBookedDate.day).format('YYYY/MM/DD'),
 						}
 					})
 					let [err, success] = data
@@ -300,9 +300,13 @@
 			}
 		},
 		onLoad: async function() {
+			uni.showLoading({
+				title: '加载中'
+			});
 			await this.getBookedDateList();
 			this.activeBookedDate = this.bookedDateList[0];
 			await this.getDayReservationList(this.activeBookedDate);
+			uni.hideLoading();
 		},
 		onShow: async function() {
 			await this.getDayReservationList(this.activeBookedDate);

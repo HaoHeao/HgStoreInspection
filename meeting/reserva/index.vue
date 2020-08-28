@@ -323,7 +323,7 @@
 						}
 					})
 					let [err, success] = data
-					console.log(err, success)
+					console.log('预约成功------>>>', success)
 					if (!err && success.data.success) {
 						uni.showToast({
 							title: '预约成功！',
@@ -465,6 +465,9 @@
 			},
 		},
 		onLoad: async function(option) {
+			uni.showLoading({
+				title: '加载中'
+			});
 			this.option_roominfo = JSON.parse(option.options)[0]
 			this.option_data = JSON.parse(option.options)[1]
 			console.log('预约会议室信息------>>>', this.option_roominfo)
@@ -473,7 +476,7 @@
 			let _this = this;
 			let new_date = new Date().getTime();
 			this.option_roominfo.reserveRoomList = this.option_roominfo.reserveRoomList.filter(function(item) {
-				return new Date(`${_this.moment(item.meetingdate).format('YYYY-MM-DD ')}${item.timeslotstart}:00`).getTime() >
+				return new Date(`${_this.moment(item.meetingdate).format('YYYY/MM/DD ')}${item.timeslotend}:00`).getTime() >
 					new_date
 			});
 			await this.getFixedEquipment()
@@ -485,6 +488,7 @@
 					.format("YYYY/MM/DD 00:00:00").replace(/-/g, '/')).getTime()) {
 				this.multiIndex = [17, 18]
 			}
+			uni.hideLoading();
 		}
 	}
 </script>
