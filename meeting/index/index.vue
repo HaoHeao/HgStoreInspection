@@ -29,11 +29,13 @@
 							<view class="info">
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
 								<view class="depart" v-if="itm.deptname && itm.optusername">{{itm.deptname + ' - ' + itm.optusername}}</view>
+								<view class="title" v-if="utils.getUserInfo(uni).deptno == itm.deptid">{{itm.title}}</view>
 							</view>
 							<view class="control">
 								<view class="item fadeIn state" v-if="itm.isover">已结束</view>
-								<view class="item fadeIn replacement" v-if="utils.getUserInfo(uni).deptno == itm.deptid && itm.replacementList.length">换</view>
-								<view class="item fadeIn" @click.stop="showPassword(itm)" v-if="utils.getUserInfo(uni).deptno == itm.deptid">
+								<view class="item fadeIn replacement" v-if="utils.getUserInfo(uni).deptno == itm.deptid && itm.replacementList.length && itm.meeting_state != 3">换</view>
+								<view :class="['item fadeIn password',utils.getUserInfo(uni).deptno == itm.deptid?'no-active':'']" @click.stop="showPassword(itm)"
+								 v-if="utils.getUserInfo(uni).deptno == itm.deptid">
 									<view class="hand">
 										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
 									</view>
@@ -208,6 +210,8 @@
 								new Date() >= new Date(this.moment(item.meetingdate).format('YYYY/MM/DD ') + item.timeslotend + ':00') ? item.isover =
 									true : item.isover = false
 							}
+							// 会议室当前状态判断
+							this.meetingState(item)
 						}
 					}
 					// 插入会议室列表下
@@ -286,6 +290,26 @@
 					}
 				} catch (e) {
 					console.log(e)
+				}
+			},
+			// 会议状态判断
+			meetingState(item) {
+				if (new Date().getTime() < new Date(this.moment(new Date(item.meetingdate)).format("YYYY/MM/DD ").replace(
+							/-/g, '/') +
+						item.timeslotstart).getTime()) {
+					// 未开始
+					item.meeting_state = 1
+				} else if (new Date().getTime() > new Date(this.moment(new Date(item.meetingdate)).format("YYYY/MM/DD ")
+						.replace(/-/g, '/') +
+						item.timeslotstart).getTime() && new Date().getTime() < new Date(this.moment(new Date(item
+						.meetingdate)).format("YYYY/MM/DD ") + item.timeslotend).getTime()) {
+					// 正在进行
+					item.meeting_state = 2
+				} else if (new Date().getTime() > new Date(this.moment(new Date(item.meetingdate)).format("YYYY/MM/DD ")
+						.replace(/-/g, '/') +
+						item.timeslotend).getTime()) {
+					// 已结束
+					item.meeting_state = 3
 				}
 			},
 			// 字符串插入操作
@@ -436,6 +460,7 @@
 						align-items: center;
 						background: #fff;
 						border-radius: 6rpx;
+						padding: 10rpx 0rpx;
 						padding-left: 14rpx;
 						box-sizing: border-box;
 						margin-bottom: 10rpx;
@@ -458,6 +483,12 @@
 								color: #ccc;
 								margin-top: 2rpx;
 							}
+
+							.title {
+								font-size: 22rpx;
+								color: #647484;
+								padding: 18rpx 60rpx 0rpx 0rpx;
+							}
 						}
 
 						.control {
@@ -467,15 +498,26 @@
 							display: flex;
 							align-items: center;
 							z-index: 998;
+							min-height: 90rpx;
+							background: rgba(255, 255, 255, 0.8);
+							padding-left: 10rpx;
 
 							.item {
-								line-height: 90rpx;
+								// line-height: 90rpx;
 								// min-width: 45rpx;
 								display: flex;
 								align-items: center;
+								transition: .2s;
+								white-space: nowrap;
 
 								&:active {
 									background: #e2e2e2;
+								}
+
+								&.no-active {
+									&:active {
+										background: transparent;
+									}
 								}
 
 								>.hand {
@@ -505,6 +547,7 @@
 								}
 
 								&.state {
+									line-height: 90rpx;
 									color: #999;
 									font-size: 22rpx;
 									margin-right: 20rpx;
@@ -524,6 +567,11 @@
 									line-height: 30rpx;
 									font-size: 22rpx;
 									justify-content: center;
+									margin-right: 10rpx;
+								}
+
+								&.password {
+									min-height: 90rpx;
 								}
 							}
 						}
