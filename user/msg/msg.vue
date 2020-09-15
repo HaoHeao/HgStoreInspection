@@ -13,8 +13,6 @@
 						<view class="sender">{{item.deptname}} - {{item.username}}</view>
 						<view class="timer">{{item.insertdate1}}</view>
 						<view class="desc">
-							<!-- <view class="round"></view> -->
-							<!-- <text class="type status" v-if="!item.logmsgview.length">[ 未读 ]</text> -->
 							<text class="type" v-if="item.msgtype == 1">[@您]</text>
 							<text class="type" v-if="item.msgtype == 2">[回复]</text>
 							<text class="type" v-if="item.msgtype == 3">[新的巡检]</text>
@@ -22,36 +20,6 @@
 						</view>
 					</view>
 				</view>
-				<!-- <view class="item" @click="navigator()">
-					<view class="source">
-						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
-					</view>
-					<view class="right">
-						<view class="sender">法务部 - 刘永强</view>
-						<view class="timer">12:59</view>
-						<view class="desc"><text class="type">[@您]</text>描述描述描述描述描述描述描述描述描述</view>
-					</view>
-				</view>
-				<view class="item">
-					<view class="source">
-						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
-					</view>
-					<view class="right">
-						<view class="sender">法务部 - 刘永强</view>
-						<view class="timer">昨天 12:59</view>
-						<view class="desc"><text class="type">[回复]</text>描述描述描述描述描述描述描述描述描述</view>
-					</view>
-				</view>
-				<view class="item">
-					<view class="source">
-						<image src="../../static/module3.png" mode="widthFix" class="img"></image>
-					</view>
-					<view class="right">
-						<view class="sender">法务部 - 刘永强</view>
-						<view class="timer">2019-10-23 12:59</view>
-						<view class="desc"><text class="type"></text>描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述</view>
-					</view>
-				</view> -->
 				<view class="null-data">
 					<view class="text">以上为全部消息</view>
 					<view class="line"></view>
@@ -182,6 +150,7 @@
 					// 	}
 					// }
 					if (done) done();
+					uni.hideLoading();
 					if (err == null) {
 						utils.timerDateString(data.data.data);
 						_this.msgList = _this.msgList.concat(data.data.data);
@@ -189,7 +158,6 @@
 							this.pagenum = data.data.pagenum
 						}
 						this.pageindex = this.pageindex + 1;
-						uni.hideLoading();
 					} else {
 						uni.showToast({
 							icon: 'none',
@@ -197,7 +165,6 @@
 							duration: 3000
 						});
 					};
-					uni.hideLoading();
 				}).then(() => {
 					uni.hideLoading();
 				})

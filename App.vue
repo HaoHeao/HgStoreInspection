@@ -6,8 +6,8 @@
 	export default {
 		globalData: {
 			system: {
-				version: "0.8.6",
-				lastmodified: "2020/09/04",
+				version: "0.8.8",
+				lastmodified: "2020/09/15",
 				systemName: "北京汉光巡检系统",
 				appId: "wx252743e71090a061"
 			},

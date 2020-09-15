@@ -16,34 +16,26 @@
 		<view class="work_view" v-if="work_view">
 			<view class="content">
 				<view class="mark fadeIn500" @click="work_show()"></view>
-				<!-- <view class="module_list fadeIn" v-if="userModelList.length"> -->
-				<view class="module_list fadeIn">
-					<!-- <view class="item" @click="work_go('store')">
-						<image src="../../static/module1.png" mode="widthFix" class="img"></image>
-						<view class="txt">卖场巡检1</view>
-					</view> -->
-					<!-- <view class="item item2" @click="work_go('plan')">
-						<image src="../../static/module2.png" mode="widthFix" class="img"></image>
-						<view class="txt">计划巡检2</view>
-					</view> -->
-					<!-- <view class="item" @click="work_go('meeting')">
-						<image src="../../static/module4.svg" mode="widthFix" class="img"></image>
-						<view class="txt">会议预约</view>
-					</view> -->
-					<!-- 正式版本图片和测试  测试1,6  正式1,2 -->
+				<view class="module_list fadeIn" v-if="userModelList.length">
 					<block v-if="userModelList.length">
-						<view class="item" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.mcode)">
-							<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.mcode == 'store'"></image>
-							<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.mcode == 'plan'"></image>
-							<image src="../../static/module4.svg" mode="widthFix" class="img" v-if="item.mcode == 'meeting'"></image>
+						<view class="item fadeIn" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.mcode)">
+							<view class="icon-view">
+								<image :src="require(`@/static/tabbar/work/${item.mcode?item.mcode:'item'}.svg`)" mode="widthFix" class="icon"></image>
+							</view>
 							<view class="txt">{{item.mname}}</view>
 						</view>
+						<!-- <view class="item" @click="work_go('spot-check')">
+							<view class="icon-view">
+								<image src="@/static/tabbar/work/spot-check.svg" mode="widthFix" class="icon"></image>
+							</view>
+							<view class="txt">店面抽盘</view>
+						</view> -->
 					</block>
 				</view>
-				<!-- <view class="no-model" v-if="!userModelList.length">
+				<view class="no-model" v-if="!userModelList.length">
 					<view class="tips">您没有任何权限！</view>
 					<view class="refresh" @click="refreshModel()">重新获取权限</view>
-				</view> -->
+				</view>
 			</view>
 		</view>
 	</view>
@@ -51,7 +43,6 @@
 
 <script>
 	let utils = require('@/util/utils.js');
-	let request = utils.api;
 	export default {
 		props: ['index'],
 		data() {
@@ -84,12 +75,8 @@
 					});
 				} else if (index == 1) {
 					// 加载查看权限
-					// console.log("加载查看用户权限",this.$store.state.usermodel.modelList)
 					utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 					this.work_view = !this.work_view;
-					// uni.setNavigationBarTitle({
-					// 	title: "巡检入口"
-					// });
 					return;
 				} else if (index == 2) {
 					this.work_view = false;
@@ -105,7 +92,6 @@
 			work_go: function(type) {
 				utils.getMarketDeptList(this);
 				utils.getMarketUserList(this);
-				/* 正式和测试  测试1,6  正式1,2 */
 				if (type == 'store') {
 					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({
@@ -117,7 +103,11 @@
 					})
 				} else if (type == 'meeting') {
 					uni.reLaunch({
-						url: '/meeting/index/index'
+						url: '/pages-packages/meeting/index/index'
+					})
+				}else if(type == 'spot-check'){
+					uni.reLaunch({
+						url: '/pages-packages/spot-check/index/index'
 					})
 				}
 			},
@@ -229,7 +219,6 @@
 					opacity: 0.95;
 
 					.item {
-						// width: 200rpx;
 						width: calc(33.3%);
 						height: 200rpx;
 						display: flex;
@@ -239,20 +228,18 @@
 						border-radius: 10rpx;
 						box-sizing: border-box;
 						padding: 40rpx 0rpx;
-						// animation: zoombig 1000ms linear;
 
-						// @keyframes zoombig {
-						//     0% {
-						//         zoom: 0.5;
-						//     }
-
-						//     100% {
-						//         zoom: 1;
-						//     }
-						// }
-
-						.img {
+						.icon-view {
 							width: 50rpx;
+							height: 50rpx;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+
+							.icon {
+								width: 100%;
+								height: 100%;
+							}
 						}
 
 						.txt {

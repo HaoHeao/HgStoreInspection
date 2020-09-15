@@ -1,6 +1,5 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
+	"pages": [{
 			"path": "user/login/login",
 			"style": {
 				"navigationBarTitleText": "登录"
@@ -13,10 +12,7 @@
 			}
 		},
 		{
-			"path": "user/index/index",
-			"style": {
-
-			}
+			"path": "user/index/index"
 		}
 	],
 	"subPackages": [{
@@ -46,10 +42,7 @@
 				}
 			},
 			{
-				"path": "addSelect/addSelect",
-				"style": {
-
-				}
+				"path": "addSelect/addSelect"
 			}
 		]
 	}, {
@@ -78,7 +71,7 @@
 			}
 		]
 	}, {
-		"root": "meeting",
+		"root": "pages-packages/meeting",
 		"pages": [{
 			"path": "index/index",
 			"style": {
@@ -93,6 +86,19 @@
 			"path": "detail/index",
 			"style": {
 				"navigationBarTitleText": "预约信息"
+			}
+		}]
+	}, {
+		"root": "pages-packages/spot-check",
+		"pages": [{
+			"path": "index/index",
+			"style": {
+				"navigationBarTitleText": "店面抽盘"
+			}
+		}, {
+			"path": "add/index",
+			"style": {
+				"navigationBarTitleText": "店面抽盘"
 			}
 		}]
 	}],

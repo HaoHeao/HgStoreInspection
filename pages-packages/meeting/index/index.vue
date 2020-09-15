@@ -22,7 +22,7 @@
 								<block v-if="ind != 0">{{'、' + itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
 							</block>
 						</view>
-						<image src="../../static/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
+						<image src="@/static/images/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
 					</view>
 					<view class="meeting-list" v-if="item.status == 1000">
 						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
@@ -122,7 +122,7 @@
 					return
 				}
 				uni.navigateTo({
-					url: `/meeting/detail/index?options=[${JSON.stringify(options.roomInfo)},${JSON.stringify(options.reserveInfo)}]`
+					url: `../detail/index?options=[${JSON.stringify(options.roomInfo)},${JSON.stringify(options.reserveInfo)}]`
 				});
 			},
 			reserve(item) {
@@ -134,7 +134,7 @@
 					return
 				}
 				uni.navigateTo({
-					url: `/meeting/reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
+					url: `../reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
 				});
 			},
 			// 下拉刷新

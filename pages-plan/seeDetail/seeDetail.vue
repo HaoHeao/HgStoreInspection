@@ -42,11 +42,11 @@
 			<block v-if="infoDetail.status">
 				<view class="module info fadeIn">
 					<view class="top-view">
-						<view class="state" v-if="infoDetail.status == 1000 && infoDetail.notStarted">
-							执行中
-						</view>
 						<view class="state not-started" v-if="infoDetail.status == 1000 && !infoDetail.notStarted">
 							未开始
+						</view>
+						<view class="state" v-if="infoDetail.status == 1000 && infoDetail.notStarted">
+							执行中
 						</view>
 						<view class="state resolved" v-if="infoDetail.status == 2000">
 							已完成
@@ -322,16 +322,21 @@
 						console.log("巡检单详细信息", err, res)
 						if (err == null && data.data.success) {
 							this.infoDetail = data.data.data.planinspectionset;
-
 							// 时间过滤
 							this.infoDetail.sdate1 = this.infoDetail.sdate.slice(0, 10).replace(/-/g, ".");
 							this.infoDetail.edate1 = this.infoDetail.edate.slice(0, 10).replace(/-/g, ".");
+							/* 2020/09/07
+							 * 初始判断巡检是否开始
+							 * 计划巡检必须手动结束后，状态变为2000，才可以判断结束,此时状态显示执行中并且可以提出巡检问题
+							 * 结束后状态显示已结束，不可提出问题
+							 */
+							// console.log()
 							if (this.moment(new Date(this.infoDetail.sdate)).date.getTime() > this.moment(new Date()).date.getTime()) {
 								this.infoDetail.notStarted = false
 							} else {
 								this.infoDetail.notStarted = true
 							}
-
+							
 							// 部门人员过滤
 							this.infoDetail.itemdeptlist = [];
 							this.infoDetail.itempersonlist = [];
@@ -342,14 +347,14 @@
 									this.infoDetail.itempersonlist.push(itm.itemname);
 								}
 							}
-
+							
 							// 问题列表项目人员过滤
+							
 							// 回复内容时间过滤
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
-
-							// console.log(this.infoDetail.planinspectionquestion)
+							
 							for (let item of this.infoDetail.planinspectionquestion) {
 								console.log(item)
 								// 整改部门反馈

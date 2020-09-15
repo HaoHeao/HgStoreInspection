@@ -50,6 +50,10 @@
 			// 	margin: 0;
 			// }
 			
+			&:last-child{
+				margin-bottom: 0;
+			}
+			
 			>.title{
 				color: #A4B1BE;
 				min-width: 4em;
