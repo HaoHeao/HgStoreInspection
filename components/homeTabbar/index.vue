@@ -24,6 +24,12 @@
 							</view>
 							<view class="txt">{{item.mname}}</view>
 						</view>
+						<view class="item" @click="work_go('assessment')">
+							<view class="icon-view">
+								<image src="@/static/tabbar/work/assessment.svg" mode="widthFix" class="icon"></image>
+							</view>
+							<view class="txt">考核项目</view>
+						</view>
 						<!-- <view class="item" @click="work_go('spot-check')">
 							<view class="icon-view">
 								<image src="@/static/tabbar/work/spot-check.svg" mode="widthFix" class="icon"></image>
@@ -90,14 +96,16 @@
 				this.work_view = false;
 			},
 			work_go: function(type) {
-				utils.getMarketDeptList(this);
-				utils.getMarketUserList(this);
 				if (type == 'store') {
+					utils.getMarketDeptList(this);
+					utils.getMarketUserList(this);
 					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({
 						url: '/pages/index/index'
 					})
 				} else if (type == 'plan') {
+					utils.getMarketDeptList(this);
+					utils.getMarketUserList(this);
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})
@@ -105,9 +113,13 @@
 					uni.reLaunch({
 						url: '/pages-packages/meeting/index/index'
 					})
-				}else if(type == 'spot-check'){
+				} else if (type == 'spot-check') {
 					uni.reLaunch({
 						url: '/pages-packages/spot-check/index/index'
+					})
+				} else if (type == 'assessment') {
+					uni.reLaunch({
+						url: '/pages-packages/assessment/index/index'
 					})
 				}
 			},
