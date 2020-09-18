@@ -263,6 +263,8 @@
 						return
 					}
 					this.goodsinfo = success.data.data
+					this.difference = this.goodsinfo.chkqty?this.goodsinfo.chkqty:null
+					this.remark = this.goodsinfo.disremark
 				} catch (e) {
 					console.log(e)
 				}
@@ -351,9 +353,6 @@
 						margin-right: 50rpx;
 						margin-bottom: 12rpx;
 						font-size: 28rpx;
-						&:last-child{
-							margin-bottom: 0;
-						}
 
 						.title {
 							color: #A4B1BE;

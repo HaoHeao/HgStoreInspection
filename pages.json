@@ -101,15 +101,6 @@
 				"navigationBarTitleText": "店面抽盘"
 			}
 		}]
-	}, {
-		"root": "pages-packages/assessment",
-		"pages": [{
-			"path": "index/index",
-			"style": {
-				"navigationBarTitleText": "考核项目",
-				"disableScroll": true
-			}
-		}]
 	}],
 	"preloadRule": {
 		"pages/index/index": {
@@ -127,10 +118,6 @@
 		"pages-packages/spot-check/index/index": {
 			"network": "all",
 			"packages": ["pages-packages/spot-check"]
-		},
-		"pages-packages/assessment/index/index": {
-			"network": "all",
-			"packages": ["pages-packages/assessment"]
 		}
 	},
 	"globalStyle": {

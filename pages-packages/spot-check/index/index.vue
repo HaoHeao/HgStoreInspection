@@ -16,7 +16,7 @@
 		</view>
 		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 			<view class="data-view" v-if="tabelData.length">
-				<view class="info">{{conerno?`[${conerno}]${tabelData[0].conername}  `:''}}共 {{tabelData.length}} 条</view>
+				<view class="info">{{conerno?`[${conerno}]${tabelData[0].conername}  `:''}}共 {{tabelInfo.total}} 条</view>
 				<view class="item fadeIn" @click="openDetail(item)" v-for="(item,index) of tabelData" :key="index">
 					<view class="title">
 						<view class="round" v-if="item.difqty != 0"></view>{{conerno?'':`[${item.conerno}]`}}{{item.prodname}}
@@ -49,7 +49,7 @@
 			</view>
 			<view class="null-data" v-if="tabelData.length">
 				<view class="text">以上为全部消息</view>
-				<view class="line"></view>	
+				<view class="line"></view>
 			</view>
 		</haoheao-scroll>
 		<view class="view-item control-list">
@@ -86,7 +86,7 @@
 				</view>
 				<view class="control">
 					<view class="btn" @click="reset()">重置</view>
-					<view class="btn success" @click="pageindex=1,tabelData=[],search(this.pagesize),$refs['screen'].close()">完成</view>
+					<view class="btn success" @click="pageindex=1,tabelData=[],search(1),$refs['screen'].close()">完成</view>
 				</view>
 			</view>
 		</popup>
@@ -159,6 +159,7 @@
 				difference: false,
 				// 首页数据
 				tabelData: [],
+				tabelInfo: {},
 				// 明细查看
 				detail: {},
 				pagesize: 20,
@@ -175,13 +176,15 @@
 			async onPullDown(done) {
 				this.pageindex = 1;
 				this.tabelData = [];
-				await this.search(this.pagesize)
+				console.log("下拉刷新")
+				await this.search(1)
 				done();
 			},
-			onLoadMore(e) {
+			async onLoadMore(e) {
 				console.log(e);
 				if (this.pageindex <= this.pagenum && this.pagenum != 1) {
-					this.search(this.pageindex);
+					console.log("加载更多")
+					await this.search(this.pageindex);
 				}
 			},
 			async openDetail(data) {
@@ -194,8 +197,10 @@
 					return
 				}
 				uni.showLoading({
-					title: '加载中'
+					title: '加载中',
+					mask: true
 				});
+				this.pageindex = this.pageindex + 1;
 				let userinfo = this.utils.getUserInfo(uni);
 				try {
 					let data = await uni.request({
@@ -215,10 +220,12 @@
 					console.log('查询成功------>>>', data)
 					uni.hideLoading();
 					if (success.data.success && success.data.data.pBillStockSpotcheckDetail.length) {
+						this.tabelInfo = success.data
+						console.log(this.tabelInfo, success.data)
 						this.tabelData = this.tabelData.concat(success.data.data.pBillStockSpotcheckDetail)
-						this.pagenum = Number((success.data.total / this.pagesize).toFixed(0)) + 1
-						this.pageindex = this.pageindex + 1;
+						this.pagenum = parseInt(success.data.total / this.pagesize) + 1
 					} else {
+						this.pageindex = this.pageindex - 1;
 						this.tabelData = []
 						uni.showToast({
 							title: err ? err : success.data.errmsg,
@@ -227,6 +234,7 @@
 						});
 					}
 				} catch (e) {
+					this.pageindex = this.pageindex - 1;
 					uni.hideLoading();
 					console.log(e)
 				}
@@ -260,7 +268,8 @@
 		},
 		onShow: async function() {
 			this.delay(100)
-			this.search(this.pagesize)
+			console.log("页面加载")
+			this.search(1)
 		}
 	}
 </script>
@@ -613,8 +622,12 @@
 			}
 		}
 
-		.null-data .text {
-			background: #E5EDF1;
+		.null-data {
+			padding-bottom: 100rpx;
+
+			.text {
+				background: #E5EDF1;
+			}
 		}
 
 		/deep/ .you-scroll {

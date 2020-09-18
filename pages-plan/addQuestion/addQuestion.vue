@@ -20,12 +20,12 @@
 				<view class="item-true fadeIn" v-for="(item,index) of deptList" :key="index" v-if="item.select == true">{{item.deptname}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(1)">+</view>
             </view>
-            <!-- <view class="item-title">整改人员</view>
+            <view class="item-title">整改人员</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of userList.leaderlist" :key="index" v-if="item.select == true">{{item.username}}</view>
 				<view class="item-true fadeIn" v-for="(item,index) of userListOnce" :key="index" v-if="item.select == true">{{item.username}}</view>
                 <view class="item-true item-true-btn" @click="openSelect(2)">+</view>
-            </view> -->
+            </view>
             <view class="item-title">添加图片</view>
             <view class="item-view label-add">
                 <view class="item-img-true fadeIn" v-for="(item,index) of upImgList" :key="index" @click="delImg(index)">
@@ -45,7 +45,6 @@
 				<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
 					<view class="item-true fadeIn" v-for="(item,index) of item.userlist" :key="index" v-if="item.select == true">{{item.username}}</view>
 				</block>
-				
                 <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
             </view>
         </view>
@@ -83,7 +82,10 @@
 						<view class="title">{{item.deptname}}</view>
 						<view class="item-list">
 							<block v-for="(itm,ind) of item.userlist" :key="ind">
-								<view :class="['item fadeIn',itm.select?'active':'']" @click="addSetDeptList({type:2,item:itm})">{{itm.username}}</view>
+								<view :class="['item fadeIn',itm.select?'active':'']" @click="addSetDeptList({type:2,item:itm})">
+									<view class="name">{{itm.username}}</view>
+									<view class="postion" v-if="itm.postion">{{itm.postion}}</view>
+								</view>
 							</block>
 						</view>
 					</block>
@@ -889,8 +891,8 @@
 					
 					.item{
 						width: calc(33.3% - 36rpx);
-						height: 38rpx;
-						line-height: 38rpx;
+						// height: 38rpx;
+						// line-height: 38rpx;
 						padding: 10rpx 10rpx;
 						margin-right:18rpx;
 						margin-bottom:18rpx;
@@ -903,6 +905,18 @@
 						white-space:nowrap;
 						text-overflow:ellipsis;
 						
+						
+						.name {
+						    width: 100%;
+						}
+						
+						.postion {
+						    // margin-top: 10rpx;
+						    width: 100%;
+						    height: auto;
+						    font-size: 20rpx;
+						    color: #999;
+						}
 						&:active{
 							opacity:0.9;
 							background:#f9f9f9;

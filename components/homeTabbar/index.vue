@@ -24,12 +24,6 @@
 							</view>
 							<view class="txt">{{item.mname}}</view>
 						</view>
-						<view class="item" @click="work_go('assessment')">
-							<view class="icon-view">
-								<image src="@/static/tabbar/work/assessment.svg" mode="widthFix" class="icon"></image>
-							</view>
-							<view class="txt">考核项目</view>
-						</view>
 						<!-- <view class="item" @click="work_go('spot-check')">
 							<view class="icon-view">
 								<image src="@/static/tabbar/work/spot-check.svg" mode="widthFix" class="icon"></image>
@@ -116,10 +110,6 @@
 				} else if (type == 'spot-check') {
 					uni.reLaunch({
 						url: '/pages-packages/spot-check/index/index'
-					})
-				} else if (type == 'assessment') {
-					uni.reLaunch({
-						url: '/pages-packages/assessment/index/index'
 					})
 				}
 			},
