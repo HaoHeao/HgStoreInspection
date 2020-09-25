@@ -159,9 +159,6 @@
 					uni.hideNavigationBarLoading();
 				})
 			}
-		},
-		created: function() {
-			console.log("question show created")
 		}
 	}
 </script>

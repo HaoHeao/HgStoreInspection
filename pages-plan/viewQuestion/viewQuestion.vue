@@ -26,10 +26,11 @@
 			<view class="question" v-if="option.data">
 				<view class="question-status">
 					<view :class="['status-round',option.data.status == 1?'solve':'']"></view>
-					<view class="status-title" v-if="option.data.status == 0">待解决...</view>
-					<view class="status-title" v-if="option.data.status == 1">问题已解决</view>
+					<view class="status-title" v-if="option.data.status == 0">待整改</view>
+					<view class="status-title" v-if="option.data.status == 100">问题已解决</view>
+					<view class="status-title" v-if="option.data.status == 1">已整改</view>
 					<block v-if="option.data.planinspectionsolveuser.length">
-						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
+						<view class="confirm-question" v-if="option.data.status == 1 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
 						 @click="confirmQuestion(option.data)">复核</view>
 					</block>
 					<block v-if="!option.data.planinspectionsolveuser.length">
@@ -97,6 +98,7 @@
 							</view>
 							<text class="txt">回复</text>
 						</view> -->
+						<!-- <view class="back-btn" v-if="item.usernumber == ">撤回</view> -->
 					</view>
 					<view class="content">{{item.content}}</view>
 					<view class="img-list">
@@ -137,10 +139,12 @@
 			</view>
 		</haoheao-scroll>
 		<block v-if="option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackUser)" @click="thatReply()">整改</view>
+			<view class="replay-btn" v-if="(option.data.status == 0 || option.data.status == 1) && (option.data.showFeedbackUser)"
+			 @click="thatReply()">整改</view>
 		</block>
 		<block v-if="!option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept)" @click="thatReply()">整改</view>
+			<view class="replay-btn" v-if="(option.data.status == 0 || option.data.status == 1) && (option.data.showFeedbackDept)"
+			 @click="thatReply()">整改</view>
 		</block>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
@@ -182,6 +186,7 @@
 		},
 		data() {
 			return {
+				uni,
 				usernumber:uni.getStorageSync('userinfo').usernumber,
 				username:uni.getStorageSync('userinfo').username,
                 bottomHeight:'20rpx',
@@ -199,6 +204,11 @@
 				btnClickReply:true,
 				imgList:[],
 				upImgList:[]
+			}
+		},
+		computed:{
+			userinfo:function(){
+				return this.utils.getUserInfo(uni)
 			}
 		},
 		methods: {
@@ -251,9 +261,6 @@
 						}
 					} else if (type == 3) {
 						console.log(item)
-						// console.log(user)
-						// console.log(user.deptid)
-						// setuserid
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
@@ -692,7 +699,8 @@
 						line-height: 20rpx;
 						color: #B6C6D6;
 					}
-
+					
+					/* 回复按钮 */
 					.reply-btn {
 						height: 48rpx;
 						border: 1rpx solid #8ABAF5;
@@ -721,6 +729,16 @@
 						.txt {
 							color: #1474EA;
 							font-size: 22rpx;
+						}
+					}
+					/* 撤回按钮 */
+					.back-btn{
+						color: #333;
+						padding: 3rpx 5rpx;
+						margin-left: 20rpx;
+						border-radius: 5rpx;
+						&:active{
+							color: #666;
 						}
 					}
 				}

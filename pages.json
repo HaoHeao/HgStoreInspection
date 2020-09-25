@@ -68,6 +68,18 @@
 				"style": {
 					"navigationBarTitleText": "巡检问题"
 				}
+			},
+			{
+				"path": "rectify/index",
+				"style": {
+					"navigationBarTitleText": "整改"
+				}
+			},
+			{
+				"path": "review/index",
+				"style": {
+					"navigationBarTitleText": "复核"
+				}
 			}
 		]
 	}, {

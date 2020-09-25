@@ -150,11 +150,11 @@
 										<view class="left">位置</view>
 										<view class="content">{{item.inspectionplace}}</view>
 									</view>
-									<view class="li" v-if="item.status == 1">
+									<view class="li" v-if="item.status == 100">
 										<view class="left">复核人</view>
 										<view class="content">{{item.confirmuserid}}</view>
 									</view>
-									<view :class="['li',item.status == 1?'place':'']" v-if="item.status == 1">
+									<view :class="['li',item.status == 100?'place':'']" v-if="item.status == 100">
 										<view class="left">复核时间</view>
 										<view class="content">{{item.confirmdate}}</view>
 									</view>
@@ -167,39 +167,33 @@
 									<view class="reply-view">
 										<view class="number" v-if="item.planinspectionfeedback.length">{{item.planinspectionfeedback.length}}条</view>
 										<view class="number" v-if="!item.planinspectionfeedback.length && item.status == 0">暂未整改</view>
+										<!-- 复核 -->
 										<block v-if="item.planinspectionsolveuser.length">
-											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'right':'']"
-											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
+											<view :class="['reply-button confirm', item.status == 1 && (infoDetail.usernumber == usernumber || item.showRightIs)?'right':'']"
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 1 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
 										</block>
 										<block v-if="!item.planinspectionsolveuser.length">
-											<view :class="['reply-button confirm', item.status == 0 && (infoDetail.usernumber == usernumber)?'right':'']"
-											 @click.stop="confirmQuestion(item)" v-if="item.status == 0 && (infoDetail.usernumber == usernumber)">复核</view>
+											<view :class="['reply-button confirm', item.status == 1 && (infoDetail.usernumber == usernumber)?'right':'']"
+											 @click.stop="confirmQuestion(item)" v-if="item.status == 1 && (infoDetail.usernumber == usernumber)">复核</view>
 										</block>
-
+										<!-- 整改、查看 -->
 										<block v-if="item.mapplaninspectionuser.length">
-											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
-											 v-if="item.status == 0 && (item.showFeedbackUser)">整改</view>
+											<view :class="['reply-button', (item.status == 0 || item.status == 1) && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="(item.status == 0 || item.status == 1) && (item.showFeedbackUser)">整改</view>
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
 											 v-if="item.status == 0 && (!item.showFeedbackUser)">查看</view>
 										</block>
 										<block v-if="!item.mapplaninspectionuser.length">
-											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
-											 v-if="item.status == 0 && (item.showFeedbackDept)">整改</view>
+											<view :class="['reply-button', (item.status == 0 || item.status == 1) && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
+											 v-if="(item.status == 0 || item.status == 1) && (item.showFeedbackDept)">整改</view>
 											<view :class="['reply-button', item.status == 0 && (infoDetail.usernumber == usernumber || item.showRightIs)?'left':'']"
 											 v-if="item.status == 0 && (!item.showFeedbackDept)">查看</view>
 										</block>
-										<!-- BUG：当问题已复核且有反馈时查看按钮不显示 -->
 
 										<!-- <view class="reply-button right">确认</view> -->
 
 									</view>
 									<view class="line"></view>
-									<!-- 
-									1.已解决的但并没有反馈的 - 右边和按钮都不显示
-									2.以解决的但有反馈的 - 右边显示几条按钮显示查看
-									3.正常显示的 - 显示确认问题 - 回复数量 - 反馈按钮
-									4.
-								 -->
 								</view>
 							</view>
 						</view>
@@ -297,9 +291,6 @@
 							return true;
 						}
 					} else if (type == 3) {
-						// console.log(item)
-						// console.log(user)
-						// console.log(user.deptid)
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
@@ -336,7 +327,7 @@
 							} else {
 								this.infoDetail.notStarted = true
 							}
-							
+
 							// 部门人员过滤
 							this.infoDetail.itemdeptlist = [];
 							this.infoDetail.itempersonlist = [];
@@ -347,14 +338,14 @@
 									this.infoDetail.itempersonlist.push(itm.itemname);
 								}
 							}
-							
+
 							// 问题列表项目人员过滤
-							
+
 							// 回复内容时间过滤
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
-							
+
 							for (let item of this.infoDetail.planinspectionquestion) {
 								console.log(item)
 								// 整改部门反馈

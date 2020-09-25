@@ -128,6 +128,7 @@
 		}
 	}
 
+	// 没有更多数据
 	.no-data {
 		padding-top: 320rpx;
 		text-align: center;
@@ -186,6 +187,29 @@
 		}
 	}
 
+	.no-data-view {
+		width: 100%;
+		min-height: 100%;
+		height: 50vh;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		align-items: center;
+
+		.center {
+			.icon {
+				width: 250rpx;
+				height: 250rpx;
+			}
+
+			.tip {
+				min-width: 100%;
+				font-size: 24rpx;
+				color: #999;
+				text-align: center;
+			}
+		}
+	}
 
 
 	// 没有更多记录

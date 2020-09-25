@@ -37,7 +37,6 @@
                     <view class="text">添加图片</view>
                 </view>
             </view>
-			
             <view class="item-title">复核部门或人员</view>
             <view class="item-view label-add">
 				<view class="item-true fadeIn" v-for="(item,index) of deptListConfirm" :key="index" v-if="item.select == true">{{item.deptname}}</view>

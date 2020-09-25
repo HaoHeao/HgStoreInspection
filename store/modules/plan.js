@@ -1,11 +1,17 @@
-const moment = require('@/util/moment.js');
-// 卖场巡检参数设置
-let config = {
-
-}
-
 export default {
 	state: {
+		tabbarIndex: 0,
+		tabbarList: [{
+			pageIndex: 0,
+			iconPath: 'rectify.svg',
+			selectedIconPath: 'rectify_active.svg',
+			text: '整改'
+		}, {
+			pageIndex: 1,
+			iconPath: 'review.svg',
+			selectedIconPath: 'review_active.svg',
+			text: '复核'
+		}],
 		pagesize: 20,
 		// 添加项目问题
 		questionSend: {
