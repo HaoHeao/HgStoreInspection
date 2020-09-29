@@ -11,9 +11,14 @@
 				<textarea v-model="question" class="inp area-inp" v-if="!popup" auto-height="true" placeholder="在此填写问题描述" />
 				<view class="inp area-inp textarea-text" v-if="popup">{{question == ''?'在此填写问题描述':question}}</view>
             </view>
+            <view class="item-title">楼层</view>
+            <view class="item-view label-add floor">
+				<view :class="['item-true fadeIn',item.floorvalue == floor?'active':'']" v-for="(item,index) of floorlist" :key="index" @click="selectFloor(item.floorvalue)">{{item.floorname}}</view>
+            </view>
             <view class="item-title">位置</view>
-            <view class="item-view label-info">
+            <view class="item-view label-info scan">
                 <input v-model="place" class="inp" type="text" value="" placeholder="在此填写位置" />
+				<image src="@/static/icon/scan-code.svg" mode="widthFix" class="icon"></image>
             </view>
             <view class="item-title">整改部门</view>
             <view class="item-view label-add">
@@ -172,6 +177,8 @@
 				userList:this.$store.state.plan.questionSend.userlist,
 				deptListConfirm:uni.getStorageSync('planQuestionDeptSendConfirm'),
 				userListConfirm:uni.getStorageSync('setQuestionUserSendConfirm'),
+				floorlist:[],
+				floor:''
 				// userListOnceConfirm:this.userListOnceConfirm1(this.userListConfirm)
             }
         },
@@ -192,14 +199,28 @@
                 return allPerson;
             },
         },
-		onLoad:function(option){
-			console.log(option)
-			this.option = option
-		},
-		onUnload:function(){
-			this.resetOption();
-		},
         methods: {
+			// 获取楼层列表
+			async getFloorList(){
+				try {
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.getFloorlist
+					})
+					let [err, success] = data
+					console.log('楼层请求成功------>>>', success)
+					if (success.data.success) {
+						this.floorlist = success.data.data.floor
+					} 
+				} catch (e) {
+					console.log(e)
+				}
+			},
+			selectFloor(data){
+				console.log(data)
+				console.log(this.floor == data)
+				this.floor == data?this.floor = '':this.floor = data
+			},
 			userListOnceConfirm1:function(person){
 				let leaderlist = person.leaderlist,
 			        deptuserlist = person.deptuserlist,
@@ -370,7 +391,7 @@
 						lstupdatedate: insertdate,//修改时间 可为空
 						lstuserid: "",//修改人
 						status: 1000,//状态
-						other1: "",//为空
+						other1: this.floor,//楼层
 						other2: "",//为空
 						confirmuserid: "",//为空
 						confirmdate: "",//为空
@@ -462,7 +483,6 @@
 						option.planinspectionquestion.mapplaninspectionuser.push(it);
 					}
 				}
-				
 				// 整改部门整改人员必须选择一个
 				if(!(option.planinspectionquestion.mapplaninspectiondept.length || option.planinspectionquestion.mapplaninspectionuser.length)){
 					uni.showToast({
@@ -502,7 +522,6 @@
 						option.planinspectionquestion.planinspectionsolveuser.push(it);
 					}
 				}
-						console.log(option.planinspectionquestion.planinspectionsolveuser)
 				for(let item of this.userListConfirm.deptuserlist){
 					for(let itm of item.userlist){
 						if(itm.select == true){
@@ -520,7 +539,6 @@
 						}
 					}
 				}
-				console.log(option.planinspectionquestion.planinspectionsolveuser)
 				// 图片写入
 				for(let item of this.upImgList){
 					let obj = {
@@ -632,6 +650,16 @@
 				this.$store.commit("setQuestionUserSend", userList);
 			},
         },
+		onLoad:function(option){
+			console.log(option)
+			this.option = option
+		},
+		onShow:function(){
+			this.getFloorList()
+		},
+		onUnload:function(){
+			this.resetOption();
+		},
     }
 </script>
 
@@ -689,6 +717,7 @@
                 padding:20rpx;
                 display:flex;
                 align-items:center;
+				overflow: hidden;
                 .item-name{
                     font-weight:700;
                     flex:2;
@@ -708,6 +737,21 @@
                     width:100%;
                     line-height:28rpx;
                 }
+				.icon{
+					width: 50rpx;
+					height: 50rpx;
+					padding: 21rpx;
+					&:active{
+						opacity: 0.8;
+						background: #e2e2e2;
+					}
+				}
+				&.scan{
+					padding: 0;
+					.inp{
+						padding: 20rpx;
+					}
+				}
             }
             // 部门或人员
             .item-view.label-add{
@@ -716,7 +760,7 @@
                 justify-content:flex-start;
 				flex-wrap: wrap;
                 .item-true{
-                    width: calc(33.3% - 36rpx);
+                    width: calc(100%/3 - 36rpx);
                     height: 38rpx;
                     line-height: 38rpx;
                     padding: 10rpx 10rpx;
@@ -730,26 +774,39 @@
                     border-radius:6rpx;
                     white-space:nowrap;
                     text-overflow:ellipsis;
+					border: 2rpx solid #F3F5F7;
                     
                     &:active{
                         opacity:0.9;
                         background:#f9f9f9;
                     }
+					&.active{
+						border: 2rpx solid #40A9FF;
+						background: #fff;
+						box-shadow: 0 0 10rpx -8rpx #000;
+					}
+					&.item-true-btn{
+						width:92rpx;
+						border:1rpx dashed #B6C6D6;
+						background: #fff;
+						color: #647484;
+						
+						&:active{
+							opacity:0.9;
+							background:#f9f9f9;
+							border:1rpx dotted #B6C6D6;
+						}
+					}
+					&:nth-child(3n) {
+						margin-right: 0;
+					}
                 }
-
-                .item-true:nth-child(3n) {
-                    margin-right: 0;
-                }
-				.item-true.item-true-btn{
-					width:92rpx;
-					border:1rpx dashed #B6C6D6;
-					background: #fff;
-					color: #647484;
-					
-					&:active{
-						opacity:0.9;
-						background:#f9f9f9;
-						border:1rpx dotted #B6C6D6;
+				&.floor{
+					.item-true{
+						width: calc(14% - 36rpx);
+						&:nth-child(3n) {
+							margin-right: 13rpx;
+						}
 					}
 				}
             }

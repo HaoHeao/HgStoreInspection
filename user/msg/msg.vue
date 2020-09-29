@@ -103,7 +103,6 @@
 						})
 						return;
 					}
-					// if (item.msgtype == 1) {
 					uni.navigateTo({
 						url: "../../pages/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +
 							"&msg=" + 'true' + '&postThereTrue=' + "true" + "&previs=" + true
@@ -116,7 +115,6 @@
 						})
 						return;
 					}
-					// if (item.msgtype == 1) {
 					console.log("计划巡检-回复")
 					uni.navigateTo({
 						url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +

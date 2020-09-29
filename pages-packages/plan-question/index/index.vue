@@ -18,20 +18,36 @@
 		</view>
 		<view class="main">
 			<swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
-				<swiper-item class="swiper-item">
+				<swiper-item class="swiper-item wait">
 					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 						<block v-if="waitData.length">
 							<view class="length">共 {{waitDataInfo}} 条</view>
-							<view class="item" v-for="(item,index) of waitData" :key="index">
+							<view class="item" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
 								<view class="question">
-									<view class="txt">{{item.question}}</view>
+									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
 									<view class="date">{{item.insertdate}}</view>
 								</view>
-								<view class="place"><text class="label">位置：</text>{{item.inspectionplace}}</view>
+								<view class="info-view">
+									<view class="title">问题描述</view>
+									<view class="content">{{item.question}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">楼层</view>
+									<view class="content">{{item.other1?item.other1:'未选择'}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">位置</view>
+									<view class="content">{{item.inspectionplace}}</view>
+								</view>
+								<view class="img-list" v-if="item.planinspectionquestionimg.length">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
+									</view>
+								</view>
 								<view class="info">
-									<view class="num active"></view>
+									<!-- <view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view> -->
 									<view class="btn-list">
-										<view class="btn">整改</view>
+										<!-- <view class="btn">整改</view> -->
 									</view>
 								</view>
 							</view>
@@ -52,16 +68,32 @@
 					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 						<block v-if="completedData.length">
 							<view class="length">共 {{completedDataInfo}} 条</view>
-							<view class="item" v-for="(item,index) of completedData" :key="index">
+							<view class="item" v-for="(item,index) of completedData" :key="index" @click="lookReplay(item)">
 								<view class="question">
-									<view class="txt">{{item.question}}</view>
+									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
 									<view class="date">{{item.insertdate}}</view>
 								</view>
-								<view class="place"><text class="label">位置：</text>{{item.inspectionplace}}</view>
+								<view class="info-view">
+									<view class="title">问题描述</view>
+									<view class="content">{{item.question}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">楼层</view>
+									<view class="content">{{item.other1?item.other1:'未选择'}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">位置</view>
+									<view class="content">{{item.inspectionplace}}</view>
+								</view>
+								<view class="img-list" v-if="item.planinspectionquestionimg.length">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
+									</view>
+								</view>
 								<view class="info">
-									<view class="num active">{{item.planinspectionfeedback.length}}条</view>
+									<!-- <view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view> -->
 									<view class="btn-list">
-										<view class="btn">复核</view>
+										<!-- <view class="btn">复核</view> -->
 									</view>
 								</view>
 							</view>
@@ -82,14 +114,34 @@
 					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 						<block v-if="finishData.length">
 							<view class="length">共 {{finishDataInfo}} 条</view>
-							<view class="item" v-for="(item,index) of finishData" :key="index">
+							<view class="item" v-for="(item,index) of finishData" :key="index" @click="lookReplay(item)">
 								<view class="question">
-									<view class="txt">{{item.question}}</view>
+									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
 									<view class="date">{{item.insertdate}}</view>
 								</view>
-								<view class="place"><text class="label">位置：</text>{{item.inspectionplace}}</view>
+								<view class="info-view">
+									<view class="title">问题描述</view>
+									<view class="content">{{item.question}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">楼层</view>
+									<view class="content">{{item.other1?item.other1:'未选择'}}</view>
+								</view>
+								<view class="info-view">
+									<view class="title">位置</view>
+									<view class="content">{{item.inspectionplace}}</view>
+								</view>
+								<!-- <view class="place"><text class="label">位置：</text>{{item.inspectionplace}}</view> -->
+								<view class="img-list" v-if="item.planinspectionquestionimg.length">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
+									</view>
+									<!-- <view class="img-view">
+										<image class="icon" src="@/static/1.jpg" mode="widthFix"></image>
+									</view> -->
+								</view>
 								<view class="info">
-									<view class="num active">{{item.planinspectionfeedback.length}}条</view>
+									<view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view>
 									<view class="btn-list">
 										<view class="btn">查看</view>
 									</view>
@@ -128,61 +180,27 @@
 				<view class="content">
 					<view class="title">日期段</view>
 					<view class="item date">
-						<view class="time">2019-09-24</view>
+						<picker id="start" class="time" mode="date" :value="date[0]" :end="moment(new Date()).format('YYYY-MM-DD')"
+						 @change="bindDateChange">{{date[0]}}</picker>
 						<view class="txt">至</view>
-						<view class="time">2020-09-24</view>
+						<picker id="end" class="time" mode="date" :value="date[1]" :end="moment(new Date()).format('YYYY-MM-DD')" @change="bindDateChange">{{date[1]}}</picker>
 					</view>
 					<view class="title">楼层</view>
 					<view class="item floor">
-						<view class="view active">1F</view>
-						<view class="view">2F</view>
-						<view class="view active">3F</view>
-						<view class="view">4F</view>
-						<view class="view">5F</view>
+						<view :class="['view fadeIn',floor == 'all'?'active':'']" @click="selectFloor({floorvalue:'all'})">全部</view>
+						<view :class="['view fadeIn',floor === item.floorvalue?'active':'']" v-for="(item,index) of floorList" :key="index"
+						 @click="selectFloor(item)">{{item.floorname}}</view>
 					</view>
 					<view class="title">主题</view>
 					<view class="item theme">
-						<view class="view">主题主题主题</view>
-						<view class="view">主题主题主题主题主</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题题主题2</view>
-						<view class="view">主题题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
-						<view class="view">主题主题主题主题主题主题1</view>
-						<view class="view">主题主题主题主题主题主题主题主题主题主题主题主题2</view>
-						<view class="view">主题主题主题主题主题主题主题主题3</view>
+						<view :class="['view fadeIn', title == '0'?'active':'']" @click="selectPlan({planid:'0'})">全部</view>
+						<view :class="['view fadeIn', title == item.planid?'active':'']" v-for="(item,index) of titleList" :key="index"
+						 @click="selectPlan(item)">{{item.title}}</view>
 					</view>
 				</view>
 				<view class="btn-list">
-					<view class="btn reset">重置</view>
-					<view class="btn search">查询</view>
+					<view class="btn reset" @click="popupReset()">重置</view>
+					<view class="btn search" @click="getQuestionReset(),getQuestion()">查询</view>
 				</view>
 			</view>
 		</uni-popup>
@@ -190,6 +208,7 @@
 </template>
 
 <script>
+	let utils = require('@/util/utils.js');
 	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
 		components: {
@@ -216,20 +235,69 @@
 				finishNum: '',
 				// 筛选loading
 				filterLoading: false,
+				// 待整改loading
+				waitLoading: false,
+				// 已整改loading
+				computedLoading: false,
+				// 已完成loading
+				finishLoading: false,
 				// 时间
-				date: "",
+				date: [],
 				// 楼层
 				floorList: [],
-				floor: '',
+				floor: 'all',
 				// 主题
 				titleList: [],
-				title: ''
+				title: '0'
 			}
 		},
 		methods: {
+			// 进入反馈
+			lookReplay(item) {
+				console.log('进入反馈', item);
+				if (item.status == 0) {
+					// 进入并回复
+					uni.navigateTo({
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + encodeURIComponent(JSON.stringify(item)) + '&id=' + item.planid +
+							'&reply_id=' + item.planquestionid +
+							'&postThereTrue=false&previs=false' + '&replyIs=true'
+					})
+				} else if (item.status == 1 || item.status == 100) {
+					// 进入查看不能回复
+					uni.navigateTo({
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + encodeURIComponent(JSON.stringify(item)) + '&id=' + item.planid +
+							'&reply_id=' + item
+							.planquestionid +
+							'&postThereTrue=false&previs=false' + '&replyIs=false'
+					})
+					// if (item.planinspectionfeedback.length) {
+					// 	// 进入查看不能回复
+					// 	uni.navigateTo({
+					// 		url: '/pages-plan/viewQuestion/viewQuestion?data=' + encodeURIComponent(JSON.stringify(item)) + '&id=' + item.planid +
+					// 			'&reply_id=' + item
+					// 			.planquestionid +
+					// 			'&postThereTrue=false&previs=false' + '&replyIs=false'
+					// 	})
+					// } else {
+					// 	uni.showToast({
+					// 		icon: "none",
+					// 		title: "此问题已解决,无反馈信息",
+					// 		duration: 2000
+					// 	})
+					// 	return;
+					// }
+				}
+			},
 			async onPullDown(done) {
-				await this.tabbarBind()
+				this.getQuestionReset()
+				await this.getQuestion()
 				done()
+			},
+			selectFloor(data) {
+				this.floor === data.floorvalue ? this.floor = 'all' : this.floor = data.floorvalue;
+			},
+			selectPlan(data) {
+				this.title === data.planid ? this.title = '0' : this.title = data.planid;
 			},
 			async onLoadMore(e) {
 				if (this.current == 0) {
@@ -245,11 +313,28 @@
 						return
 					}
 				}
+				console.log('加载更多------>>>')
 				await this.getQuestion()
 			},
 			swiperChange(e) {
 				this.current = e.target.current
 				this.tabbarBind()
+			},
+			async bindDateChange(e) {
+				e.target.id == 'start' ? this.date[0] = e.target.value : e.target.id == 'end' ? this.date[1] = e.target.value : ''
+				await this.getFilterData()
+				this.floor = 'all'
+				this.title = '0'
+				this.$forceUpdate()
+			},
+			async popupReset() {
+				this.date = [this.moment(new Date(new Date().getTime() - 365 * 24 * 60 * 60 * 1000)).format("YYYY-MM-DD"), this.moment()
+					.format("YYYY-MM-DD")
+				]
+				await this.getFilterData()
+				this.floor = 'all'
+				this.title = '0'
+				this.$forceUpdate()
 			},
 			getQuestionReset() {
 				this.waitPageindex = 1
@@ -261,21 +346,26 @@
 				this.waitData = []
 				this.completedData = []
 				this.finishData = []
+				this.filterLoading = false
 			},
 			getQuestion() {
 				this.current == 0 ? this.getQuestionWait() : this.current == 1 ? this.getQuestionCompleted() : this.current == 2 ?
 					this.getQuestionFinish() :
 					true
+				this.$refs['popup'].close()
 			},
 			// tabbar切换请求数据
 			async tabbarBind() {
-				this.getQuestionReset()
+				await this.getQuestionReset()
+				await this.popupReset()
 				await this.getQuestion()
 			},
 			// 待整改
 			async getQuestionWait() {
+				if (this.waitLoading) return
 				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
+				this.waitLoading = true
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -284,14 +374,15 @@
 							pagesize: this.pagesize,
 							pageindex: this.waitPageindex,
 							usernumber: userinfo.usernumber,
-							floor: 'all',
-							planid: 0,
-							sdate: '2019-09-25',
-							edate: '2020-09-25',
+							floor: this.floor,
+							planid: this.title,
+							sdate: this.date[0],
+							edate: this.date[1],
 							status: 0
 						}
 					})
 					uni.hideNavigationBarLoading()
+					this.waitLoading = false
 					let [err, success] = data
 					console.log('待整改请求成功------>>>', success)
 					if (success.data.success) {
@@ -308,13 +399,16 @@
 					}
 				} catch (e) {
 					uni.hideNavigationBarLoading()
+					this.waitLoading = false
 					console.log(e)
 				}
 			},
 			// 已整改
 			async getQuestionCompleted() {
+				if (this.computedLoading) return
 				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
+				this.computedLoading = true
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -323,14 +417,15 @@
 							pagesize: this.pagesize,
 							pageindex: this.completedPageindex,
 							usernumber: userinfo.usernumber,
-							floor: 'all',
-							planid: 0,
-							sdate: '2019-09-25',
-							edate: '2020-09-25',
+							floor: this.floor,
+							planid: this.title,
+							sdate: this.date[0],
+							edate: this.date[1],
 							status: 1
 						}
 					})
 					uni.hideNavigationBarLoading()
+					this.computedLoading = false
 					let [err, success] = data
 					console.log('已整改请求成功------>>>', success)
 					if (success.data.success) {
@@ -346,14 +441,17 @@
 						});
 					}
 				} catch (e) {
+					this.computedLoading = false
 					uni.hideNavigationBarLoading()
 					console.log(e)
 				}
 			},
 			// 已完成
 			async getQuestionFinish() {
+				if (this.finishLoading) return
 				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
+				this.finishLoading = true
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -362,18 +460,19 @@
 							pagesize: this.pagesize,
 							pageindex: this.finishPageindex,
 							usernumber: userinfo.usernumber,
-							floor: 'all',
-							planid: 0,
-							sdate: '2019-09-25',
-							edate: '2020-09-25',
+							floor: this.floor,
+							planid: this.title,
+							sdate: this.date[0],
+							edate: this.date[1],
 							status: 100
 						}
 					})
 					uni.hideNavigationBarLoading()
+					this.finishLoading = false
 					let [err, success] = data
 					console.log('已完成请求成功------>>>', success)
 					if (success.data.success) {
-						this.finishData = this.finishData.concat(success.data.data.asset)
+						this.finishData = this.finishData.concat(success.data.data.question)
 						this.finishDataInfo = success.data.pagecount
 						this.finishNum ? '' : this.finishNum = success.data.pagenum
 						this.finishPageindex += 1
@@ -386,6 +485,7 @@
 					}
 				} catch (e) {
 					uni.hideNavigationBarLoading()
+					this.finishLoading = false
 					console.log(e)
 				}
 			},
@@ -398,13 +498,13 @@
 						method: 'POST',
 						url: this.api.plan_getFilterData,
 						data: {
-							pagesize: this.pagesize,
-							pageindex: this.finishPageindex,
+							pagesize: 0,
+							pageindex: 1,
 							usernumber: userinfo.usernumber,
 							floor: '',
 							planid: 0,
-							sdate: '2019-09-25',
-							edate: '2020-09-25',
+							sdate: this.date[0],
+							edate: this.date[1],
 							status: this.current == 0 ? 0 : this.current == 1 ? 1 : this.current == 2 ? 100 : ''
 						}
 					})
@@ -412,7 +512,8 @@
 					let [err, success] = data
 					console.log('筛选条件请求成功------>>>', success)
 					if (success.data.success) {
-
+						this.floorList = success.data.data.floor
+						this.titleList = success.data.data.planinspectionset
 					} else {
 						uni.showToast({
 							title: err ? err : success.data.errmsg,
@@ -426,9 +527,11 @@
 				}
 			}
 		},
-		onShow: function() {
+		onLoad: function() {
 			this.tabbarBind()
-			this.getFilterData()
+		},
+		onShow: function() {
+			// this.tabbarBind()
 		}
 	}
 </script>
@@ -464,6 +567,10 @@
 				text-align: center;
 				color: #323436;
 				font-size: 28rpx;
+				/* IOS XR */
+				// padding-bottom: env(safe-area-inset-bottom);
+				/* ------ */
+				box-sizing: border-box;
 
 				.btn-list {
 					width: 340rpx;
@@ -565,13 +672,15 @@
 								padding: 20rpx 0rpx;
 								font-size: 28rpx;
 								// font-weight: 800;
-								border-bottom: 1rpx solid #f2f2f2;
-								margin-bottom: 10rpx;
+								// border-bottom: 1rpx solid #f2f2f2;
+								// margin-bottom: 10rpx;
 								display: flex;
 								align-items: flex-start;
 
 								.txt {
 									flex: 2;
+									color: #647484;
+									font-size: 26rpx;
 								}
 
 								.date {
@@ -583,19 +692,60 @@
 								}
 							}
 
-							.place {
-								color: #333;
-								font-size: 26rpx;
+							.info-view {
+								display: flex;
+								font-size: 24rpx;
+								padding-bottom: 10rpx;
 
-								.label {
+								.title {
+									color: #A4B1BE;
+									width: 4em;
+									margin-right: 20rpx;
+									white-space: nowrap;
+								}
+
+								.content {
 									color: #647484;
 								}
 							}
+
+							.img-list {
+								margin-top: 10rpx;
+								display: flex;
+								flex-wrap: wrap;
+
+								.img-view {
+									margin-right: 10rpx;
+									margin-bottom: 10rpx;
+									width: calc(100%/5 - 10rpx);
+									height: 124rpx;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									overflow: hidden;
+
+									.icon {
+										border-radius: 10rpx;
+										width: 100%;
+										height: 100%;
+									}
+								}
+							}
+
+							// .place {
+							// 	color: #333;
+							// 	font-size: 26rpx;
+
+							// 	.label {
+							// 		color: #647484;
+							// 	}
+							// }
 
 							.info {
 								display: flex;
 								align-items: center;
 								padding: 20rpx 0;
+								padding-top: 0;
 
 								.num {
 									color: #e2e2e2;
@@ -615,7 +765,8 @@
 									.btn {
 										color: #1BA1F3;
 										border: 1rpx solid #1BA1F3;
-										padding: 0rpx 25rpx;
+										width: 130rpx;
+										text-align: center;
 										line-height: 48rpx;
 										border-radius: 24rpx;
 									}
@@ -634,6 +785,14 @@
 							}
 						}
 					}
+
+					// &.wait {
+					// 	.haoheao-scroll {
+					// 		.item {
+					// 			padding-bottom: 20rpx;
+					// 		}
+					// 	}
+					// }
 				}
 			}
 		}
@@ -644,12 +803,15 @@
 			height: calc(100vh - 70rpx);
 			overflow-y: scroll;
 			background: #fff;
+			display: flex;
+			flex-direction: column;
 
 			.content {
 				font-size: 24rpx;
 				box-sizing: border-box;
 				padding: 20rpx;
 				padding-bottom: 80rpx;
+				flex: 2;
 
 				.title {
 					padding: 10rpx 0rpx 10rpx 5rpx;
@@ -661,14 +823,20 @@
 					color: #647685;
 
 					&.date {
-						border-radius: 10rpx;
-						background: #F3F5F7;
-						line-height: 80rpx;
+						line-height: 70rpx;
 						display: flex;
 						align-items: center;
-						padding: 0 20rpx;
 
-						.time {}
+						.time {
+							border-radius: 10rpx;
+							background: #F3F5F7;
+							width: 250rpx;
+							text-align: center;
+
+							&:active {
+								opacity: 0.8;
+							}
+						}
 
 						.txt {
 							padding: 0 20rpx;
@@ -695,7 +863,7 @@
 							}
 
 							&:active {
-								opacity: 0.9;
+								opacity: 0.8;
 							}
 
 							&.active {
@@ -718,7 +886,7 @@
 							border-radius: 10rpx;
 							margin-bottom: 20rpx;
 							border: 2rpx solid transparent;
-							padding: 0 10rpx;
+							padding: 0 20rpx;
 
 							&:active {
 								opacity: 0.9;

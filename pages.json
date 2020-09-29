@@ -68,18 +68,6 @@
 				"style": {
 					"navigationBarTitleText": "巡检问题"
 				}
-			},
-			{
-				"path": "rectify/index",
-				"style": {
-					"navigationBarTitleText": "整改"
-				}
-			},
-			{
-				"path": "review/index",
-				"style": {
-					"navigationBarTitleText": "复核"
-				}
 			}
 		]
 	}, {
@@ -111,6 +99,24 @@
 			"path": "add/index",
 			"style": {
 				"navigationBarTitleText": "店面抽盘"
+			}
+		}]
+	}, {
+		"root": "pages-packages/plan-question",
+		"pages": [{
+			"path": "index/index",
+			"style": {
+				"navigationBarTitleText": "计划巡检整改",
+				"disableScroll": true
+			}
+		}]
+	}, {
+		"root": "pages-packages/plan-review",
+		"pages": [{
+			"path": "index/index",
+			"style": {
+				"navigationBarTitleText": "计划巡检复核",
+				"disableScroll": true
 			}
 		}]
 	}],

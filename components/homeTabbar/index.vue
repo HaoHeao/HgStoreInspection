@@ -111,6 +111,14 @@
 					uni.reLaunch({
 						url: '/pages-packages/spot-check/index/index'
 					})
+				} else if (type == 'plan-question') {
+					uni.reLaunch({
+						url: '/pages-packages/plan-question/index/index'
+					})
+				} else if (type == 'plan-review') {
+					uni.reLaunch({
+						url: '/pages-packages/plan-review/index/index'
+					})
 				}
 			},
 			refreshModel: function() {

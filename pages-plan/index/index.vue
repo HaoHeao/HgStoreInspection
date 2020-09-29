@@ -3,7 +3,7 @@
 		<view class="main">
 			<home class="fadeIn"></home>
 		</view>
-		<tabbar></tabbar>
+		<!-- <tabbar></tabbar> -->
 	</view>
 </template>
 

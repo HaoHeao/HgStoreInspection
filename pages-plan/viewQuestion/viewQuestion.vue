@@ -25,10 +25,10 @@
 			</view>
 			<view class="question" v-if="option.data">
 				<view class="question-status">
-					<view :class="['status-round',option.data.status == 1?'solve':'']"></view>
+					<view :class="['status-round',option.data.status == 100?'solve':'']"></view>
 					<view class="status-title" v-if="option.data.status == 0">待整改</view>
-					<view class="status-title" v-if="option.data.status == 100">问题已解决</view>
 					<view class="status-title" v-if="option.data.status == 1">已整改</view>
+					<view class="status-title" v-if="option.data.status == 100">问题已解决</view>
 					<block v-if="option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 1 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
 						 @click="confirmQuestion(option.data)">复核</view>
@@ -57,7 +57,7 @@
 						</text>
 					</view>
 				</view>
-				<!-- <view class="info-list" v-if="option.data.mapplaninspectionuser.length">
+				<view class="info-list" v-if="option.data.mapplaninspectionuser.length">
 					<view class="left">整改人员</view>
 					<view class="content">
 						<text>
@@ -65,7 +65,7 @@
 							<block v-for="(ite,ind) of option.data.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
 						</text>
 					</view>
-				</view> -->
+				</view>
 				<!-- 确认部门或人员 -->
 				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
 					<view class="left">复核人员或部门</view>
@@ -102,9 +102,6 @@
 					</view>
 					<view class="content">{{item.content}}</view>
 					<view class="img-list">
-						<!-- <view class="item">
-							<image class="img" src="../../static/1.jpg" mode=""></image>
-						</view> -->
 						<view class="item" v-for="(itm,ind) of item.planinspectionfeedbackimg" :key="ind" @click="seePicture(item.planinspectionfeedbackimg,ind)">
 							<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
 						</view>
@@ -124,13 +121,6 @@
 					</view> -->
 				</view>
 			</view>
-			<!-- off -->
-			<!-- <view class="replay-null">
-				<view class="none">
-					<view class="txt">暂时无人回复</view>
-					<view class="line"></view>
-				</view>
-			</view> -->
 			<view class="replay-null">
 				<view class="none">
 					<view class="txt">没有更多记录</view>
@@ -138,14 +128,8 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<block v-if="option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="(option.data.status == 0 || option.data.status == 1) && (option.data.showFeedbackUser)"
-			 @click="thatReply()">整改</view>
-		</block>
-		<block v-if="!option.data.mapplaninspectionuser.length">
-			<view class="replay-btn" v-if="(option.data.status == 0 || option.data.status == 1) && (option.data.showFeedbackDept)"
-			 @click="thatReply()">整改</view>
-		</block>
+		<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept || option.data.showFeedbackUser)"
+		 @click="thatReply()">整改</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
 			<view class="popup-reply">
@@ -250,6 +234,7 @@
 			// 当前登录人权限判断
 			showRightIs(data,type) {
 				let user = uni.getStorageSync('userinfo');
+				console.log('showRightIs',data)
 				for (let item of data) {
 					if (type == 1) {
 						if (item.deptid == user.deptid) {
@@ -260,7 +245,6 @@
 							return true;
 						}
 					} else if (type == 3) {
-						console.log(item)
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
@@ -324,8 +308,6 @@
 							for (let itm of item.mapplaninspectiondept) {
 								item.itemdeptlist.push(itm.deptname);
 							}
-							console.log(item)
-
 							// 回复内容时间过滤
 							utils.timerDateString(item.planinspectionfeedback,this);
 							utils.timerDateString([item],this);
@@ -444,7 +426,9 @@
 						if (res.confirm) {
 							request.confirmPlanQuestion({
 									usernumber: uni.getStorageSync('userinfo').usernumber,
-									planquestionid: item.planquestionid
+									planquestionid: item.planquestionid,
+									confirmtype: 1,
+									remark: ""
 								})
 								.then(data => {
 									let [err, res] = data;
@@ -455,7 +439,6 @@
 											icon: "none",
 											title: err.errmsg
 										});
-										
 										return;
 									}
 									if (res.data.success) {
@@ -478,7 +461,9 @@
 			}
 		},
 		onLoad: function(option) {
-			if(option.data)option.data = JSON.parse(option.data);
+			console.log("plan-viewQuestion option:",option)
+			// if(option.data)option.data = JSON.parse(option.data);
+			if(option.data)option.data = JSON.parse(typeof(option.data) == 'string'?decodeURIComponent(option.data):option.data);
 			this.option = option;
 			console.log("plan-viewQuestion option:",this.option)
 		},
@@ -497,6 +482,9 @@
 		padding-bottom: env(safe-area-inset-bottom);
 		box-sizing: border-box;
 		
+		.haoheao-scroll{
+			height: 100vh;
+		}
 		// 消息页进入显示问题内容
 		.question.msg{
 			// box-shadow:0rpx 0rpx 8rpx -2rpx #40A9FF;

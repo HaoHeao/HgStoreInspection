@@ -6,26 +6,9 @@ const api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/'
 // const root = 'https://vipapi.hanguangbaihuo.com/hgInspection/'
 // const api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/'
 
-// const root = 'https://mobile.huaweihotel.com/hwhoteladoc/'
-// const api = 'https://mobile.huaweihotel.com/hwhoteladoc/storeapi/'
-
-// const resRoot = `https://mobile.huaweihotel.com/hwhoteladoc/`
-// const res = `https://mobile.huaweihotel.com/hwhoteladoc/storeapi`
-
-// 华威正式 - 线上
-// const root = 'https://zh.bjhwa.com/hwInspection/'
-// const api = 'https://zh.bjhwa.com/hwInspection/storeapi/'
-
-// 华威正式
-// const root = 'https://mobile.huaweihotel.com/hwInspection/'
-// const api = 'https://mobile.huaweihotel.com/hwInspection/storeapi/'
-
-
 // 本地
 // const root = 'http://192.168.128.66:8080/hgInspection/'
 // const api = 'http://192.168.128.66:8080/hgInspection/api/'
-
-
 
 // ---------------------------------------登录--------------------------------------------------------
 // 获取openId
