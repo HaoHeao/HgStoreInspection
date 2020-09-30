@@ -18,7 +18,7 @@
             <view class="item-title">位置</view>
             <view class="item-view label-info scan">
                 <input v-model="place" class="inp" type="text" value="" placeholder="在此填写位置" />
-				<image src="@/static/icon/scan-code.svg" mode="widthFix" class="icon"></image>
+				<image src="@/static/icon/scan-code.svg" mode="widthFix" class="icon" @click="scanCode()"></image>
             </view>
             <view class="item-title">整改部门</view>
             <view class="item-view label-add">
@@ -200,6 +200,39 @@
             },
         },
         methods: {
+			// 扫码
+			scanCode(){
+				let _this = this
+				uni.scanCode({
+				    success: function (res) {
+				        console.log('扫码成功------>>>',res);
+						_this.getSalerqrcodeInfo(res.result)
+				    }
+				});
+			},
+			// 解析导购工牌
+			async getSalerqrcodeInfo(salerqrcode){
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.getSalerqrcodeInfo + `?salerqrcode=${salerqrcode}`,
+					})
+					let [err, success] = data
+					console.log('解析导购工牌请求成功------>>>', success)
+					if (success.data.success) {
+						this.floor = success.data.data.salerinfo.floorvalue
+						this.place = success.data.data.salerinfo.conername
+					}else{
+						uni.showToast({
+							title: err ? err : success.data.errmsg,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				} catch (e) {
+					console.log(e)
+				}
+			},
 			// 获取楼层列表
 			async getFloorList(){
 				try {

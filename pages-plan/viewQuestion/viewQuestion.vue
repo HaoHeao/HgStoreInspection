@@ -31,11 +31,11 @@
 					<view class="status-title" v-if="option.data.status == 100">问题已解决</view>
 					<block v-if="option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 1 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
-						 @click="confirmQuestion(option.data)">复核</view>
+						 @click="$refs['review'].open(),remark = ''">复核</view>
 					</block>
-					<block v-if="!option.data.planinspectionsolveuser.length">
+					<!-- <block v-if="!option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber)" @click="confirmQuestion(option.data)">整改复核</view>
-					</block>
+					</block> -->
 					<view class="del" @click="delPlanQuestion()" v-if="username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">撤回</view>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
@@ -86,7 +86,11 @@
 					</view>
 				</view>
 			</view>
-			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">整改回复</view>
+			<view class="question-discuss-title">
+				<view class="item left"></view>
+				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改回复</view>
+				<view class="item right" @click="$refs['person_list'].open()" v-if="option.data.planinspectionquestionconfirmlog.length">复核记录</view>
+			</view>
 			<view class="discuss-list">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
 					<view class="info">
@@ -154,19 +158,54 @@
 				</view>
 			</view>
 		</uni-popup>
+		<uni-popup ref="review" type="bottom">
+			<view class="popup">
+				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
+				<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" placeholder="不通过请填写原因" auto-height />
+				<view class="bottom-control">
+					<view class="content">
+						<view class="item del" @click="confirmQuestion(false)">
+							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
+						<view class="item" @click="confirmQuestion(true)">
+							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
+					</view>
+				</view>
+			</view>
+		</uni-popup>
+		<popup ref="person_list" type="bottom">
+			<view class="popup">
+				<view class="person-list fadeIn">
+					<view class="item">共{{option.data.planinspectionquestionconfirmlog.length}}条</view>
+					<view class="item fadeIn" v-for="(item,index) of option.data.planinspectionquestionconfirmlog" :key="index">
+						<image :src="require(`@/static/icon/${item.confirmtype == 1?'success-filling-green':'delete-filling-red'}.svg`)"
+						 mode="widthFix" class="icon"></image>
+						<view class="userinfo">{{item.deptname}} - {{item.username}}</view>
+						<view class="date">{{item.insertdate}}</view>
+						<view class="remark" v-if="item.remark">{{item.remark}}</view>
+					</view>
+				</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="item del" @click="$refs['person_list'].close()">
+							关闭
+						</view>
+					</view>
+				</view>
+			</view>
+		</popup>
 	</view>
 </template>
 
 <script>
 	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
-	import uniPopup from '@/components/uni-popup/uni-popup.vue'
+	import popup from '@/components/uni-popup/uni-popup.vue'
     let utils = require('@/util/utils.js');
 	let moment = utils.moment;
     let request = utils.request;
 	export default {
 		components: {
 			haoheaoScroll,
-			uniPopup
+			popup
 		},
 		data() {
 			return {
@@ -187,7 +226,9 @@
 				// 重复提交
 				btnClickReply:true,
 				imgList:[],
-				upImgList:[]
+				upImgList:[],
+				
+				remark:'',
 			}
 		},
 		computed:{
@@ -418,46 +459,37 @@
 					url:"../seeDetail/seeDetail?id=" + item.planid
 				})
 			},
-			confirmQuestion(item) {
-				// console.log(item);
-				uni.showModal({
-					title: "确认该问题已解决？",
-					success: (res) => {
-						if (res.confirm) {
-							request.confirmPlanQuestion({
-									usernumber: uni.getStorageSync('userinfo').usernumber,
-									planquestionid: item.planquestionid,
-									confirmtype: 1,
-									remark: ""
-								})
-								.then(data => {
-									let [err, res] = data;
-									console.log("确认巡检返回:", err, res)
-									this.getDetail(this.option.id,this.option.reply_id);
-									if (!err == null) {
-										uni.showToast({
-											icon: "none",
-											title: err.errmsg
-										});
-										return;
-									}
-									if (res.data.success) {
-										uni.showToast({
-											icon: "none",
-											title: '问题已确认解决！'
-										});
-										
-									} else {
-										uni.showToast({
-											icon: "none",
-											title: res.data.errmsg
-										});
-										
-									}
-								})
+			confirmQuestion(type) {
+				let _this = this;
+				if(!type && !this.remark){
+					uni.showToast({
+						icon: "none",
+						title: '复核不通过请填写原因'
+					});
+					return
+				}
+				console.log(_this.option)
+				request.confirmPlanQuestion({
+						usernumber: uni.getStorageSync('userinfo').usernumber,
+						planquestionid: _this.option.data.planquestionid,
+						confirmtype: type?1:0,
+						remark: type && !_this.remark?_this.remark:'复核通过'
+					})
+					.then(data => {
+						let [err, success] = data;
+						console.log("确认巡检返回:", success)
+						if (!err && success.data.success) {
+							_this.getDetail(this.option.id,this.option.reply_id);
+							_this.$refs['review'].close()
+						}else{
+							uni.showToast({
+								title: err?err:success.data.errmsg,
+								icon: 'none',
+								duration:3000
+							});
+							this.reserveLoading = false
 						}
-					}
-				})
+					})
 			}
 		},
 		onLoad: function(option) {
@@ -474,6 +506,7 @@
 </script>
 
 <style scoped lang="scss">
+	@import '@/styles/popup.scss';
 	.container {
 		min-height: 100vh;
 		width: 100%;
@@ -648,6 +681,28 @@
 			text-align: center;
 			width: 100%;
 			font-weight:700;
+			display: flex;
+			
+			.item{
+				&.left,&.right{
+					min-width:200rpx;
+				}
+				&.left{
+					padding-left: 20rpx;
+				}
+				&.right{
+					padding-right: 20rpx;
+					font-weight: 500;
+					color: #1BA1F3;
+					text-align: right;
+					&:active{
+						background: #f2f2f2;
+					}
+				}
+				&.center{
+					flex: 2;
+				}
+			}
 		}
 
 		// 回复列表
@@ -1018,6 +1073,116 @@
 				.btn.reply-close{
 					background:transparent;
 					color:#545658;
+				}
+			}
+		}
+	}
+
+	.popup {
+		padding: 30rpx;
+		padding-bottom: 0;
+		.title{
+			display: flex;
+			.content{
+				flex: 2;
+			}
+			.close{
+				padding: 4rpx 15rpx;
+				border-radius: 5rpx;
+				&:active{
+					color: #1BA1F3;
+					background: #f2f2f2;
+				}
+			}
+		}
+		.remark{
+			min-height: 200rpx;
+			background: #F3F5F7;
+			border-radius: 10rpx;
+			padding: 20rpx;
+			font-size: 24rpx;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.bottom-control {
+			z-index: 999;
+			padding: 20rpx 20rpx;
+			padding-right: 0;
+			background: #fff;
+
+			.item {
+				line-height: 60rpx;
+			}
+		}
+
+		.filter {
+			display: flex;
+			align-items: center;
+			padding: 20rpx;
+			position: sticky;
+			top: 0;
+			z-index: 999;
+			background: #fff;
+			border-radius: 20rpx;
+
+			.item {
+				line-height: 40rpx;
+				padding: 8rpx 20rpx;
+				border-bottom: 5rpx solid transparent;
+
+				&.active {
+					color: #333;
+					font-weight: 800;
+					font-size: 26rpx;
+					border-bottom: 5rpx solid #ff0036;
+				}
+
+				&.date {
+					flex: 2;
+					text-align: right;
+				}
+			}
+		}
+
+		.person-txt {
+			color: #333;
+			font-size: 28rpx;
+			border-bottom: 1rpx solid #f2f2f2;
+			font-weight: 800;
+			padding: 20rpx 0;
+			margin: 0 20rpx;
+		}
+
+		.person-list {
+			margin: 20rpx;
+
+			.item {
+				display: flex;
+				align-items: center;
+				font-size: 24rpx;
+				margin-bottom: 15rpx;
+				flex-wrap: wrap;
+
+				.icon {
+					width: 34rpx;
+					height: 34rpx;
+					margin-right: 10rpx;
+				}
+
+				.userinfo {
+					color: #647484;
+				}
+
+				.date {
+					flex: 2;
+					text-align: right;
+					color: #A4B1BE;
+				}
+				.remark{
+					margin-left: 20rpx;
+					margin-top: 20rpx;
+					height: auto;
+					min-height: auto;
 				}
 			}
 		}
