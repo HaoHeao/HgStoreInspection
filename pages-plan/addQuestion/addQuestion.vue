@@ -11,10 +11,12 @@
 				<textarea v-model="question" class="inp area-inp" v-if="!popup" auto-height="true" placeholder="在此填写问题描述" />
 				<view class="inp area-inp textarea-text" v-if="popup">{{question == ''?'在此填写问题描述':question}}</view>
             </view>
-            <view class="item-title">楼层</view>
-            <view class="item-view label-add floor">
-				<view :class="['item-true fadeIn',item.floorvalue == floor?'active':'']" v-for="(item,index) of floorlist" :key="index" @click="selectFloor(item.floorvalue)">{{item.floorname}}</view>
-            </view>
+			<block v-if="floorlist.length" class="fadeIn">
+				<view class="item-title">楼层</view>
+				<view class="item-view label-add floor">
+					<view :class="['item-true fadeIn',item.floorvalue == floor?'active':'']" v-for="(item,index) of floorlist" :key="index" @click="selectFloor(item.floorvalue)">{{item.floorname}}</view>
+				</view>
+			</block>
             <view class="item-title">位置</view>
             <view class="item-view label-info scan">
                 <input v-model="place" class="inp" type="text" value="" placeholder="在此填写位置" />

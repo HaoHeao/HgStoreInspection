@@ -87,9 +87,9 @@
 				</view>
 			</view>
 			<view class="question-discuss-title">
-				<view class="item left"></view>
+				<!-- <view class="item left"></view> -->
 				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改回复</view>
-				<view class="item right" @click="$refs['person_list'].open()" v-if="option.data.planinspectionquestionconfirmlog.length">复核记录</view>
+				<!-- <view class="item right" @click="$refs['person_list'].open()" v-if="option.data.planinspectionquestionconfirmlog.length">复核记录</view> -->
 			</view>
 			<view class="discuss-list">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
@@ -123,6 +123,17 @@
 						<view class="cancel">取消</view>
 						<view class="confirm">确认</view>
 					</view> -->
+					<!-- 复核记录 -->
+					<view class="review-result" v-if="item.confirmresult">
+						<view :class="['title',item.confirmresult == '通过'?'':'not']">复核结果：<span>{{item.confirmresult}}</span></view>
+						<!-- <view class="userinfo">{{item.confirmuserid}}</view> -->
+						<!-- <view class="userinfo">复核结果</view> -->
+						<!-- <view class="date">
+							<view :class="['status',item.confirmresult == '通过'?'':'not']">{{item.confirmresult == '通过'?'通过':'不通过'}}</view>
+						</view> -->
+						<view class="date">{{item.confirmuserid}}</view>
+						<view class="remark" v-if="item.confirmresult == '不通过'">原因：{{item.confirmremark}}</view>
+					</view>
 				</view>
 			</view>
 			<view class="replay-null">
@@ -161,7 +172,10 @@
 		<uni-popup ref="review" type="bottom">
 			<view class="popup">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
-				<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" placeholder="不通过请填写原因" auto-height />
+				<!-- <input placeholder-style="color:#B6C6D6" cursor-spacing="20" placeholder="不通过请填写原因" class="remark" type="text" v-model="remark" /> -->
+				<view class="textarea-view">
+					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" fixed="true" auto-height />
+				</view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="item del" @click="confirmQuestion(false)">
@@ -175,14 +189,14 @@
 		<popup ref="person_list" type="bottom">
 			<view class="popup">
 				<view class="person-list fadeIn">
-					<view class="item">共{{option.data.planinspectionquestionconfirmlog.length}}条</view>
-					<view class="item fadeIn" v-for="(item,index) of option.data.planinspectionquestionconfirmlog" :key="index">
+					<!-- <view class="item">共{{option.data.planinspectionquestionconfirmlog.length}}条</view> -->
+					<!-- <view class="item fadeIn" v-for="(item,index) of option.data.planinspectionquestionconfirmlog" :key="index">
 						<image :src="require(`@/static/icon/${item.confirmtype == 1?'success-filling-green':'delete-filling-red'}.svg`)"
 						 mode="widthFix" class="icon"></image>
 						<view class="userinfo">{{item.deptname}} - {{item.username}}</view>
 						<view class="date">{{item.insertdate}}</view>
 						<view class="remark" v-if="item.remark">{{item.remark}}</view>
-					</view>
+					</view> -->
 				</view>
 				<view class="bottom-control">
 					<view class="content">
@@ -473,7 +487,7 @@
 						usernumber: uni.getStorageSync('userinfo').usernumber,
 						planquestionid: _this.option.data.planquestionid,
 						confirmtype: type?1:0,
-						remark: type && !_this.remark?_this.remark:'复核通过'
+						remark: type?'复核通过':_this.remark
 					})
 					.then(data => {
 						let [err, success] = data;
@@ -717,8 +731,6 @@
 				background: #fff;
 				border-radius: 10rpx;
 				box-sizing: border-box;
-				padding: 20rpx;
-				padding-top: 0;
 
 				// &:active {
 				// 	opacity: 0.9;
@@ -731,6 +743,7 @@
 					justify-content: flex-start;
 					align-items: center;
 					font-size: 24rpx;
+					margin: 0 20rpx;
 
 					.user {
 						color: #647484;
@@ -792,6 +805,7 @@
 					margin-bottom: 16rpx;
 					margin-top: 20rpx;
 					word-break:break-word;
+					padding: 0 20rpx;
 				}
 				
 				.img-list{
@@ -799,6 +813,7 @@
 					display: flex;
 					justify-content: flex-start;
 					flex-wrap: wrap;
+					padding: 0 20rpx;
 				
 					.item {
 						width: 120rpx;
@@ -842,6 +857,47 @@
 
 					.item {
 						margin-bottom: 6rpx;
+					}
+				}
+				/* 复核状态 */
+				.review-result{
+					display: flex;
+					flex-wrap: wrap;
+					// border-top: 1rpx dashed #EDEEEF;
+					font-size: 24rpx;
+					padding: 20rpx;
+					color: #647484;
+					box-shadow: 0rpx -4rpx 10rpx -10rpx #000;
+					
+					.title{
+						flex: 2;
+						&.not{
+							span{
+								color: #ff0036;
+							}
+						}
+					}
+					
+					.userinfo{
+						flex: 2;
+					}
+					
+					.date{
+						white-space: nowrap;
+						display: flex;
+						.status{
+							margin-left: 10rpx;
+							&.not{
+								color: #ff0036;
+							}
+						}
+					}
+					
+					.remark{
+						width: 100%;
+						// padding: 3rpx;
+						// border-radius: 5rpx;
+						padding: 5rpx 0;
 					}
 				}
 			}
