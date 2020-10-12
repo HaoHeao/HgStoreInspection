@@ -1,16 +1,10 @@
 <template>
 	<view class="container">
 		<view class="main">
-			<view class="item-title" v-if="option.itemIs">巡检项目</view>
-			<view class="item-view label-info" v-if="option.itemIs">
-				<view class="item-name">1.三楼东南角卫生间检查</view>
-				<image src="../../static/right2.png" mode="widthFix" class="img"></image>
-			</view>
 			<view class="item-title">问题描述</view>
 			<view class="item-view label-info">
-				<textarea v-model="question" class="inp area-inp" v-if="!popup" auto-height="true" placeholder="在此填写问题描述" />
-				<view class="inp area-inp textarea-text" v-if="popup">{{question == ''?'在此填写问题描述':question}}</view>
-            </view>
+				<textarea v-model="question" class="inp area-inp" fixed auto-height placeholder="在此填写问题描述" />
+				</view>
 			<block v-if="floorlist.length" class="fadeIn">
 				<view class="item-title">楼层</view>
 				<view class="item-view label-add floor">
@@ -125,12 +119,15 @@
 							<view :class="['item fadeIn',item.select?'active':'']" @click="addSetDeptList({type:4,item})">{{item.username}}</view>
 						</block>
 					</view>
-					
 					<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
 						<view class="title">{{item.deptname}}</view>
 						<view class="item-list">
 							<block v-for="(itm,ind) of item.userlist" :key="ind">
-								<view :class="['item fadeIn',itm.select?'active':'']" @click="addSetDeptList({type:4,item:itm})">{{itm.username}}</view>
+								<view :class="['item fadeIn',itm.select?'active':'']" @click="addSetDeptList({type:4,item:itm})">
+									<!-- {{itm.username}} -->
+									<view class="name">{{itm.username}}</view>
+									<view class="postion" v-if="itm.postion">{{itm.postion}}</view>
+								</view>
 							</block>
 						</view>
 					</block>
@@ -691,6 +688,7 @@
 		},
 		onShow:function(){
 			this.getFloorList()
+			console.log(this.userListConfirm)
 		},
 		onUnload:function(){
 			this.resetOption();

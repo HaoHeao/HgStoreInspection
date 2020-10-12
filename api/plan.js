@@ -22,6 +22,9 @@ const plan_getReviewlist = `${api}/hgInspection/storeapi/plan/load/question/conf
 // 复核筛选列表
 const plan_getReviewFilterlist = `${api}/hgInspection/storeapi/plan/load/question/confirm/selectit`
 
+// 撤回整改回复
+const plan_delReplydeep = `${api}/hgInspection/storeapi/plan/reply/del`
+
 export {
 	// 待整改
 	plan_questionWait,
@@ -35,4 +38,6 @@ export {
 	plan_getReviewlist,
 	// 复核筛选列表
 	plan_getReviewFilterlist,
+	// 撤回整改回复
+	plan_delReplydeep,
 }

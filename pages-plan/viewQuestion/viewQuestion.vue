@@ -102,7 +102,7 @@
 							</view>
 							<text class="txt">回复</text>
 						</view> -->
-						<!-- <view class="back-btn" v-if="item.usernumber == ">撤回</view> -->
+						<view class="back-btn" v-if="item.usernumber == userinfo.usernumber" @click="feedbackClick(item)">撤回</view>
 					</view>
 					<view class="content">{{item.content}}</view>
 					<view class="img-list">
@@ -251,6 +251,41 @@
 			}
 		},
 		methods: {
+			// 撤回整改问题
+			feedbackClick(item){
+				uni.showModal({
+					title: "确认撤回此整改回复？",
+					success: async (res) => {
+						if (res.confirm) {
+							console.log(item)
+							try {
+								let data = await uni.request({
+									method: 'GET',
+									url: this.api.plan_delReplydeep,
+									data: {
+										planfeedbackid:item.planfeedbackid,
+										usernumber:this.userinfo.usernumber
+									}
+								})
+								let [err, success] = data
+								console.log('撤回整改回复返回------>>>', success)
+								if (!err && success.data.success) {
+									console.log("撤回成功")
+									this.getDetail(this.option.id,this.option.reply_id);
+								} else {
+									uni.showToast({
+										title: err ? err : success.data.errmsg,
+										icon: 'none',
+										duration: 3000
+									});
+								}
+							} catch (e) {
+								console.log(e)
+							}
+						}
+					}
+				})
+			},
 			// 撤回巡检
 			delPlanQuestion(){
 				uni.showModal({
