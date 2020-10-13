@@ -178,7 +178,7 @@
 										<view class="reply-button" @click.stop="confirmQuestion(item)" v-if="item.status == 1 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
 										<!-- 整改、查看 -->
 										<view class="reply-button" v-if="item.status == 0 && (item.showFeedbackUser || item.showFeedbackDept)">整改</view>
-										<view class="reply-button" v-if="item.status == 100">查看</view>
+										<view class="reply-button" v-if="item.status == 100 || (!item.showFeedbackUser && !item.showFeedbackDept)">查看</view>
 									</view>
 									<view class="line"></view>
 								</view>
@@ -270,9 +270,11 @@
 				let user = uni.getStorageSync('userinfo');
 				for (let item of data) {
 					if (type == 1) {
-						if (item.deptid == user.deptid) {
-							return true;
-						}
+						// if (item.deptid == user.deptid) {
+						// 	return true;
+						// }
+						if(user.deptlist.filter(itm=>itm.deptid == item.deptid).length) return true;
+						// return user.deptlist.filter(itm=>itm.deptid == item.deptid).length?true:false
 					} else if (type == 2) {
 						if (item.usernumber == user.usernumber) {
 							return true;
@@ -281,24 +283,29 @@
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
-						if (item.itemno == user.deptno) {
-							return true;
-						}
+						// if (item.itemno == user.deptno) {
+						// 	return true;
+						// }
+						if(user.deptlist.filter(itm=>itm.deptno == item.itemno).length) return true
+						// return user.deptlist.filter(itm=>itm.deptno == item.itemno).length?true:false
 					}
 				}
 			},
-			// 复制内容
-			copy: function(data) {
-				app.copy(data)
+			// 是否可以回复整改
+			rectifyFilter(item){
+				
 			},
+			// 是否可以复核
+			reviewFilter(item){},
+			// 是否可以提出巡检问题
+			setQuestionFilter(item){},
 			// 获取巡检单详细信息
 			getDetail: function(id, done) {
 				let _this = this;
 				request.getPlanDetail(id)
 					.then(res => {
 						let [err, data] = res;
-						console.log("巡检单详细信息", err, res)
-						if (err == null && data.data.success) {
+						if (!err && data.data.success) {
 							this.infoDetail = data.data.data.planinspectionset;
 							// 时间过滤
 							this.infoDetail.sdate1 = this.infoDetail.sdate.slice(0, 10).replace(/-/g, ".");
@@ -308,14 +315,12 @@
 							 * 计划巡检必须手动结束后，状态变为2000，才可以判断结束,此时状态显示执行中并且可以提出巡检问题
 							 * 结束后状态显示已结束，不可提出问题
 							 */
-							console.log(new Date(this.infoDetail.sdate1).getTime() > new Date().getTime())
-							console.log(new Date(this.infoDetail.sdate1).getTime())
-							console.log(new Date().getTime())
 							if (new Date(this.infoDetail.sdate1).getTime() > new Date().getTime()) {
 								this.infoDetail.notStarted = false
 							} else {
 								this.infoDetail.notStarted = true
 							}
+							
 							// 部门人员过滤
 							this.infoDetail.itemdeptlist = [];
 							this.infoDetail.itempersonlist = [];
@@ -328,14 +333,13 @@
 							}
 
 							// 问题列表项目人员过滤
-
 							// 回复内容时间过滤
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
-
+							
+							// 权限添加
 							for (let item of this.infoDetail.planinspectionquestion) {
-								console.log(item)
 								// 整改部门反馈
 								item.showFeedbackDept = this.showRightIs(item.mapplaninspectiondept, 1)
 								// 整改人员反馈
@@ -343,15 +347,14 @@
 								// 确认核验权限
 								item.showRightIs = this.showRightIs(item.planinspectionsolveuser, 3);
 							}
-							console.log("巡检单详细信息2", this.infoDetail)
-							// 回复内容过滤
 							if (done) done();
+							console.log("巡检单详细信息--->>>", this.infoDetail)
 						} else {
 							uni.showToast({
-								icon: "none",
-								duration: 2500,
-								title: "查找失败:" + err.errMsg
-							})
+								title: err ? err : success.data.errmsg,
+								icon: 'none',
+								duration: 3000
+							});
 						}
 					})
 			},
@@ -444,7 +447,6 @@
 			}
 		},
 		onLoad(option) {
-			console.log("巡检详细onLoad option:", option)
 			this.option = option;
 			this.detail_id = option.id;
 		},

@@ -47,7 +47,7 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<popup ref="tips" type="center">
+		<uni-popup ref="tips" type="center">
 			<view class="popup">
 				<view class="close" @click="$refs['tips'].close()">×</view>
 				<view class="head">会议室管理规定</view>
@@ -77,16 +77,16 @@
 					</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import popup from '@/components/uni-popup/uni-popup.vue'
+	// import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
+		// components: {
+		// 	popup
+		// },
 		data() {
 			return {
 				uni,

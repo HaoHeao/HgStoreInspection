@@ -48,7 +48,6 @@
 				this.current = e.detail.current;
 			},
 			getState() {
-				console.log(this.current)
 				this.getPlanList(0);
 				this.getPlanList(1);
 			},
@@ -79,21 +78,12 @@
 										item.itempersonlist.push(itm.itemname);
 									}
 								};
-								// for(let ind in item.planinspectionappenduser){
-								// 	if(ind == 0 && item.planinspectionappenduser[0]) item.itemdeptlist = item.planinspectionappenduser[0].itemname;
-								// 	if(ind != 0){
-								// 		item.itemdeptlist = item.itemdeptlist + '、' + item.planinspectionappenduser[ind].itemname
-								// 	}
-								// }
 								if (datatype == 1) {
 									this.dataList0.push(item);
 								} else if (datatype == 0) {
 									this.dataList1.push(item);
 								}
 							};
-							console.log(data.data.data.planinspectionset)
-							// this.dataList0 = data.data.data.planinspectionset;
-							// this.dataList1 = data.data.data.planinspectionset;
 						} else {
 							uni.showToast({
 								icon: "none",

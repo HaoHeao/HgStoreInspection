@@ -178,7 +178,7 @@
 
 		.line {
 			width: 310rpx;
-			height: 1rpx;
+			height: 2rpx;
 			background: #B6C6D6;
 			position: absolute;
 			left: calc(50% - 145rpx);
@@ -220,7 +220,7 @@
 		.none {
 			width: 100%;
 			height: 20rpx;
-			margin: 40rpx 0rpx;
+			margin: 30rpx 0rpx;
 			position: relative;
 
 			.txt {
@@ -241,7 +241,7 @@
 
 			.line {
 				width: 310rpx;
-				height: 1rpx;
+				height: 2rpx;
 				background: #B6C6D6;
 				position: absolute;
 				left: calc(50% - 145rpx);

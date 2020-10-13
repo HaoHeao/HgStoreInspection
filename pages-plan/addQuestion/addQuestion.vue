@@ -523,7 +523,15 @@
 					});
 					return;
 				}
-				// 审核部门和人员写入
+				// 复核人或部门选择判断
+				if(!this.deptListConfirm.filter(item=> item.select).length && !this.userListConfirm.leaderlist.filter(item=> item.select).length && !this.userListConfirm.deptuserlist.filter(item=> item.select).length){
+					uni.showToast({
+						icon:"none",
+						title:"请选择复核部门或复核人员!"
+					});
+					return;
+				}
+				// 复核部门和人员写入
 				for(let item of this.deptListConfirm){
 					if(item.select == true){
 						let it = {
@@ -571,7 +579,7 @@
 						}
 					}
 				}
-				// 图片写入
+				// 图片插入
 				for(let item of this.upImgList){
 					let obj = {
 						planquestionimgid:0,
@@ -588,17 +596,30 @@
 				request.sendPlanReply(option).then(data=>{
 					let [err,res] = data;
 					console.log("上传回复结果:",err,res)
-					if(err == null && res.data.success){
+					if (!err && res.data.success) {
 						this.resetOption();
 						uni.navigateBack({
 							delta:1
 						})
 					}else{
 						uni.showToast({
-							icon: "none",
-							title: err.errmsg
-						})
+							title: err?err:res.data.errmsg,
+							icon: 'none',
+							duration:3000
+						});
+						this.reserveLoading = false
 					}
+					// if(err == null && res.data.success){
+					// 	this.resetOption();
+					// 	uni.navigateBack({
+					// 		delta:1
+					// 	})
+					// }else{
+					// 	uni.showToast({
+					// 		icon: "none",
+					// 		title: err.errmsg
+					// 	})
+					// }
 				})
 			},
 			addImg:function(){

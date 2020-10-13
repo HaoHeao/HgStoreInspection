@@ -86,12 +86,12 @@
 					</view>
 				</view>
 			</view>
-			<view class="question-discuss-title">
+			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">
 				<!-- <view class="item left"></view> -->
 				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改回复</view>
 				<!-- <view class="item right" @click="$refs['person_list'].open()" v-if="option.data.planinspectionquestionconfirmlog.length">复核记录</view> -->
 			</view>
-			<view class="discuss-list">
+			<view class="discuss-list" v-if="option.data.planinspectionfeedback.length">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
 					<view class="info">
 						<view class="user">{{item.deptname}} - {{item.username}}</view>
@@ -102,7 +102,8 @@
 							</view>
 							<text class="txt">回复</text>
 						</view> -->
-						<view class="back-btn" v-if="item.usernumber == userinfo.usernumber" @click="feedbackClick(item)">撤回</view>
+						<view class="back-btn" v-if="item.usernumber == userinfo.usernumber && option.data.status != 100 && !item.confirmresult"
+						 @click="feedbackClick(item)">撤回</view>
 					</view>
 					<view class="content">{{item.content}}</view>
 					<view class="img-list">
@@ -138,7 +139,7 @@
 			</view>
 			<view class="replay-null">
 				<view class="none">
-					<view class="txt">没有更多记录</view>
+					<view class="txt">{{option.data.planinspectionfeedback.length?'没有更多记录':'暂无整改记录'}}</view>
 					<view class="line"></view>
 				</view>
 			</view>
@@ -186,7 +187,7 @@
 				</view>
 			</view>
 		</uni-popup>
-		<popup ref="person_list" type="bottom">
+		<uni-popup ref="person_list" type="bottom">
 			<view class="popup">
 				<view class="person-list fadeIn">
 					<!-- <view class="item">共{{option.data.planinspectionquestionconfirmlog.length}}条</view> -->
@@ -206,21 +207,15 @@
 					</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
-	import popup from '@/components/uni-popup/uni-popup.vue'
     let utils = require('@/util/utils.js');
 	let moment = utils.moment;
     let request = utils.request;
 	export default {
-		components: {
-			haoheaoScroll,
-			popup
-		},
 		data() {
 			return {
 				uni,
@@ -322,14 +317,16 @@
 				})
 			},
 			// 当前登录人权限判断
-			showRightIs(data,type) {
+			showRightIs(data, type) {
+				if (!data) return false;
 				let user = uni.getStorageSync('userinfo');
-				console.log('showRightIs',data)
 				for (let item of data) {
 					if (type == 1) {
-						if (item.deptid == user.deptid) {
-							return true;
-						}
+						// if (item.deptid == user.deptid) {
+						// 	return true;
+						// }
+						if(user.deptlist.filter(itm=>itm.deptid == item.deptid).length) return true;
+						// return user.deptlist.filter(itm=>itm.deptid == item.deptid).length?true:false
 					} else if (type == 2) {
 						if (item.usernumber == user.usernumber) {
 							return true;
@@ -338,9 +335,11 @@
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
-						if (item.itemno == user.deptno) {
-							return true;
-						}
+						// if (item.itemno == user.deptno) {
+						// 	return true;
+						// }
+						if(user.deptlist.filter(itm=>itm.deptno == item.itemno).length) return true
+						// return user.deptlist.filter(itm=>itm.deptno == item.itemno).length?true:false
 					}
 				}
 			},
@@ -542,11 +541,8 @@
 			}
 		},
 		onLoad: function(option) {
-			console.log("plan-viewQuestion option:",option)
-			// if(option.data)option.data = JSON.parse(option.data);
 			if(option.data)option.data = JSON.parse(typeof(option.data) == 'string'?decodeURIComponent(option.data):option.data);
 			this.option = option;
-			console.log("plan-viewQuestion option:",this.option)
 		},
 		onShow:function(){
 			this.getDetail(this.option.id,this.option.reply_id);
@@ -633,8 +629,11 @@
 					border:1rpx solid #1BA1F3;
 					color:#1BA1F3;
 					border-radius:40rpx;
-					padding: 5rpx 15rpx;
 					font-size: 22rpx;
+					width: 130rpx;
+					height: 48rpx;
+					line-height: 48rpx;
+					text-align: center;
 					 &:active{
 						 background:#1BA1F3;
 						 color:#fff;
@@ -766,6 +765,7 @@
 				background: #fff;
 				border-radius: 10rpx;
 				box-sizing: border-box;
+				padding: 1rpx 0;
 
 				// &:active {
 				// 	opacity: 0.9;
@@ -824,10 +824,11 @@
 					}
 					/* 撤回按钮 */
 					.back-btn{
-						color: #333;
-						padding: 3rpx 5rpx;
+						color: #1BA1F3;
+						padding: 5rpx 10rpx;
 						margin-left: 20rpx;
 						border-radius: 5rpx;
+						// background:#E5EDF1;
 						&:active{
 							color: #666;
 						}

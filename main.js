@@ -48,7 +48,6 @@ import store from './store'
 Vue.prototype.$store = store;
 
 import installComponent from '@/components/index.js';
-console.log(installComponent)
 Vue.use(installComponent);
 
 const moment = require('@/util/moment.js');
@@ -59,7 +58,6 @@ Vue.prototype.api = api.default;
 
 const utils = require('@/util/utils.js')
 Vue.prototype.utils = utils;
-console.log(utils)
 
 // 同步延迟
 Vue.prototype.delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));
