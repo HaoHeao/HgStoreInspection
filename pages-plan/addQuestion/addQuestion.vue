@@ -385,10 +385,6 @@
 			sendQuestion:function(){
 				// if(!this.btnClick) {return;}
 				// this.btnClick = false;
-				uni.showLoading({
-					title:"正在添加反馈问题...",
-					mask:true
-				})
 				if(this.question == ''){
 					uni.showToast({
 						icon:"none",
@@ -524,7 +520,9 @@
 					return;
 				}
 				// 复核人或部门选择判断
-				if(!this.deptListConfirm.filter(item=> item.select).length && !this.userListConfirm.leaderlist.filter(item=> item.select).length && !this.userListConfirm.deptuserlist.filter(item=> item.select).length){
+				if(!this.deptListConfirm.filter(item=> item.select).length && 
+					!this.userListConfirm.leaderlist.filter(item=> item.select).length && 
+					!this.userListConfirm.deptuserlist.filter(item=>{if(item.userlist.filter(itm=> itm.select).length) return true}).length){
 					uni.showToast({
 						icon:"none",
 						title:"请选择复核部门或复核人员!"
@@ -592,6 +590,10 @@
 				}
 				console.log(option)
 				console.log(JSON.stringify(option))
+				uni.showLoading({
+					title:"正在添加反馈问题...",
+					mask:true
+				})
 				// 反馈
 				request.sendPlanReply(option).then(data=>{
 					let [err,res] = data;
@@ -609,17 +611,6 @@
 						});
 						this.reserveLoading = false
 					}
-					// if(err == null && res.data.success){
-					// 	this.resetOption();
-					// 	uni.navigateBack({
-					// 		delta:1
-					// 	})
-					// }else{
-					// 	uni.showToast({
-					// 		icon: "none",
-					// 		title: err.errmsg
-					// 	})
-					// }
 				})
 			},
 			addImg:function(){

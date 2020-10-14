@@ -5,12 +5,11 @@
 				<view class="msg-title">{{detailInfo.title}}</view>
 				<view class="msg-list">
 					<view class="left">发起部门</view>
-					<view class="content">{{detailInfo.deptname?detailInfo.deptname:''}} -
-						{{detailInfo.username?detailInfo.username:''}}</view>
+					<view class="content">{{detailInfo.deptname?detailInfo.deptname:'' + '-' + detailInfo.username?detailInfo.username:''}}</view>
 				</view>
 				<view class="msg-list">
 					<view class="left">巡查日期</view>
-					<view class="content">{{detailInfo.sdate1?detailInfo.sdate1:''}} - {{detailInfo.edate1?detailInfo.edate1:''}}</view>
+					<view class="content">{{detailInfo.sdate1?detailInfo.sdate1:'' + '-' + detailInfo.edate1?detailInfo.edate1:''}}</view>
 				</view>
 				<view class="msg-list">
 					<view class="left">检查重点</view>
@@ -18,25 +17,20 @@
 				</view>
 				<view class="msg-list">
 					<view class="left">巡检级别</view>
-					<view class="content" v-if="detailInfo.properties == 0">未定级别</view>
-					<view class="content" v-if="detailInfo.properties == 1">公司级别</view>
-					<view class="content" v-if="detailInfo.properties == 2">部门级别</view>
+					<view class="content">{{detailInfo.properties == 0?'未定级别':detailInfo.properties == 1?'公司级别':detailInfo.properties == 2?'部门级别':''}}</view>
 				</view>
 			</view>
 			<view class="question" v-if="option.data">
 				<view class="question-status">
 					<view :class="['status-round',option.data.status == 100?'solve':'']"></view>
-					<view class="status-title" v-if="option.data.status == 0">待整改</view>
-					<view class="status-title" v-if="option.data.status == 1">已整改</view>
-					<view class="status-title" v-if="option.data.status == 100">问题已解决</view>
+					<view class="status-title">{{option.data.status == 0?'待整改':option.data.status == 1?'已整改':option.data.status == 100?'问题已解决':''}}</view>
 					<block v-if="option.data.planinspectionsolveuser.length">
 						<view class="confirm-question" v-if="option.data.status == 1 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
 						 @click="$refs['review'].open(),remark = ''">复核</view>
 					</block>
-					<!-- <block v-if="!option.data.planinspectionsolveuser.length">
-						<view class="confirm-question" v-if="option.data.status == 0 && (detailInfo.usernumber == usernumber)" @click="confirmQuestion(option.data)">整改复核</view>
-					</block> -->
-					<view class="del" @click="delPlanQuestion()" v-if="username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">撤回</view>
+					<block v-if="username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">
+						<view class="del" @click="delPlanQuestion()">撤回</view>
+					</block>
 				</view>
 				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
@@ -76,10 +70,12 @@
 						</text>
 					</view>
 				</view>
+				<!-- 信息 -->
 				<view class="info-list">
 					<view class="left">位置</view>
 					<view class="content">{{option.data.inspectionplace}}</view>
 				</view>
+				<!-- 图片 -->
 				<view class="question-img" v-if="option.data.planinspectionquestionimg.length">
 					<view class="item" v-for="(item,index) of option.data.planinspectionquestionimg" :key="index" @click="seePicture(option.data.planinspectionquestionimg,index)">
 						<image class="img" :src="item.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
@@ -87,15 +83,14 @@
 				</view>
 			</view>
 			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">
-				<!-- <view class="item left"></view> -->
 				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改回复</view>
-				<!-- <view class="item right" @click="$refs['person_list'].open()" v-if="option.data.planinspectionquestionconfirmlog.length">复核记录</view> -->
 			</view>
 			<view class="discuss-list" v-if="option.data.planinspectionfeedback.length">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
 					<view class="info">
 						<view class="user">{{item.deptname}} - {{item.username}}</view>
 						<view class="date">{{item.insertdate1}}</view>
+						<!-- 回复按钮 -->
 						<!-- <view class="reply-btn">
 							<view class="img-btn">
 								<image class="img" src="../../static/reply.png" mode="widthFix"></image>
@@ -111,6 +106,7 @@
 							<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
 						</view>
 					</view>
+					<!-- 回复记录 -->
 					<!-- <view class="reply-list">
 						<view class="item">(人资部)张章：回复了一个内容，文字显示，文字显示，文字显示，文字显示。</view>
 						<view class="item">(人资部)张章：回复了一个内容，文字显示，文字显示。</view>
@@ -127,11 +123,6 @@
 					<!-- 复核记录 -->
 					<view class="review-result" v-if="item.confirmresult">
 						<view :class="['title',item.confirmresult == '通过'?'':'not']">复核结果：<span>{{item.confirmresult}}</span></view>
-						<!-- <view class="userinfo">{{item.confirmuserid}}</view> -->
-						<!-- <view class="userinfo">复核结果</view> -->
-						<!-- <view class="date">
-							<view :class="['status',item.confirmresult == '通过'?'':'not']">{{item.confirmresult == '通过'?'通过':'不通过'}}</view>
-						</view> -->
 						<view class="date">{{item.confirmuserid}}</view>
 						<view class="remark" v-if="item.confirmresult == '不通过'">原因：{{item.confirmremark}}</view>
 					</view>
@@ -145,13 +136,13 @@
 			</view>
 		</haoheao-scroll>
 		<view class="replay-btn" v-if="option.data.status == 0 && (option.data.showFeedbackDept || option.data.showFeedbackUser)"
-		 @click="thatReply()">整改</view>
+		 @click="$refs['popup'].open()">整改</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="popup" type="bottom">
 			<view class="popup-reply">
 				<view class="textarea-view">
-					<textarea auto-height="false" fixed="true" class="input-view solve" maxlength="200" placeholder-style="color:#B6C6D6;"
-					 value="" placeholder="请输入处理方法或建议(200字以内)" v-model="replyTxt" @focus="inpFoc" @blur="inpBur" />
+					<textarea auto-height="false" fixed class="input-view solve" maxlength="200" placeholder-style="color:#B6C6D6;"
+					 placeholder="请输入处理方法或建议(200字以内)" v-model="replyTxt" @focus="inpFoc" @blur="inpBur" />
 					</view>
 				<view class="control-view" :style="{'padding-bottom':bottomHeight}">
 					<view class="img-list">
@@ -173,7 +164,6 @@
 		<uni-popup ref="review" type="bottom">
 			<view class="popup">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
-				<!-- <input placeholder-style="color:#B6C6D6" cursor-spacing="20" placeholder="不通过请填写原因" class="remark" type="text" v-model="remark" /> -->
 				<view class="textarea-view">
 					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" fixed="true" auto-height />
 				</view>
@@ -183,27 +173,6 @@
 							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
 						<view class="item" @click="confirmQuestion(true)">
 							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
-					</view>
-				</view>
-			</view>
-		</uni-popup>
-		<uni-popup ref="person_list" type="bottom">
-			<view class="popup">
-				<view class="person-list fadeIn">
-					<!-- <view class="item">共{{option.data.planinspectionquestionconfirmlog.length}}条</view> -->
-					<!-- <view class="item fadeIn" v-for="(item,index) of option.data.planinspectionquestionconfirmlog" :key="index">
-						<image :src="require(`@/static/icon/${item.confirmtype == 1?'success-filling-green':'delete-filling-red'}.svg`)"
-						 mode="widthFix" class="icon"></image>
-						<view class="userinfo">{{item.deptname}} - {{item.username}}</view>
-						<view class="date">{{item.insertdate}}</view>
-						<view class="remark" v-if="item.remark">{{item.remark}}</view>
-					</view> -->
-				</view>
-				<view class="bottom-control">
-					<view class="content">
-						<view class="item del" @click="$refs['person_list'].close()">
-							关闭
-						</view>
 					</view>
 				</view>
 			</view>
@@ -246,6 +215,13 @@
 			}
 		},
 		methods: {
+			onPullDown(done) { // 下拉刷新
+				this.getDetail(this.option.id,this.option.reply_id);
+				console.log("下拉刷新")
+				setTimeout(() => {
+					done();
+				}, 1800)
+			},
 			// 撤回整改问题
 			feedbackClick(item){
 				uni.showModal({
@@ -343,20 +319,9 @@
 					}
 				}
 			},
-			onPullDown(done) { // 下拉刷新
-				this.getDetail(this.option.id,this.option.reply_id);
-				console.log("下拉刷新")
-				setTimeout(() => {
-					done();
-				}, 1800)
-			},
 			// 查看图片
 			seePicture:function(list,index){
 				utils.seePicture(list,index);
-			},
-			// 打开回复框
-			thatReply:function(){
-				this.$refs['popup'].open()
 			},
 			// 关闭回复框并且清空详细信息
 			thatReplyClose:function(){

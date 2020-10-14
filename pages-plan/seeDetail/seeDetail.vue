@@ -110,95 +110,87 @@
 				</view> -->
 				</view>
 				<view class="module reply fadeIn500" v-if="infoDetail.planinspectionquestion.length">
-					<view class="head" v-if="infoDetail.planinspectionquestion.length">
+					<view class="head">
 						<view class="title">巡检问题</view>
-						<view class="number" v-if="infoDetail.planinspectionquestion.length">共{{infoDetail.planinspectionquestion.length}}条</view>
+						<view class="number">共{{infoDetail.planinspectionquestion.length}}条</view>
 					</view>
-					<view class="question-block" v-if="!item.planinspectionquestion.length">
-						<view class="question-view">
-							<view class="question-list">
-								<view class="question-item item-none" v-for="(item,index) of infoDetail.planinspectionquestion" :key="index"
-								 @tap.stop="lookReplay(item)">
-									<view class="li li-top">
-										<!-- <view :class="['question-status',item.status == 1?'solve':'']"></view> -->
-										<view class="question-status" v-if="item.status == 0"></view>
-										<view class="sender">{{item.deptname}} - {{item.username}}</view>
-										<view class="send-timer">{{item.insertdate1}}</view>
-									</view>
-									<view class="li">
-										<view class="left">问题描述</view>
-										<view class="content"><text>{{item.question}}</text></view>
-									</view>
-									<view class="li" v-if="item.mapplaninspectiondept.length">
-										<view class="left">整改部门</view>
-										<view class="content">
-											<text>
-												<block>{{item.mapplaninspectiondept[0].deptname}}</block>
-												<block v-for="(ite,ind) of item.mapplaninspectiondept" :key="ind" v-if="ind != 0">{{'、' + ite.deptname}}</block>
-											</text>
-										</view>
-									</view>
-									<view class="li" v-if="item.mapplaninspectionuser.length">
-										<view class="left">整改人员</view>
-										<view class="content">
-											<text>
-												<block>{{item.mapplaninspectionuser[0].username}}</block>
-												<block v-for="(ite,ind) of item.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
-											</text>
-										</view>
-									</view>
-									<div v-if="item.shopAds == !null" class="commodity_introduce">{{item.shopAds}}</div>
-									<div v-if="item.shopAds == null" class="commodity_introduce">{{item.shop_add}}</div>
-									<view class="li">
-										<view class="left">位置</view>
-										<view class="content">{{item.inspectionplace?item.inspectionplace:'未填写位置'}}</view>
-									</view>
-									<!-- <view class="li" v-if="item.other1"> -->
-									<view class="li">
-									<!-- <view class="li place"> -->
-										<view class="left">楼层</view>
-										<view class="content">{{item.other1?item.other1:'未选择'}}</view>
-									</view>
-									<view class="li" v-if="item.status == 100">
-										<view class="left">复核人</view>
-										<view class="content">{{item.confirmuserid}}</view>
-									</view>
-									<view :class="['li',item.status == 100?'place':'']" v-if="item.status == 100">
-										<view class="left">复核时间</view>
-										<view class="content">{{item.confirmdate}}</view>
-									</view>
-									<view class="li li-imgs" v-if="item.planinspectionquestionimg.length">
-										<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="index" @tap.stop="seePicture(item.planinspectionquestionimg,ind)">
-											<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
-										</view>
-									</view>
-									<view class="reply-view">
-										<view class="number">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:!item.planinspectionfeedback.length && item.status == 0?'暂未整改':''}}</view>
-										<!-- 复核 -->
-										<view class="reply-button" @click.stop="confirmQuestion(item)" v-if="item.status == 1 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
-										<!-- 整改、查看 -->
-										<view class="reply-button" v-if="item.status == 0 && (item.showFeedbackUser || item.showFeedbackDept)">整改</view>
-										<view class="reply-button" v-if="item.status == 100 || (!item.showFeedbackUser && !item.showFeedbackDept)">查看</view>
-									</view>
-									<view class="line"></view>
+					<view class="question-view">
+						<view class="feedback-tabs">
+							<view :class="['item',feedbackTabIndex == 0?'active':'']">全部</view>
+							<view :class="['item',feedbackTabIndex == 1?'active':'']">待整改</view>
+							<view :class="['item',feedbackTabIndex == 2?'active':'']">待复核</view>
+							<view :class="['item',feedbackTabIndex == 3?'active':'']">已解决</view>
+						</view>
+						<view class="question-list">
+							<view class="question-item item-none" v-for="(item,index) of infoDetail.planinspectionquestion" :key="index"
+							 @tap.stop="lookReplay(item)">
+								<view class="li li-top">
+									<!-- <view :class="['question-status',item.status == 1?'solve':'']"></view> -->
+									<view class="question-status" v-if="item.status == 0"></view>
+									<view class="sender">{{item.deptname}} - {{item.username}}</view>
+									<view class="send-timer">{{item.insertdate1}}</view>
 								</view>
+								<view class="li">
+									<view class="left">问题描述</view>
+									<view class="content"><text>{{item.question}}</text></view>
+								</view>
+								<view class="li" v-if="item.mapplaninspectiondept.length">
+									<view class="left">整改部门</view>
+									<view class="content">
+										<text>
+											<block>{{item.mapplaninspectiondept[0].deptname}}</block>
+											<block v-for="(ite,ind) of item.mapplaninspectiondept" :key="ind" v-if="ind != 0">{{'、' + ite.deptname}}</block>
+										</text>
+									</view>
+								</view>
+								<view class="li" v-if="item.mapplaninspectionuser.length">
+									<view class="left">整改人员</view>
+									<view class="content">
+										<text>
+											<block>{{item.mapplaninspectionuser[0].username}}</block>
+											<block v-for="(ite,ind) of item.mapplaninspectionuser" :key="ind" v-if="ind != 0">{{'、' + ite.username}}</block>
+										</text>
+									</view>
+								</view>
+								<view v-if="item.shopAds == !null" class="commodity_introduce">{{item.shopAds}}</view>
+								<view v-if="item.shopAds == null" class="commodity_introduce">{{item.shop_add}}</view>
+								<view class="li">
+									<view class="left">位置</view>
+									<view class="content">{{item.inspectionplace?item.inspectionplace:'未填写位置'}}</view>
+								</view>
+								<view class="li">
+									<view class="left">楼层</view>
+									<view class="content">{{item.other1?item.other1:'未选择'}}</view>
+								</view>
+								<view class="li" v-if="item.status == 100">
+									<view class="left">复核人</view>
+									<view class="content">{{item.confirmuserid}}</view>
+								</view>
+								<view :class="['li',item.status == 100?'place':'']" v-if="item.status == 100">
+									<view class="left">复核时间</view>
+									<view class="content">{{item.confirmdate}}</view>
+								</view>
+								<view class="li li-imgs" v-if="item.planinspectionquestionimg.length">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="index" @tap.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+										<image class="img" :src="itm.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
+									</view>
+								</view>
+								<view class="reply-view">
+									<view class="number">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:!item.planinspectionfeedback.length && item.status == 0?'暂未整改':''}}</view>
+									<!-- 复核 -->
+									<view class="reply-button" @click.stop="$refs['review'].open(),remark = '',focusReviewData = item" v-if="item.status == 1 && (infoDetail.usernumber == usernumber || item.showRightIs)">复核</view>
+									<!-- 整改、查看 -->
+									<view class="reply-button" v-if="item.status == 0 && (item.showFeedbackUser || item.showFeedbackDept)">整改</view>
+									<view class="reply-button" v-if="item.status == 100 || (!item.showFeedbackUser && !item.showFeedbackDept)">查看</view>
+								</view>
+								<view class="line"></view>
 							</view>
 						</view>
 					</view>
 				</view>
-				<!-- off -->
-				<!-- <view class="replay-null">
-
-            </view> -->
-				<view class="replay-null" v-if="!infoDetail.planinspectionquestion.length">
+				<view class="replay-null">
 					<view class="none">
-						<view class="txt">暂无巡检问题</view>
-						<view class="line"></view>
-					</view>
-				</view>
-				<view class="replay-null" v-if="infoDetail.planinspectionquestion.length">
-					<view class="none">
-						<view class="txt">没有更多内容</view>
+						<view class="txt">{{infoDetail.planinspectionquestion.length?'没有更多内容':'暂无巡检问题'}}</view>
 						<view class="line"></view>
 					</view>
 				</view>
@@ -210,20 +202,33 @@
 		<block v-if="!infoDetail.status">
 			<view class="replay-btn backcolor2"></view>
 		</block>
+		<uni-popup ref="review" type="bottom">
+			<view class="popup">
+				<view class="title"><text class="content">复核问题</text>
+					<view class="close" @click="$refs['review'].close()">关闭</view>
+				</view>
+				<!-- <input placeholder-style="color:#B6C6D6" cursor-spacing="20" placeholder="不通过请填写原因" class="remark" type="text" v-model="remark" /> -->
+				<view class="textarea-view">
+					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因"
+					 fixed="true" auto-height />
+					</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="item del" @click="confirmQuestion(false)">
+							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
+						<view class="item" @click="confirmQuestion(true)">
+							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
+					</view>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	let app = getApp().$vm;
-	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	let utils = require('@/util/utils.js');
 	let request = utils.request;
 	export default {
-		components: {
-			haoheaoScroll,
-			popup
-		},
 		data() {
 			return {
 				infoDetail: [],
@@ -261,44 +266,81 @@
 				postThereTrue: false,
 				// 巡检单状态
 				status: 0,
+				
+				// 复核填写原因
+				feedbackTabIndex:0,
+				remark:'',
+				focusReviewData:{}
 			}
 		},
 		methods: {
+			onPullDown(done) { // 下拉刷新
+				this.getDetail(this.detail_id, done);
+				console.log("下拉刷新")
+				// done();
+			},
+			confirmQuestion(type) {
+				let _this = this;
+				if(!type && !this.remark){
+					uni.showToast({
+						icon: "none",
+						title: '复核不通过请填写原因'
+					});
+					return
+				}
+				console.log(_this.option)
+				request.confirmPlanQuestion({
+						usernumber: uni.getStorageSync('userinfo').usernumber,
+						planquestionid: _this.focusReviewData.planquestionid,
+						confirmtype: type?1:0,
+						remark: type?'复核通过':_this.remark
+					})
+					.then(data => {
+						let [err, success] = data;
+						console.log("复核巡检返回:", success)
+						if (!err && success.data.success) {
+							_this.getDetail(_this.detail_id);
+							_this.$refs['review'].close()
+						}else{
+							uni.showToast({
+								title: err?err:success.data.errmsg,
+								icon: 'none',
+								duration:3000
+							});
+							this.reserveLoading = false
+						}
+					})
+			},
 			// 当前登录人权限判断
 			showRightIs(data, type) {
 				if (!data) return false;
 				let user = uni.getStorageSync('userinfo');
 				for (let item of data) {
 					if (type == 1) {
-						// if (item.deptid == user.deptid) {
-						// 	return true;
-						// }
-						if(user.deptlist.filter(itm=>itm.deptid == item.deptid).length) return true;
-						// return user.deptlist.filter(itm=>itm.deptid == item.deptid).length?true:false
+						// 整改部门反馈
+						if (user.deptlist.filter(itm => itm.deptid == item.deptid).length) return true;
 					} else if (type == 2) {
+						// 整改人员反馈
 						if (item.usernumber == user.usernumber) {
 							return true;
 						}
 					} else if (type == 3) {
+						// 确认核验权限
 						if (item.itemno == user.usernumber) {
 							return true;
 						}
-						// if (item.itemno == user.deptno) {
-						// 	return true;
-						// }
-						if(user.deptlist.filter(itm=>itm.deptno == item.itemno).length) return true
-						// return user.deptlist.filter(itm=>itm.deptno == item.itemno).length?true:false
+						if (user.deptlist.filter(itm => itm.deptno == item.itemno).length) return true
 					}
 				}
 			},
 			// 是否可以回复整改
-			rectifyFilter(item){
-				
+			rectifyFilter(item) {
+
 			},
 			// 是否可以复核
-			reviewFilter(item){},
+			reviewFilter(item) {},
 			// 是否可以提出巡检问题
-			setQuestionFilter(item){},
+			setQuestionFilter(item) {},
 			// 获取巡检单详细信息
 			getDetail: function(id, done) {
 				let _this = this;
@@ -320,7 +362,7 @@
 							} else {
 								this.infoDetail.notStarted = true
 							}
-							
+
 							// 部门人员过滤
 							this.infoDetail.itemdeptlist = [];
 							this.infoDetail.itempersonlist = [];
@@ -337,7 +379,7 @@
 							utils.timerDateString(this.infoDetail.planinspectionquestion, this);
 							var str = this.infoDetail.content.replace(/<.*?>/ig, "");
 							this.infoDetail.content = str;
-							
+
 							// 权限添加
 							for (let item of this.infoDetail.planinspectionquestion) {
 								// 整改部门反馈
@@ -389,75 +431,65 @@
 					}
 				}
 			},
-			onPullDown(done) { // 下拉刷新
-				this.getDetail(this.detail_id, done);
-				console.log("下拉刷新")
-				// done();
-			},
-			reply: function() {
-				console.log(this.option)
-				console.log(this.infoDetail)
+			// 提出巡检问题
+			reply() {
 				let itemIs = this.infoDetail.planinspectionitem.length ? this.infoDetail.planinspectionitem : false;
-				console.log(itemIs)
 				uni.navigateTo({
 					url: "../addQuestion/addQuestion?id=" + this.option.id + "&itemIs=" + itemIs
 				})
 			},
-			// 查看图片
-			seePicture: function(list, index) {
-				utils.seePicture(list, index);
-			},
-			confirmQuestion(item) {
-				uni.showModal({
-					title: "确认该问题已解决？",
-					success: (res) => {
-						if (res.confirm) {
-							request.confirmPlanQuestion({
-									usernumber: this.usernumber,
-									planquestionid: item.planquestionid,
-									confirmtype: 1,
-									remark: ""
-								})
-								.then(data => {
-									let [err, res] = data;
-									console.log("确认巡检返回:", err, res)
-									this.getDetail(this.detail_id);
-									if (!err == null) {
-										uni.showToast({
-											icon: "none",
-											title: err.errmsg
-										});
-										return;
-									}
-									if (res.data.success) {
-										uni.showToast({
-											icon: "none",
-											title: '问题已确认解决！'
-										});
-									} else {
-										uni.showToast({
-											icon: "none",
-											title: res.data.errmsg
-										});
-									}
-								})
-						}
-					}
-				})
-			}
+			// 复核问题
+			// confirmQuestion(item) {
+			// 	uni.showModal({
+			// 		title: "确认该问题已解决？",
+			// 		success: (res) => {
+			// 			if (res.confirm) {
+			// 				request.confirmPlanQuestion({
+			// 						usernumber: this.usernumber,
+			// 						planquestionid: item.planquestionid,
+			// 						confirmtype: 1,
+			// 						remark: ""
+			// 					})
+			// 					.then(data => {
+			// 						let [err, res] = data;
+			// 						console.log("确认巡检返回:", err, res)
+			// 						this.getDetail(this.detail_id);
+			// 						if (!err == null) {
+			// 							uni.showToast({
+			// 								icon: "none",
+			// 								title: err.errmsg
+			// 							});
+			// 							return;
+			// 						}
+			// 						if (res.data.success) {
+			// 							uni.showToast({
+			// 								icon: "none",
+			// 								title: '问题已确认解决！'
+			// 							});
+			// 						} else {
+			// 							uni.showToast({
+			// 								icon: "none",
+			// 								title: res.data.errmsg
+			// 							});
+			// 						}
+			// 					})
+			// 			}
+			// 		}
+			// 	})
+			// }
 		},
 		onLoad(option) {
 			this.option = option;
 			this.detail_id = option.id;
 		},
 		onShow: function() {
-			console.log("seeDetail onShow");
 			this.getDetail(this.detail_id);
 		}
 	}
 </script>
 
 <style scoped lang="scss">
+	@import '@/styles/popup.scss';
 	.container {
 		background: #E5EDF1;
 		min-height: 100vh;
@@ -670,14 +702,6 @@
 				}
 			}
 
-			.question-block {
-				border-bottom: 1rpx solid #EDEEEF;
-			}
-
-			.question-block:last-child {
-				border: 0;
-			}
-
 			.question-view {
 				.question-text {
 					display: flex;
@@ -698,6 +722,27 @@
 					.icon {
 						width: 24rpx;
 						height: 24rpx;
+					}
+				}
+				
+				// 问题tab切换
+				.feedback-tabs{
+					// background: #e2e2e2;
+					padding: 14rpx 20rpx;
+					display: flex;
+					align-items: center;
+					border-bottom: 1rpx dashed #EDEEEF;
+					.item{
+						border-radius: 10rpx;
+						font-size: 26rpx;
+						color: #333;
+						padding: 6rpx 20rpx;
+						margin-right: 20rpx;
+						&.active{
+							background: #f2f2f2;
+							font-weight: 800;
+							color: #27A6F4;
+						}
 					}
 				}
 
@@ -898,6 +943,115 @@
 				.content {
 					background: #f2f2f2;
 					border-radius: 10rpx;
+				}
+			}
+		}
+	}
+	.popup {
+		padding: 30rpx;
+		padding-bottom: 0;
+		.title{
+			display: flex;
+			.content{
+				flex: 2;
+			}
+			.close{
+				padding: 4rpx 15rpx;
+				border-radius: 5rpx;
+				&:active{
+					color: #1BA1F3;
+					background: #f2f2f2;
+				}
+			}
+		}
+		.remark{
+			min-height: 200rpx;
+			background: #F3F5F7;
+			border-radius: 10rpx;
+			padding: 20rpx;
+			font-size: 24rpx;
+			width: 100%;
+			box-sizing: border-box;
+		}
+		.bottom-control {
+			z-index: 999;
+			padding: 20rpx 20rpx;
+			padding-right: 0;
+			background: #fff;
+
+			.item {
+				line-height: 60rpx;
+			}
+		}
+
+		.filter {
+			display: flex;
+			align-items: center;
+			padding: 20rpx;
+			position: sticky;
+			top: 0;
+			z-index: 999;
+			background: #fff;
+			border-radius: 20rpx;
+
+			.item {
+				line-height: 40rpx;
+				padding: 8rpx 20rpx;
+				border-bottom: 5rpx solid transparent;
+
+				&.active {
+					color: #333;
+					font-weight: 800;
+					font-size: 26rpx;
+					border-bottom: 5rpx solid #ff0036;
+				}
+
+				&.date {
+					flex: 2;
+					text-align: right;
+				}
+			}
+		}
+
+		.person-txt {
+			color: #333;
+			font-size: 28rpx;
+			border-bottom: 1rpx solid #f2f2f2;
+			font-weight: 800;
+			padding: 20rpx 0;
+			margin: 0 20rpx;
+		}
+
+		.person-list {
+			margin: 20rpx;
+
+			.item {
+				display: flex;
+				align-items: center;
+				font-size: 24rpx;
+				margin-bottom: 15rpx;
+				flex-wrap: wrap;
+
+				.icon {
+					width: 34rpx;
+					height: 34rpx;
+					margin-right: 10rpx;
+				}
+
+				.userinfo {
+					color: #647484;
+				}
+
+				.date {
+					flex: 2;
+					text-align: right;
+					color: #A4B1BE;
+				}
+				.remark{
+					margin-left: 20rpx;
+					margin-top: 20rpx;
+					height: auto;
+					min-height: auto;
 				}
 			}
 		}
