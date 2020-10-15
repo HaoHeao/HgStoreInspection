@@ -25,6 +25,12 @@ const plan_getReviewFilterlist = `${api}/hgInspection/storeapi/plan/load/questio
 // 撤回整改回复
 const plan_delReplydeep = `${api}/hgInspection/storeapi/plan/reply/del`
 
+// 计划巡检获取某一条巡检记录明细
+const plan_getPlaninspectionDetail = `${api}/hgInspection/storeapi/plan/load/questionstatus`
+
+// 计划巡检巡检问题复核
+const plan_submitInspectionReview = `${api}/hgInspection/storeapi/plan/confirm`
+
 export {
 	// 待整改
 	plan_questionWait,
@@ -40,4 +46,8 @@ export {
 	plan_getReviewFilterlist,
 	// 撤回整改回复
 	plan_delReplydeep,
+	// 计划巡检获取某一条巡检记录明细
+	plan_getPlaninspectionDetail,
+	// 计划巡检巡检问题复核
+	plan_submitInspectionReview,
 }

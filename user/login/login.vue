@@ -57,18 +57,18 @@
 						})
 						return;
 					}
-					console.log(request)
 					request.getOpenId({
 							code: res.code,
 							appId: globalData.system.appId
 						})
 						.then(data => {
+							console.log(data)
 							let [err, res] = data;
-							let openId = res.data.data.openId;
-							globalData.openId = openId;
-							globalData.serverTime = res.data.data.serverTime;
 							console.log("openId解析返回信息：", err, res);
-							if (err == null && res.data.data) {
+							if (!err && res.data.data) {
+								// if (err == null && res.data.data) {
+								let openId = res.data.data.openId;
+								globalData.openId = openId;
 								request.loginOpenid({
 										openId: globalData.openId
 									})
@@ -93,6 +93,10 @@
 							} else {
 								uni.hideLoading()
 								_this.loading = true;
+								uni.showModal({
+									title: err ? err.errMsg : res,
+									showCancel:false
+								});
 							}
 						});
 				})
@@ -129,7 +133,6 @@
 								if (err == null && res.data.data) {
 									let openId = res.data.data.openId;
 									globalData.openId = openId;
-									globalData.serverTime = res.data.data.serverTime;
 									console.log("登录中...", res);
 									// 存入storage
 									globalData.userinfo = res.data.data.userinfo;
@@ -140,7 +143,7 @@
 									uni.hideLoading();
 									uni.showToast({
 										icon: "none",
-										duration: 2000,
+										duration: 3000,
 										title: "登录失败:" + err.errMsg
 									})
 								}

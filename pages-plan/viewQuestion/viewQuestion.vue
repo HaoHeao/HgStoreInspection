@@ -70,6 +70,15 @@
 						</text>
 					</view>
 				</view>
+				<!-- 复核人和时间 -->
+				<view class="info-list" v-if="option.data.status == 100">
+					<view class="left">复核人</view>
+					<view class="content">{{option.data.confirmuserid}}</view>
+				</view>
+				<view class="info-list" v-if="option.data.status == 100">
+					<view class="left">复核时间</view>
+					<view class="content">{{option.data.confirmdate}}</view>
+				</view>
 				<!-- 信息 -->
 				<view class="info-list">
 					<view class="left">位置</view>
