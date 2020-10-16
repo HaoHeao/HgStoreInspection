@@ -24,15 +24,12 @@
 				<view class="question-status">
 					<view :class="['status-round',option.data.status == 100?'solve':'']"></view>
 					<view class="status-title">{{option.data.status == 0?'待整改':option.data.status == 1?'已整改':option.data.status == 100?'问题已解决':''}}</view>
-					<block v-if="option.data.planinspectionsolveuser.length">
-						<view class="confirm-question" v-if="option.data.status == 1 && (detailInfo.usernumber == usernumber || option.data.showRightIs)"
+					<view class="confirm-question" v-if="option.data.status == 1 && (option.data.usernumber == userinfo.usernumber || detailInfo.usernumber == userinfo.usernumber || option.data.showRightIs)"
 						 @click="$refs['review'].open(),remark = ''">复核</view>
-					</block>
-					<block v-if="username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">
+					<block v-if="userinfo.username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">
 						<view class="del" @click="delPlanQuestion()">撤回</view>
 					</block>
 				</view>
-				<view class="item-title" v-if="detailInfo.planinspectionitem.length">1.巡检项目</view>
 				<view class="question-info">
 					<view class="user">{{option.data.deptname?option.data.deptname:''}} -
 						{{option.data.username?option.data.username:''}}</view>
@@ -62,7 +59,7 @@
 				</view>
 				<!-- 确认部门或人员 -->
 				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
-					<view class="left">复核人员或部门</view>
+					<view class="left"><!-- 复核人员或部门 -->复核部门</view>
 					<view class="content">
 						<text>
 							<block>{{option.data.planinspectionsolveuser[0].itemname}}</block>
@@ -92,7 +89,7 @@
 				</view>
 			</view>
 			<view class="question-discuss-title" v-if="option.data.planinspectionfeedback.length">
-				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改回复</view>
+				<view class="item center" v-if="option.data.planinspectionfeedback.length">整改记录</view>
 			</view>
 			<view class="discuss-list" v-if="option.data.planinspectionfeedback.length">
 				<view class="discuss-item" v-for="(item,index) of option.data.planinspectionfeedback" :key="index">
@@ -162,7 +159,7 @@
 					</view>
 					<view class="control">
 						<view class="select-img" @click="addImg()">
-							<image class="img" src="../../static/select-img.png" mode="widthFix"></image>
+							<image class="img" src="@/static/icon/add_img.svg" mode="widthFix"></image>
 						</view>
 						<view class="btn reply-close" @click="thatReplyClose()">取消</view>
 						<view class="btn reply-btn" @click="addReply()">提交</view>
@@ -219,7 +216,7 @@
 			}
 		},
 		computed:{
-			userinfo:function(){
+			userinfo(){
 				return this.utils.getUserInfo(uni)
 			}
 		},
@@ -303,28 +300,18 @@
 			},
 			// 当前登录人权限判断
 			showRightIs(data, type) {
-				if (!data) return false;
-				let user = uni.getStorageSync('userinfo');
 				for (let item of data) {
 					if (type == 1) {
-						// if (item.deptid == user.deptid) {
-						// 	return true;
-						// }
-						if(user.deptlist.filter(itm=>itm.deptid == item.deptid).length) return true;
-						// return user.deptlist.filter(itm=>itm.deptid == item.deptid).length?true:false
+						// 整改部门反馈
+						if (this.userinfo.deptlist.filter(itm => itm.deptid == item.deptid).length) return true;
 					} else if (type == 2) {
-						if (item.usernumber == user.usernumber) {
-							return true;
-						}
+						// 整改人员反馈
+						if (item.usernumber == this.userinfo.usernumber) return true;
 					} else if (type == 3) {
-						if (item.itemno == user.usernumber) {
-							return true;
-						}
-						// if (item.itemno == user.deptno) {
-						// 	return true;
-						// }
-						if(user.deptlist.filter(itm=>itm.deptno == item.itemno).length) return true
-						// return user.deptlist.filter(itm=>itm.deptno == item.itemno).length?true:false
+						// 确认核验权限
+						if (this.inspectionDetail && this.inspectionDetail.usernumber == this.userinfo.usernumber) return true;
+						if (item.itemno == this.userinfo.usernumber) return true;
+						if (this.userinfo.deptlist.filter(itm => itm.deptno == item.itemno).length) return true
 					}
 				}
 			},
@@ -647,7 +634,8 @@
 				margin-bottom:5rpx;
 				
 				.left{
-					width:105rpx;
+					min-width:4em;
+					text-align-last: justify;
 					padding-right:10rpx;
 					margin-right:10rpx;
 				}

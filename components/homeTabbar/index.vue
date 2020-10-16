@@ -42,7 +42,6 @@
 </template>
 
 <script>
-	let utils = require('@/util/utils.js');
 	export default {
 		props: ['index'],
 		data() {
@@ -75,7 +74,7 @@
 					});
 				} else if (index == 1) {
 					// 加载查看权限
-					utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
+					this.utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 					this.work_view = !this.work_view;
 					return;
 				} else if (index == 2) {
@@ -86,20 +85,21 @@
 				}
 				this.$store.commit("changeHomeTabbar", index);
 			},
-			work_show: function() {
+			work_show() {
 				this.work_view = false;
 			},
-			work_go: function(type) {
+			async work_go(type) {
 				if (type == 'store') {
-					utils.getMarketDeptList(this);
-					utils.getMarketUserList(this);
+					this.utils.getMarketDeptList(this);
+					this.utils.getMarketUserList(this);
 					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({
 						url: '/pages/index/index'
 					})
 				} else if (type == 'plan') {
-					utils.getMarketDeptList(this);
-					utils.getMarketUserList(this);
+					this.request.getPlanFloorList()
+					this.utils.getMarketDeptList(this);
+					this.utils.getMarketUserList(this);
 					uni.reLaunch({
 						url: '/pages-plan/index/index'
 					})
@@ -121,8 +121,8 @@
 					})
 				}
 			},
-			refreshModel: function() {
-				utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
+			refreshModel() {
+				this.utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 			}
 		}
 	}

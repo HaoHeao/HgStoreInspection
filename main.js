@@ -44,7 +44,7 @@ import Vue from 'vue'
 import App from './App'
 
 // Vuex
-import store from './store'
+import store from '@/store'
 Vue.prototype.$store = store;
 
 import installComponent from '@/components/index.js';
@@ -53,11 +53,14 @@ Vue.use(installComponent);
 const moment = require('@/util/moment.js');
 Vue.prototype.moment = moment;
 
-const api = require('@/api/index.js')
-Vue.prototype.api = api.default;
+const api = require('@/api/index.js').default;
+Vue.prototype.api = api;
 
 const utils = require('@/util/utils.js')
 Vue.prototype.utils = utils;
+
+const request = require('@/util/request.js')
+Vue.prototype.request = request;
 
 // 同步延迟
 Vue.prototype.delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));

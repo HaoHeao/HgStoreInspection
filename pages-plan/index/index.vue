@@ -3,16 +3,13 @@
 		<view class="main">
 			<home class="fadeIn"></home>
 		</view>
-		<!-- <tabbar></tabbar> -->
 	</view>
 </template>
 
 <script>
-	import tabbar from '../components/tabbar'
 	import home from '../home'
 	export default {
 		components: {
-			tabbar,
 			home,
 		},
 		data() {

@@ -53,7 +53,7 @@
 					</view>
 					<view class="detail-item">
 						<view class="item">巡查日期</view>
-						<view class="content">{{moment(inspectionDetail.sdate.replace('-','/')).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace('-','/')).format('YYYY.MM.DD')}}</view>
+						<view class="content">{{moment(inspectionDetail.sdate.replace(/-/g, "/")).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace(/-/g, "/")).format('YYYY.MM.DD')}}</view>
 					</view>
 					<view class="detail-item">
 						<view class="item">参与部门</view>
@@ -82,7 +82,7 @@
 						<rich-text :nodes="inspectionDetail.content?inspectionDetail.content:'无描述'" class="content"></rich-text>
 					</view>
 				</view>
-				<view class="module reply" v-if="inspectionDetail.planinspectionquestion.length">
+				<view class="module reply">
 					<view class="head">
 						<view class="title">巡检问题</view>
 						<view class="number">共{{inspectionDetail.planinspectionquestion.length}}条</view>
@@ -102,13 +102,13 @@
 								<view class="btn">已解决</view>
 							</view>
 						</view>
-						<view class="question-list">
+						<view class="question-list" v-if="inspectionDetail.planinspectionquestion.length">
 							<view class="question-item item-none" v-for="(item,index) of inspectionDetail.planinspectionquestion" :key="index"
 							 @tap.stop="lookReplay(item)">
 								<view class="li li-top">
 									<view class="question-status" v-if="item.status == 0"></view>
 									<view class="sender">{{item.deptname + ' - ' + item.username}}</view>
-									<view class="send-timer">{{moment(item.insertdate).format("MM-DD hh:mm:ss")}}</view>
+									<view class="send-timer">{{moment(item.insertdate.replace(/-/g, "/")).format("MM-DD hh:mm:ss")}}</view>
 								</view>
 								<view class="li">
 									<view class="left">问题描述</view>
@@ -150,10 +150,10 @@
 								<view class="reply-view">
 									<view class="number">{{item.status == 0?'暂未整改':`${item.planinspectionfeedback.length}条`}}</view>
 									<!-- 复核 -->
-									<view class="reply-button" @tap.stop="review(item)" v-if="item.status == 1 && item.showRightIs">复核</view>
+									<view class="reply-button" @tap.stop="review(item)" v-if="item.status == 1 && (item.showRightIs || item.usernumber == userinfo.usernumber)">复核</view>
 									<!-- 整改、查看 -->
 									<view class="reply-button" v-if="item.status == 0 && (item.showFeedbackUser || item.showFeedbackDept)">整改</view>
-									<view class="reply-button" v-if="item.status == 100 || (!item.showFeedbackUser && !item.showFeedbackDept)">查看</view>
+									<view class="reply-button" v-if="(item.status == 0 && !item.showFeedbackUser && !item.showFeedbackDept) || (item.status == 1 && !item.showRightIs && item.usernumber != userinfo.usernumber) || item.status == 100">查看</view>
 								</view>
 								<view class="line"></view>
 							</view>
@@ -309,7 +309,7 @@
 					})
 					uni.hideLoading();
 					let [err, success] = data
-					console.log('获取某一条巡检复核状态的问题列表--->>>',err, success)
+					console.log('计划巡检获取某一条巡检记录明细--->>>',err, success)
 					if (!err && success.data.success) {
 						// 计划巡检判断 0:未开始 1:执行中 2:已结束 3:已删除
 						let dateStatus = new Date(success.data.data.planinspectionset.sdate.replace(/-/g, "/")).getTime() > new Date().getTime()
@@ -336,6 +336,7 @@
 						}
 						this.questionStatusList = success.data.data.planinspectionset.planinspectionquestion
 						this.inspectionDetail = success.data.data.planinspectionset
+						this.$forceUpdate()
 					}else{
 						uni.showToast({
 							title: err?err:success.data.errmsg,
@@ -354,22 +355,13 @@
 				if (item.status == 0) {
 					// 进入并回复
 					uni.navigateTo({
-						url: '../viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid 
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid 
 					})
 				} else if (item.status == 1 || item.status == 100) {
-					if (item.planinspectionfeedback.length) {
-						// 进入查看不能回复
-						uni.navigateTo({
-							url: '../viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid
-						})
-					} else {
-						uni.showToast({
-							icon: "none",
-							title: "此问题已解决,无反馈信息",
-							duration: 2000
-						})
-						return;
-					}
+					// 进入查看不能回复
+					uni.navigateTo({
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid
+					})
 				}
 			},
 			// 提出巡检问题
@@ -390,6 +382,9 @@
 
 <style scoped lang="scss">
 	@import '@/styles/popup.scss';
+	page{
+		background: #E5EDF1;
+	}
 	.container {
 		background: #E5EDF1;
 		min-height: 100vh;
@@ -412,7 +407,7 @@
 
 		// 信息
 		.module.info {
-			padding-top: 30rpx;
+			padding-top: 20rpx;
 			margin-top: 20rpx;
 			padding-bottom: 20rpx;
 
@@ -460,8 +455,8 @@
 				height: 1rpx;
 				background: #EDEEEF;
 				width: 100%;
-				margin: 30rpx 0rpx;
-				margin-bottom: 20rpx;
+				margin: 20rpx 0rpx;
+				margin-bottom: 10rpx;
 			}
 
 			.detail-item {
@@ -469,6 +464,7 @@
 				padding: 10rpx 0rpx;
 				display: flex;
 				font-size: 26rpx;
+				padding-bottom: 0;
 
 				.item {
 					color: #C2C4C6;
@@ -507,7 +503,7 @@
 			margin-bottom: 50rpx;
 			border-radius: 10rpx;
 			padding: 0rpx 0rpx;
-			padding-bottom: 20rpx;
+			// padding-bottom: 20rpx;
 
 			.head {
 				display: flex;
@@ -632,7 +628,7 @@
 							border-radius: 10rpx;
 							font-size: 26rpx;
 							color: #333;
-							padding: 6rpx 20rpx;
+							padding: 15rpx 30rpx;
 						}
 						&.active{
 							.btn{
@@ -650,7 +646,6 @@
 						padding: 0rpx 40rpx;
 						padding-top: 20rpx;
 						font-size: 26rpx;
-
 
 						.li {
 							display: flex;
@@ -671,7 +666,9 @@
 
 							.left {
 								color: #A4B1BE;
-								min-width: 125rpx;
+								min-width: 4em;
+								margin-right: 20rpx;
+								text-align-last: justify;
 							}
 
 							.content {
@@ -833,6 +830,12 @@
 					}
 				}
 			}
+			// &.no-data{
+			// 	padding-bottom: 0;
+			// 	.feedback-tabs{
+			// 		border: 0;
+			// 	}
+			// }
 		}
 
 

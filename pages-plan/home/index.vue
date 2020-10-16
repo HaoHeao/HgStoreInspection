@@ -15,8 +15,7 @@
 </template>
 
 <script>
-	let utils = require('@/util/utils.js');
-	let request = utils.request;
+	let request = require('@/util/utils.js').request;
 	import screen from '@/components/planScreen/planScreen';
 	import dataListItem from "@/components/planPageDataList";
 	export default {

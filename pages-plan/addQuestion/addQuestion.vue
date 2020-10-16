@@ -3,9 +3,9 @@
 		<view class="main">
 			<view class="item-title">问题描述</view>
 			<view class="item-view label-info">
-				<textarea v-model="question" class="inp area-inp" fixed auto-height placeholder="在此填写问题描述" />
+				<textarea v-model="question" class="inp area-inp" auto-height placeholder="在此填写问题描述" />
 				</view>
-			<block v-if="floorlist.length" class="fadeIn">
+			<block v-if="floorlist.length">
 				<view class="item-title">楼层</view>
 				<view class="item-view label-add floor">
 					<view :class="['item-true fadeIn',item.floorvalue == floor?'active':'']" v-for="(item,index) of floorlist" :key="index" @click="selectFloor(item.floorvalue)">{{item.floorname}}</view>
@@ -47,10 +47,14 @@
 				</block>
                 <view class="item-true item-true-btn" @click="openSelect(3)">+</view>
             </view>
+			<view class="item-title review-no-tip">
+				<image src="@/static/icon/tip.svg" mode="widthFix" class="icon"></image>
+				如未指定复核部门或人员,默认复核人员为提交人
+			</view>
         </view>
         <view class="confirm-btn" @click="sendQuestion()">提交</view>
         
-        <popup ref="popup" type="center" @change="popupChange">
+        <uni-popup ref="popup" type="center" @change="popupChange" :maskClick="false">
 			<view v-if="selectForm == 1" class="popup-from">
 				<view scroll-y="true" class="popup depart">
 					<!-- cover-view -->
@@ -147,19 +151,13 @@
 				</view>
 				<view class="close-btn" @click="openSelect(0)">×</view>
 			</view>
-        </popup>
+        </uni-popup>
     </view>
 </template>
 
 <script>
-    import popup from '@/components/uni-popup/uni-popup.vue'
-	let utils = require('@/util/utils.js');
-	let request = utils.request;
-	let moment = utils.moment;
+	let request = require('@/util/utils.js').request;
     export default {
-        components: {
-            popup
-        },
         data() {
             return {
                 popup: false,
@@ -176,12 +174,15 @@
 				userList:this.$store.state.plan.questionSend.userlist,
 				deptListConfirm:uni.getStorageSync('planQuestionDeptSendConfirm'),
 				userListConfirm:uni.getStorageSync('setQuestionUserSendConfirm'),
-				floorlist:[],
+				// floorlist:[],
 				floor:''
 				// userListOnceConfirm:this.userListOnceConfirm1(this.userListConfirm)
             }
         },
         computed: {
+			floorlist(){
+				return this.$store.state.plan.planAddQuestionFloorList
+			},
             userListOnce(){
                 let person = this.$store.state.plan.questionSend.userlist;
                 let leaderlist = person.leaderlist,
@@ -228,22 +229,6 @@
 							duration: 3000
 						});
 					}
-				} catch (e) {
-					console.log(e)
-				}
-			},
-			// 获取楼层列表
-			async getFloorList(){
-				try {
-					let data = await uni.request({
-						method: 'GET',
-						url: this.api.getFloorlist
-					})
-					let [err, success] = data
-					console.log('楼层请求成功------>>>', success)
-					if (success.data.success) {
-						this.floorlist = success.data.data.floor
-					} 
 				} catch (e) {
 					console.log(e)
 				}
@@ -399,7 +384,7 @@
 					});
 					return;
 				}
-				let insertdate = moment().format('yyyy-MM-dd hh:mm:ss');
+				let insertdate = this.moment().format('yyyy-MM-dd hh:mm:ss');
 				// 条件
 				let option = {
 					planinspectionquestion:{
@@ -520,15 +505,15 @@
 					return;
 				}
 				// 复核人或部门选择判断
-				if(!this.deptListConfirm.filter(item=> item.select).length && 
-					!this.userListConfirm.leaderlist.filter(item=> item.select).length && 
-					!this.userListConfirm.deptuserlist.filter(item=>{if(item.userlist.filter(itm=> itm.select).length) return true}).length){
-					uni.showToast({
-						icon:"none",
-						title:"请选择复核部门或复核人员!"
-					});
-					return;
-				}
+				// if(!this.deptListConfirm.filter(item=> item.select).length && 
+				// 	!this.userListConfirm.leaderlist.filter(item=> item.select).length && 
+				// 	!this.userListConfirm.deptuserlist.filter(item=>{if(item.userlist.filter(itm=> itm.select).length) return true}).length){
+				// 	uni.showToast({
+				// 		icon:"none",
+				// 		title:"请选择复核部门或复核人员!"
+				// 	});
+				// 	return;
+				// }
 				// 复核部门和人员写入
 				for(let item of this.deptListConfirm){
 					if(item.select == true){
@@ -614,10 +599,10 @@
 				})
 			},
 			addImg:function(){
-				utils.addImg(this);
+				this.utils.addImg(this);
 			},
 			delImg:function(index){
-				utils.delImg(index,this);
+				this.utils.delImg(index,this);
 			},
 			resetFromConfirm:function(){
 				this.deptListConfirm = uni.getStorageSync('planQuestionDeptSendConfirm');
@@ -699,8 +684,9 @@
 			this.option = option
 		},
 		onShow:function(){
-			this.getFloorList()
-			console.log(this.userListConfirm)
+			if(!this.$store.state.plan.planAddQuestionFloorList.length) this.request.getPlanFloorList()
+			// this.getFloorList()
+			// console.log(this.userListConfirm)
 		},
 		onUnload:function(){
 			this.resetOption();
@@ -751,6 +737,19 @@
                 color:#647484;
                 padding:30rpx 20rpx;
                 padding-bottom:15rpx;
+				&.review-no-tip{
+					display: flex;
+					align-items: center;
+					padding-top: 0;
+					padding-bottom: 0;
+					color: #999;
+					font-weight: 500;
+					.icon{
+						width: 40rpx;
+						height: 40rpx;
+						margin-right: 10rpx;
+					}
+				}
             }
             .item-view{
                 color:#647685;

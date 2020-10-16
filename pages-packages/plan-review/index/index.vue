@@ -124,17 +124,12 @@
 				if (item.status == 0) {
 					// 进入并回复
 					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + encodeURIComponent(JSON.stringify(item)) + '&id=' + item.planid +
-							'&reply_id=' + item.planquestionid +
-							'&postThereTrue=false&previs=false' + '&replyIs=true'
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid 
 					})
 				} else if (item.status == 1 || item.status == 100) {
 					// 进入查看不能回复
 					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + encodeURIComponent(JSON.stringify(item)) + '&id=' + item.planid +
-							'&reply_id=' + item
-							.planquestionid +
-							'&postThereTrue=false&previs=false' + '&replyIs=false'
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid
 					})
 				}
 			},
@@ -451,6 +446,7 @@
 							width: 4em;
 							margin-right: 20rpx;
 							white-space: nowrap;
+							text-align-last: justify;
 						}
 
 						.content {

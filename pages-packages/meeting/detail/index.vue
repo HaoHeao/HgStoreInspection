@@ -699,6 +699,7 @@
 			padding: 0;
 
 			.item {
+				margin-bottom: 0;
 				.replacement {
 					color: #fff;
 					background: #D56C68;

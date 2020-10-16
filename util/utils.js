@@ -1,6 +1,6 @@
 const moment = require('./moment');
 const api = require('./api');
-const request = require('./request');
+const request = require('./request/index');
 
 // 卖场巡检系统请求部门列表
 let getMarketDeptList = (that) => {
