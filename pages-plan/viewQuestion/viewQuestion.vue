@@ -901,6 +901,7 @@
 						// padding: 3rpx;
 						// border-radius: 5rpx;
 						padding: 5rpx 0;
+						padding-top: 0;
 					}
 				}
 			}
