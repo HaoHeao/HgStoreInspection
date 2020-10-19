@@ -1,10 +1,10 @@
 // 汉光测试
-const root = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/'
-const api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/'
+// const root = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/'
+// const api = 'https://vipapi-cs.hanguangbaihuo.com/hgInspection/storeapi/'
 
 // 汉光正式
-// const root = 'https://vipapi.hanguangbaihuo.com/hgInspection/'
-// const api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/'
+const root = 'https://vipapi.hanguangbaihuo.com/hgInspection/'
+const api = 'https://vipapi.hanguangbaihuo.com/hgInspection/storeapi/'
 
 // 本地
 // const root = 'http://192.168.128.66:8080/hgInspection/'

@@ -18,7 +18,7 @@
 		</view>
 		<view class="main">
 			<swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
-				<swiper-item class="swiper-item wait">
+				<swiper-item class="swiper-item">
 					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 						<block v-if="waitData.length">
 							<view class="length">共 {{waitDataInfo}} 条</view>
@@ -208,12 +208,7 @@
 </template>
 
 <script>
-	let utils = require('@/util/utils.js');
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				pagesize: 20,
@@ -258,12 +253,14 @@
 				if (item.status == 0) {
 					// 进入并回复
 					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid 
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' +
+							item.planquestionid
 					})
 				} else if (item.status == 1 || item.status == 100) {
 					// 进入查看不能回复
 					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' + item.planquestionid
+						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' +
+							item.planquestionid
 					})
 				}
 			},
@@ -364,7 +361,7 @@
 					this.waitLoading = false
 					let [err, success] = data
 					console.log('待整改请求成功------>>>', success)
-					if (success.data.success) {
+					if (!err && success.data.success) {
 						this.waitData = this.waitData.concat(success.data.data.question)
 						this.waitDataInfo = success.data.pagecount
 						this.waitPageNum ? '' : this.waitPageNum = success.data.pagenum
@@ -407,7 +404,7 @@
 					this.computedLoading = false
 					let [err, success] = data
 					console.log('已整改请求成功------>>>', success)
-					if (success.data.success) {
+					if (!err && success.data.success) {
 						this.completedData = this.completedData.concat(success.data.data.question)
 						this.completedDataInfo = success.data.pagecount
 						this.completedNum ? '' : this.completedNum = success.data.pagenum
@@ -450,7 +447,7 @@
 					this.finishLoading = false
 					let [err, success] = data
 					console.log('已完成请求成功------>>>', success)
-					if (success.data.success) {
+					if (!err && success.data.success) {
 						this.finishData = this.finishData.concat(success.data.data.question)
 						this.finishDataInfo = success.data.pagecount
 						this.finishNum ? '' : this.finishNum = success.data.pagenum
@@ -490,7 +487,7 @@
 					uni.hideNavigationBarLoading()
 					let [err, success] = data
 					console.log('筛选条件请求成功------>>>', success)
-					if (success.data.success) {
+					if (!err && success.data.success) {
 						this.floorList = success.data.data.floor
 						this.titleList = success.data.data.planinspectionset
 					} else {
@@ -506,11 +503,11 @@
 				}
 			}
 		},
-		onLoad: function() {
-			this.tabbarBind()
-		},
+		// onLoad: function() {
+		// 	this.tabbarBind()
+		// },
 		onShow: function() {
-			// this.tabbarBind()
+			this.tabbarBind()
 		}
 	}
 </script>
@@ -765,14 +762,6 @@
 							}
 						}
 					}
-
-					// &.wait {
-					// 	.haoheao-scroll {
-					// 		.item {
-					// 			padding-bottom: 20rpx;
-					// 		}
-					// 	}
-					// }
 				}
 			}
 		}
@@ -891,7 +880,7 @@
 				.btn {
 					flex: 2;
 					text-align: center;
-					line-height: 80rpx;
+					line-height: 100rpx;
 					background: #F6F7F9;
 
 					&:active {

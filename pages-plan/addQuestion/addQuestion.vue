@@ -49,7 +49,7 @@
             </view>
 			<view class="item-title review-no-tip">
 				<image src="@/static/icon/tip.svg" mode="widthFix" class="icon"></image>
-				如未指定复核部门或人员,默认复核人员为提交人
+				如未指定则复核人员为提交人
 			</view>
         </view>
         <view class="confirm-btn" @click="sendQuestion()">提交</view>
@@ -732,7 +732,7 @@
 			padding-bottom:40rpx;
             
             .item-title{
-                font-size:28rpx;
+                font-size:24rpx;
                 font-weight:700;
                 color:#647484;
                 padding:30rpx 20rpx;
@@ -745,8 +745,8 @@
 					color: #999;
 					font-weight: 500;
 					.icon{
-						width: 40rpx;
-						height: 40rpx;
+						width: 30rpx;
+						height: 30rpx;
 						margin-right: 10rpx;
 					}
 				}

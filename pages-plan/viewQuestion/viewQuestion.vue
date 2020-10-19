@@ -130,6 +130,7 @@
 					<view class="review-result" v-if="item.confirmresult">
 						<view :class="['title',item.confirmresult == '通过'?'':'not']">复核结果：<span>{{item.confirmresult}}</span></view>
 						<view class="date">{{item.confirmuserid}}</view>
+						<view class="title by" v-if="item.confirmdate">复核时间：{{item.confirmdate}}</span></view>
 						<view class="remark" v-if="item.confirmresult == '不通过'">原因：{{item.confirmremark}}</view>
 					</view>
 				</view>
@@ -171,7 +172,7 @@
 			<view class="popup">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
 				<view class="textarea-view">
-					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" fixed="true" auto-height />
+					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" fixed auto-height />
 				</view>
 				<view class="bottom-control">
 					<view class="content">
@@ -874,6 +875,10 @@
 								color: #ff0036;
 							}
 						}
+						&.by{
+							width: 100%;
+							flex: auto;
+						}
 					}
 					
 					.userinfo{
@@ -1028,8 +1033,8 @@
 		background:#fff;
 		width:100%;
 		box-sizing:border-box;
-		border-bottom-left-radius:10rpx;
-		border-bottom-right-radius:10rpx;
+		border-top-left-radius:10rpx;
+		border-top-right-radius:10rpx;
 		padding-top:30rpx;
 		
 		.textarea-view{
@@ -1154,7 +1159,7 @@
 			background: #F3F5F7;
 			border-radius: 10rpx;
 			padding: 20rpx;
-			font-size: 24rpx;
+			font-size: 26rpx;
 			width: 100%;
 			box-sizing: border-box;
 		}
@@ -1166,78 +1171,6 @@
 
 			.item {
 				line-height: 60rpx;
-			}
-		}
-
-		.filter {
-			display: flex;
-			align-items: center;
-			padding: 20rpx;
-			position: sticky;
-			top: 0;
-			z-index: 999;
-			background: #fff;
-			border-radius: 20rpx;
-
-			.item {
-				line-height: 40rpx;
-				padding: 8rpx 20rpx;
-				border-bottom: 5rpx solid transparent;
-
-				&.active {
-					color: #333;
-					font-weight: 800;
-					font-size: 26rpx;
-					border-bottom: 5rpx solid #ff0036;
-				}
-
-				&.date {
-					flex: 2;
-					text-align: right;
-				}
-			}
-		}
-
-		.person-txt {
-			color: #333;
-			font-size: 28rpx;
-			border-bottom: 1rpx solid #f2f2f2;
-			font-weight: 800;
-			padding: 20rpx 0;
-			margin: 0 20rpx;
-		}
-
-		.person-list {
-			margin: 20rpx;
-
-			.item {
-				display: flex;
-				align-items: center;
-				font-size: 24rpx;
-				margin-bottom: 15rpx;
-				flex-wrap: wrap;
-
-				.icon {
-					width: 34rpx;
-					height: 34rpx;
-					margin-right: 10rpx;
-				}
-
-				.userinfo {
-					color: #647484;
-				}
-
-				.date {
-					flex: 2;
-					text-align: right;
-					color: #A4B1BE;
-				}
-				.remark{
-					margin-left: 20rpx;
-					margin-top: 20rpx;
-					height: auto;
-					min-height: auto;
-				}
 			}
 		}
 	}
