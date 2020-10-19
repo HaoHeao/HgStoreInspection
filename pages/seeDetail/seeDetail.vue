@@ -130,7 +130,7 @@
 		</haoheao-scroll>
 		<view v-show="infoDetail.status == 0 && postThereTrue" class="replay-btn" @click="thatReply()">回复</view>
 
-		<popup ref="popup" type="top" :maskClick="false">
+		<uni-popup ref="popup" type="top" :maskClick="false">
 			<!-- <view :class="['popup-reply', up?'top':'']"> -->
 			<view class="popup-reply">
 				<view class="title">说明</view>
@@ -158,8 +158,8 @@
 					</view>
 				</view>
 			</view>
-		</popup>
-		<popup ref="status" type="top" :maskClick="false">
+		</uni-popup>
+		<uni-popup ref="status" type="top" :maskClick="false">
 			<view class="status-select popup-reply">
 				<view class="select-view">
 					<view class="title">具体位置</view>
@@ -184,8 +184,8 @@
 					</view>
 				</view>
 			</view>
-		</popup>
-		<popup ref="showMore" type="center">
+		</uni-popup>
+		<uni-popup ref="showMore" type="center">
 			<view class="more-list" v-if="showMoreType == 1">
 				<view class="item" @click="moreChoice(1)">撤回此巡检记录</view>
 			</view>
@@ -200,21 +200,15 @@
 					<view class="btn confirm" @click="drawInfo()">确认撤回</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
 	let app = getApp().$vm;
-	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
-	import popup from '@/components/uni-popup/uni-popup.vue'
     let utils = require('@/util/utils.js');
     let request = utils.request;
 	export default {
-		components: {
-			haoheaoScroll,
-			popup
-		},
 		data() {
 			return {
 				infoDetail: [],

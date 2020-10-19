@@ -57,7 +57,7 @@
 				<image src="@/static/icon/add-white.svg" mode="widthFix" class="icon"></image>抽盘
 			</navigator>
 		</view>
-		<popup ref="screen" type="top" :maskClick="false" @change="screenChange">
+		<uni-popup ref="screen" type="top" :maskClick="false" @change="screenChange">
 			<view class="popup screen">
 				<view class="item-list">
 					<view class="item">
@@ -89,8 +89,8 @@
 					<view class="btn success" @click="pageindex=1,tabelData=[],search(1),$refs['screen'].close()">完成</view>
 				</view>
 			</view>
-		</popup>
-		<popup ref="detail" type="bottom">
+		</uni-popup>
+		<uni-popup ref="detail" type="bottom">
 			<view class="popup detail">
 				<view class="title">
 					<view class="round" v-if="item.difqty != 0"></view>{{detail.prodname}}
@@ -138,16 +138,12 @@
 					</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				uni,

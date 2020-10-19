@@ -78,11 +78,7 @@
 </template>
 
 <script>
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				// 专柜号

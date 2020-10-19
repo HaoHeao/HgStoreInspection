@@ -14,7 +14,7 @@
             </view>
         </view>
 
-        <popup ref="popup" type="center" @change="popupChange">
+        <uni-popup ref="popup" type="center" @change="popupChange">
             <view class="screen">
                 <view class="top"></view>
                 <view class="title">设置日期段:</view>
@@ -44,18 +44,14 @@
                     <view class="btn define" @click="showPopup()">完成</view>
                 </view>
             </view>
-        </popup>
+        </uni-popup>
     </view>
 </template>
 
 <script>
-    import popup from '@/components/uni-popup/uni-popup.vue'
     let app = getApp();
     const moment = require('@/util/moment.js');
     export default {
-        components: {
-            popup
-        },
         props: ['current', 'isScreen', 'index'],
         data() {
             const currentDate = this.getDate({

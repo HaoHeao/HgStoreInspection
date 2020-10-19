@@ -101,15 +101,9 @@
 </template>
 
 <script>
-	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
-	import uniPopup from '@/components/uni-popup/uni-popup.vue'
     let utils = require('@/util/utils.js');
     let request = utils.request;
 	export default {
-		components: {
-			haoheaoScroll,
-			uniPopup
-		},
 		data() {
 			return {
 				option: {},

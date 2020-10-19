@@ -73,7 +73,7 @@
 				</view>
 			</view>
 		</haoheao-scroll>
-		<popup ref="loading_time" type="bottom">
+		<uni-popup ref="loading_time" type="bottom">
 			<view class="popup">
 				<view class="item-view select">
 					<image src="@/static/images/date.svg" class="icon" mode="widthFix"></image>
@@ -92,8 +92,8 @@
 					</view>
 				</view>
 			</view>
-		</popup>
-		<popup ref="replacement" type="bottom">
+		</uni-popup>
+		<uni-popup ref="replacement" type="bottom">
 			<view class="popup" v-if="!replacementList.length">
 				<view class="title">请选择要置换的会议室</view>
 				<view class="item-view select">
@@ -148,16 +148,12 @@
 					</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 	</view>
 </template>
 
 <script>
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				iconurl: "https://hg-kaifa-test.oss-cn-beijing.aliyuncs.com/meetingroom/",

@@ -97,7 +97,7 @@
 			<view class="title">饮用水、纸巾、会议花等用品请自行准备。</view>
 			<view class="title">笔记本电脑等技术支持，请自行联系信息开发-IT运维。</view>
 		</view>
-		<popup ref="mobile_popup" type="bottom" :maskClick="false">
+		<uni-popup ref="mobile_popup" type="bottom" :maskClick="false">
 			<view class="popup mobile-equipment">
 				<view class="title">软件设备</view>
 				<view class="item-view-list">
@@ -122,17 +122,13 @@
 					</view>
 				</view>
 			</view>
-		</popup>
+		</uni-popup>
 		<view class="mh-btn" @click="reserveLoading?false:reserva()">预约</view>
 	</view>
 </template>
 
 <script>
-	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
-		components: {
-			popup
-		},
 		data() {
 			return {
 				iconurl: "https://hg-kaifa-test.oss-cn-beijing.aliyuncs.com/meetingroom/",
