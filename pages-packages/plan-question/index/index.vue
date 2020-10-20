@@ -4,13 +4,13 @@
 			<view class="left"></view>
 			<view class="center">
 				<view class="btn-list">
-					<view :class="['item', current == 0?'active':'']" @click="!filterLoading?current = 0:''">待整改</view>
-					<view :class="['item', current == 1?'active':'']" @click="!filterLoading?current = 1:''">已整改</view>
-					<view :class="['item', current == 2?'active':'']" @click="!filterLoading?current = 2:''">已完成</view>
+					<view :class="['item', current == 0?'active':'']" @click="current = 0">待整改</view>
+					<view :class="['item', current == 1?'active':'']" @click="current = 1">已整改</view>
+					<view :class="['item', current == 2?'active':'']" @click="current = 2">已完成</view>
 				</view>
 			</view>
 			<view class="right">
-				<view class="filter" @click="filterLoading?($refs['popup'].close(),filterLoading = false):($refs['popup'].open(),filterLoading = true)">
+				<view class="filter" @click="$refs['popup'].open()">
 					<image src="@/static/icon/screen.svg" mode="widthFix" class="icon"></image>
 					筛选
 				</view>
@@ -19,7 +19,7 @@
 		<view class="main">
 			<swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
-					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
+					<scroll-view class="haoheao-scroll" scroll-y refresher-enabled>
 						<block v-if="waitData.length">
 							<view class="length">共 {{waitDataInfo}} 条</view>
 							<view class="item" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
@@ -62,6 +62,8 @@
 								<view class="tip">暂无待整改记录</view>
 							</view>
 						</view>
+					</scroll-view>
+					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
 					</haoheao-scroll>
 				</swiper-item>
 				<swiper-item class="swiper-item">
@@ -175,8 +177,8 @@
 				</swiper-item>
 			</swiper>
 		</view>
-		<uni-popup ref="popup" type="center">
-			<view class="popup">
+		<uni-popup ref="popup" type="top">
+			<scroll-view scroll-y class="popup">
 				<view class="content">
 					<view class="title">日期段</view>
 					<view class="item date">
@@ -202,7 +204,7 @@
 					<view class="btn reset" @click="popupReset()">重置</view>
 					<view class="btn search" @click="getQuestionReset(),getQuestion()">查询</view>
 				</view>
-			</view>
+			</scroll-view>
 		</uni-popup>
 	</view>
 </template>
@@ -228,8 +230,6 @@
 				finishDataInfo: '',
 				finishPageindex: 1,
 				finishNum: '',
-				// 筛选loading
-				filterLoading: false,
 				// 待整改loading
 				waitLoading: false,
 				// 已整改loading
@@ -322,7 +322,6 @@
 				this.waitData = []
 				this.completedData = []
 				this.finishData = []
-				this.filterLoading = false
 			},
 			getQuestion() {
 				this.current == 0 ? this.getQuestionWait() : this.current == 1 ? this.getQuestionCompleted() : this.current == 2 ?
@@ -513,10 +512,6 @@
 </script>
 
 <style scoped lang="scss">
-	/deep/ .uni-popup {
-		margin-top: 70rpx;
-	}
-
 	.container {
 		min-height: 100vh;
 		background: #F6F7F9;
@@ -767,11 +762,11 @@
 		}
 
 		.popup {
-			// margin-top: 70rpx;
-			min-width: 100vw;
-			height: calc(100vh - 70rpx);
-			overflow-y: scroll;
+			width: 100vw;
+			min-height: 50vh;
+			max-height: 80vh;
 			background: #fff;
+			overflow: hidden;
 			display: flex;
 			flex-direction: column;
 
@@ -876,6 +871,7 @@
 				align-items: center;
 				position: sticky;
 				bottom: 0;
+				overflow: hidden;
 
 				.btn {
 					flex: 2;

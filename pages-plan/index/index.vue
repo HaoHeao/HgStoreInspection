@@ -17,24 +17,14 @@
 				
 			}
 		},
-		computed: {
-			
-		},
 		methods: {
 
 		},
 		onShow: function() {
 			
 		},
-        onHide: function() {
-			
-        },
-        onUnload: function() {
+        onLoad: function() {
 			
         },
 	}
 </script>
-
-<style scoped lang="scss">
-	.container {}
-</style>
