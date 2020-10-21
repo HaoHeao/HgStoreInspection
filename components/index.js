@@ -5,7 +5,7 @@ const installComponent = {
 	install: function(Vue) {
 
 		Vue.component('uni-popup', uniPopup)
-		Vue.component('haoheaoScroll', haoheaoScroll)
+		Vue.component('haoheao-scroll', haoheaoScroll)
 
 	}
 

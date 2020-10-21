@@ -74,6 +74,7 @@
 </script>
 
 <style lang="scss">
+	@import "uview-ui/index.scss";
 	page {
 		height: auto;
 		font-size: 28rpx;
@@ -156,19 +157,16 @@
 	// 没有更多数据
 	.null-data {
 		width: 100%;
-		height: 20rpx;
-		margin: 40rpx 0rpx;
+		height: 100rpx;
 		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		.text {
 			width: auto;
-			height: 20rpx;
 			white-space: nowrap;
-			line-height: 20rpx;
 			text-align: center;
-			position: absolute;
-			left: calc(50% - 78rpx);
-			top: 0rpx;
 			z-index: 2;
 			padding: 0rpx 20rpx;
 			background: #F6F7F9;
@@ -177,19 +175,18 @@
 		}
 
 		.line {
-			width: 310rpx;
+			width: 300rpx;
 			height: 2rpx;
 			background: #B6C6D6;
 			position: absolute;
-			left: calc(50% - 145rpx);
-			top: 10rpx;
+			left: calc(50% - 150rpx);
 			z-index: 1;
 		}
 	}
 
 	.no-data-view {
 		width: 100%;
-		min-height: 100%;
+		// min-height: 100%;
 		height: 50vh;
 		display: flex;
 		justify-content: center;

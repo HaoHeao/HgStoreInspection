@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="head">
+		<view class="tabs">
 			<view class="left"></view>
 			<view class="center">
 				<view class="btn-list">
@@ -11,18 +11,19 @@
 			</view>
 			<view class="right">
 				<view class="filter" @click="$refs['popup'].open()">
-					<image src="@/static/icon/screen.svg" mode="widthFix" class="icon"></image>
+					<image src="@/static/icon/filter.svg" mode="widthFix" class="icon"></image>
 					筛选
 				</view>
 			</view>
 		</view>
 		<view class="main">
-			<swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
+			<swiper class="swiper" circular duration="100" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
-					<scroll-view class="haoheao-scroll" scroll-y refresher-enabled>
+					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="waitRefresherLoading"
+					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
 						<block v-if="waitData.length">
 							<view class="length">共 {{waitDataInfo}} 条</view>
-							<view class="item" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
+							<view class="item no-bottom" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
 								<view class="question">
 									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
 									<view class="date">{{item.insertdate}}</view>
@@ -44,17 +45,14 @@
 										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
 									</view>
 								</view>
-								<view class="info">
-									<!-- <view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view> -->
+								<!-- <view class="info">
+									<view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view>
 									<view class="btn-list">
-										<!-- <view class="btn">整改</view> -->
+										<view class="btn">整改</view>
 									</view>
-								</view>
+								</view> -->
 							</view>
-							<view class="null-data">
-								<view class="text">以上为全部记录</view>
-								<view class="line"></view>
-							</view>
+							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!waitData.length">
 							<view class="center">
@@ -63,14 +61,13 @@
 							</view>
 						</view>
 					</scroll-view>
-					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
-					</haoheao-scroll>
 				</swiper-item>
 				<swiper-item class="swiper-item">
-					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="computedRefresherLoading"
+					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
 						<block v-if="completedData.length">
 							<view class="length">共 {{completedDataInfo}} 条</view>
-							<view class="item" v-for="(item,index) of completedData" :key="index" @click="lookReplay(item)">
+							<view class="item no-bottom" v-for="(item,index) of completedData" :key="index" @click="lookReplay(item)">
 								<view class="question">
 									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
 									<view class="date">{{item.insertdate}}</view>
@@ -92,17 +89,8 @@
 										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
 									</view>
 								</view>
-								<view class="info">
-									<!-- <view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view> -->
-									<view class="btn-list">
-										<!-- <view class="btn">复核</view> -->
-									</view>
-								</view>
 							</view>
-							<view class="null-data">
-								<view class="text">以上为全部记录</view>
-								<view class="line"></view>
-							</view>
+							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!completedData.length">
 							<view class="center">
@@ -110,10 +98,11 @@
 								<view class="tip">暂无已整改记录</view>
 							</view>
 						</view>
-					</haoheao-scroll>
+					</scroll-view>
 				</swiper-item>
 				<swiper-item class="swiper-item">
-					<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="finishRefresherLoading"
+					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
 						<block v-if="finishData.length">
 							<view class="length">共 {{finishDataInfo}} 条</view>
 							<view class="item" v-for="(item,index) of finishData" :key="index" @click="lookReplay(item)">
@@ -149,10 +138,7 @@
 									</view>
 								</view>
 							</view>
-							<view class="null-data">
-								<view class="text">以上为全部记录</view>
-								<view class="line"></view>
-							</view>
+							<u-loadmore class="loadmore" :status="finishLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!finishData.length">
 							<view class="center">
@@ -173,7 +159,7 @@
 								</view>
 							</view>
 						</view> -->
-					</haoheao-scroll>
+					</scroll-view>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -213,7 +199,7 @@
 	export default {
 		data() {
 			return {
-				pagesize: 20,
+				pagesize: 8,
 				current: 0,
 				// 待整改
 				waitData: [],
@@ -232,10 +218,13 @@
 				finishNum: '',
 				// 待整改loading
 				waitLoading: false,
+				waitRefresherLoading: false,
 				// 已整改loading
 				computedLoading: false,
+				computedRefresherLoading: false,
 				// 已完成loading
 				finishLoading: false,
+				finishRefresherLoading: false,
 				// 时间
 				date: [],
 				// 楼层
@@ -243,10 +232,61 @@
 				floor: 'all',
 				// 主题
 				titleList: [],
-				title: '0'
+				title: '0',
+			}
+		},
+		computed:{
+			setting(){
+				return this.$store.state.setting
 			}
 		},
 		methods: {
+			// 触发下拉刷新
+			async onRefresh() {
+				console.log('下拉刷新')
+				if (this.current == 0) {
+					this.waitRefresherLoading = true
+					await this.getQuestionReset()
+					await this.getQuestion()
+					this.waitRefresherLoading = false
+				} else if (this.current == 1) {
+					this.computedRefresherLoading = true
+					await this.getQuestionReset()
+					await this.getQuestion()
+					this.computedRefresherLoading = false
+				} else if (this.current == 2) {
+					this.finishRefresherLoading = true
+					await this.getQuestionReset()
+					await this.getQuestion()
+					this.finishRefresherLoading = false
+				}
+			},
+			// 刷新完成/重置
+			onRestore() {
+				if (this.current == 0) this.waitRefresherLoading = false;
+				if (this.current == 1) this.computedRefresherLoading = false;
+				if (this.current == 2) this.finishRefresherLoading = false;
+				console.log("onRestore");
+			},
+			// 滚动触底
+			async onTolower() {
+				console.log('滚动触底')
+				if (this.current == 0) {
+					if (!(this.waitPageindex <= this.waitPageNum && this.waitPageNum != 1)) {
+						return
+					}
+				} else if (this.current == 1) {
+					if (!(this.completedPageindex <= this.completedNum && this.completedNum != 1)) {
+						return
+					}
+				} else if (this.current == 2) {
+					if (!(this.finishPageindex >= this.finishNum && this.finishNum != 1)) {
+						return
+					}
+				}
+				console.log('加载更多------>>>')
+				await this.getQuestion()
+			},
 			// 进入反馈
 			lookReplay(item) {
 				console.log('进入反馈', item);
@@ -264,33 +304,11 @@
 					})
 				}
 			},
-			async onPullDown(done) {
-				this.getQuestionReset()
-				await this.getQuestion()
-				done()
-			},
 			selectFloor(data) {
 				this.floor === data.floorvalue ? this.floor = 'all' : this.floor = data.floorvalue;
 			},
 			selectPlan(data) {
 				this.title === data.planid ? this.title = '0' : this.title = data.planid;
-			},
-			async onLoadMore(e) {
-				if (this.current == 0) {
-					if (!(this.waitPageindex <= this.waitPageNum && this.waitPageNum != 1)) {
-						return
-					}
-				} else if (this.current == 1) {
-					if (!(this.completedPageindex <= this.completedNum && this.completedNum != 1)) {
-						return
-					}
-				} else if (this.current == 2) {
-					if (!(this.finishPageindex >= this.finishNum && this.finishNum != 1)) {
-						return
-					}
-				}
-				console.log('加载更多------>>>')
-				await this.getQuestion()
 			},
 			swiperChange(e) {
 				this.current = e.target.current
@@ -502,9 +520,6 @@
 				}
 			}
 		},
-		// onLoad: function() {
-		// 	this.tabbarBind()
-		// },
 		onShow: function() {
 			this.tabbarBind()
 		}
@@ -513,115 +528,29 @@
 
 <style scoped lang="scss">
 	.container {
-		min-height: 100vh;
+		height: 100vh;
 		background: #F6F7F9;
 		display: flex;
 		flex-direction: column;
 
-		.head {
-			width: 100%;
-			height: 70rpx;
-			box-sizing: border-box;
-			background: #fff;
-			display: flex;
-			justify-content: space-between;
-			border-bottom: 1rpx solid #f6f7f9;
-
-			.left {
-				flex: 1;
-			}
-
-			.center {
-				flex: 2;
-				display: flex;
-				justify-content: center;
-				text-align: center;
-				color: #323436;
-				font-size: 28rpx;
-				/* IOS XR */
-				// padding-bottom: env(safe-area-inset-bottom);
-				/* ------ */
-				box-sizing: border-box;
-
-				.btn-list {
-					width: 340rpx;
-					line-height: 70rpx;
-					display: flex;
-					justify-content: space-around;
-					align-items: center;
-
-					.item {
-						width: 50%;
-						height: 100%;
-						font-size: 26rpx;
-						text-align: center;
-						color: #434343;
-						position: relative;
-
-						&:active {
-							background: #f9f9f9;
-							opacity: 0.9;
-						}
-
-						&:nth-child(2) {
-							margin: 0 30rpx;
-						}
-					}
-
-					.item.active {
-						color: #323436;
-						font-size: 28rpx;
-						font-weight: 700;
-
-						&::before {
-							content: '';
-							display: block;
-							width: 100%;
-							height: 4rpx;
-							position: absolute;
-							left: 0;
-							bottom: 0;
-							background: #1BA1F3;
-						}
-					}
-				}
-			}
-
-			.right {
-				flex: 1;
-				display: flex;
-				justify-content: flex-end;
-
-				.filter {
-					height: 100%;
-					display: flex;
-					align-items: center;
-					color: #647484;
-					padding: 0 20rpx;
-
-					.icon {
-						width: 26rpx;
-						height: 24rpx;
-					}
-
-					&:active {
-						background: #f9f9f9;
-						opacity: 0.9;
-					}
-				}
-			}
+		.tabs {
+			
 		}
 
 		.main {
 			flex: 2;
+			display: flex;
+			flex-direction: column;
 
 			.swiper {
 				height: calc(100vh - 70rpx);
 
 				.swiper-item {
+					display: flex;
+					flex-direction: column;
 
-					.haoheao-scroll {
-						flex: 2;
+					.scroll-view {
+						height: 100%;
 
 						.length {
 							font-size: 24rpx;
@@ -634,17 +563,19 @@
 						.item {
 							width: calc(100% - 40rpx);
 							margin: 20rpx;
+							margin-bottom: 0;
 							background: #fff;
 							border-radius: 10rpx;
 							padding: 0 20rpx;
 							box-sizing: border-box;
+							
+							&.no-bottom{
+								padding-bottom: 10rpx;
+							}
 
 							.question {
 								padding: 20rpx 0rpx;
 								font-size: 28rpx;
-								// font-weight: 800;
-								// border-bottom: 1rpx solid #f2f2f2;
-								// margin-bottom: 10rpx;
 								display: flex;
 								align-items: flex-start;
 
@@ -699,19 +630,11 @@
 									.icon {
 										border-radius: 10rpx;
 										width: 100%;
+										min-height: 100%;
 										height: 100%;
 									}
 								}
 							}
-
-							// .place {
-							// 	color: #333;
-							// 	font-size: 26rpx;
-
-							// 	.label {
-							// 		color: #647484;
-							// 	}
-							// }
 
 							.info {
 								display: flex;

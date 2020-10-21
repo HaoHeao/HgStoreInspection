@@ -43,6 +43,8 @@
 import Vue from 'vue'
 import App from './App'
 
+import '@/styles/index.scss'
+
 // Vuex
 import store from '@/store'
 Vue.prototype.$store = store;
@@ -61,6 +63,9 @@ Vue.prototype.utils = utils;
 
 const request = require('@/util/request.js')
 Vue.prototype.request = request;
+
+import uView from 'uview-ui';
+Vue.use(uView);
 
 // 同步延迟
 Vue.prototype.delay = (ms) => new Promise((resolve, reject) => setTimeout(resolve, ms));

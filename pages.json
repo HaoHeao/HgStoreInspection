@@ -1,4 +1,7 @@
 {
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
 	"pages": [{
 			"path": "user/login/login",
 			"style": {
@@ -8,11 +11,15 @@
 		{
 			"path": "user/selectInfo/selectInfo",
 			"style": {
-				"navigationBarTitleText": "用户信息修改"
+				"navigationBarTitleText": "用户信息修改",
+				"disableScroll": true
 			}
 		},
 		{
-			"path": "user/index/index"
+			"path": "user/index/index",
+			"style": {
+				"disableScroll": true
+			}
 		}
 	],
 	"subPackages": [{
@@ -20,29 +27,36 @@
 		"pages": [{
 				"path": "index/index",
 				"style": {
-					"navigationBarTitleText": "卖场巡检"
+					"navigationBarTitleText": "卖场巡检",
+					"disableScroll": true
 				}
 			},
 			{
 				"path": "seeDetail/seeDetail",
 				"style": {
-					"navigationBarTitleText": "查看巡检记录"
+					"navigationBarTitleText": "查看巡检记录",
+					"disableScroll": true
 				}
 			},
 			{
 				"path": "viewQuestion/viewQuestion",
 				"style": {
-					"navigationBarTitleText": "问题讨论"
+					"navigationBarTitleText": "问题讨论",
+					"disableScroll": true
 				}
 			},
 			{
 				"path": "add/add",
 				"style": {
-					"navigationBarTitleText": "添加卖场巡检记录"
+					"navigationBarTitleText": "添加卖场巡检记录",
+					"disableScroll": true
 				}
 			},
 			{
-				"path": "addSelect/addSelect"
+				"path": "addSelect/addSelect",
+				"style": {
+					"disableScroll": true
+				}
 			}
 		]
 	}, {
@@ -50,23 +64,27 @@
 		"pages": [{
 				"path": "index/index",
 				"style": {
-					"navigationBarTitleText": "计划巡检"
+					"navigationBarTitleText": "计划巡检",
+					"disableScroll": true
 				}
 			}, {
 				"path": "seeDetail/seeDetail",
 				"style": {
-					"navigationBarTitleText": "计划巡检内容"
+					"navigationBarTitleText": "计划巡检内容",
+					"disableScroll": true
 				}
 			}, {
 				"path": "addQuestion/addQuestion",
 				"style": {
-					"navigationBarTitleText": "提出巡检问题"
+					"navigationBarTitleText": "提出巡检问题",
+					"disableScroll": true
 				}
 			},
 			{
 				"path": "viewQuestion/viewQuestion",
 				"style": {
-					"navigationBarTitleText": "巡检问题"
+					"navigationBarTitleText": "巡检问题",
+					"disableScroll": true
 				}
 			}
 		]
@@ -75,17 +93,20 @@
 		"pages": [{
 			"path": "index/index",
 			"style": {
-				"navigationBarTitleText": "会议预约"
+				"navigationBarTitleText": "会议预约",
+				"disableScroll": true
 			}
 		}, {
 			"path": "reserva/index",
 			"style": {
-				"navigationBarTitleText": "预约"
+				"navigationBarTitleText": "预约",
+				"disableScroll": true
 			}
 		}, {
 			"path": "detail/index",
 			"style": {
-				"navigationBarTitleText": "预约信息"
+				"navigationBarTitleText": "预约信息",
+				"disableScroll": true
 			}
 		}]
 	}, {
@@ -93,12 +114,14 @@
 		"pages": [{
 			"path": "index/index",
 			"style": {
-				"navigationBarTitleText": "店面抽盘"
+				"navigationBarTitleText": "店面抽盘",
+				"disableScroll": true
 			}
 		}, {
 			"path": "add/index",
 			"style": {
-				"navigationBarTitleText": "店面抽盘"
+				"navigationBarTitleText": "店面抽盘",
+				"disableScroll": true
 			}
 		}]
 	}, {
