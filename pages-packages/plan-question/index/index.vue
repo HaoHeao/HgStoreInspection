@@ -17,10 +17,11 @@
 			</view>
 		</view>
 		<view class="main">
-			<swiper class="swiper" circular duration="100" :current="current" @change="swiperChange">
+			<swiper class="swiper" :circular="setting.circular" :duration="setting.swiperDuration" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
-					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="waitRefresherLoading"
-					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="waitRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scrolltolower="onTolower">
 						<block v-if="waitData.length">
 							<view class="length">共 {{waitDataInfo}} 条</view>
 							<view class="item no-bottom" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
@@ -52,7 +53,8 @@
 									</view>
 								</view> -->
 							</view>
-							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
+							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+							 :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!waitData.length">
 							<view class="center">
@@ -63,8 +65,9 @@
 					</scroll-view>
 				</swiper-item>
 				<swiper-item class="swiper-item">
-					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="computedRefresherLoading"
-					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="computedRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scrolltolower="onTolower">
 						<block v-if="completedData.length">
 							<view class="length">共 {{completedDataInfo}} 条</view>
 							<view class="item no-bottom" v-for="(item,index) of completedData" :key="index" @click="lookReplay(item)">
@@ -90,7 +93,8 @@
 									</view>
 								</view>
 							</view>
-							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
+							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType"
+							 :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!completedData.length">
 							<view class="center">
@@ -101,8 +105,9 @@
 					</scroll-view>
 				</swiper-item>
 				<swiper-item class="swiper-item">
-					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="finishRefresherLoading"
-					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="finishRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scrolltolower="onTolower">
 						<block v-if="finishData.length">
 							<view class="length">共 {{finishDataInfo}} 条</view>
 							<view class="item" v-for="(item,index) of finishData" :key="index" @click="lookReplay(item)">
@@ -138,7 +143,8 @@
 									</view>
 								</view>
 							</view>
-							<u-loadmore class="loadmore" :status="finishLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" />
+							<u-loadmore class="loadmore" :status="finishLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+							 :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!finishData.length">
 							<view class="center">
@@ -235,8 +241,8 @@
 				title: '0',
 			}
 		},
-		computed:{
-			setting(){
+		computed: {
+			setting() {
 				return this.$store.state.setting
 			}
 		},
@@ -312,7 +318,6 @@
 			},
 			swiperChange(e) {
 				this.current = e.target.current
-				this.tabbarBind()
 			},
 			async bindDateChange(e) {
 				e.target.id == 'start' ? this.date[0] = e.target.value : e.target.id == 'end' ? this.date[1] = e.target.value : ''
@@ -331,15 +336,19 @@
 				this.$forceUpdate()
 			},
 			getQuestionReset() {
-				this.waitPageindex = 1
-				this.completedPageindex = 1
-				this.finishPageindex = 1
-				this.waitPageNum = ''
-				this.completedNum = ''
-				this.finishNum = ''
-				this.waitData = []
-				this.completedData = []
-				this.finishData = []
+				if (this.current == 0) {
+					this.waitPageindex = 1
+					this.waitPageNum = ''
+					this.waitData = []
+				} else if (this.current == 1) {
+					this.completedPageindex = 1
+					this.completedNum = ''
+					this.completedData = []
+				} else if (this.current == 2) {
+					this.finishPageindex = 1
+					this.finishNum = ''
+					this.finishData = []
+				}
 			},
 			getQuestion() {
 				this.current == 0 ? this.getQuestionWait() : this.current == 1 ? this.getQuestionCompleted() : this.current == 2 ?
@@ -520,8 +529,11 @@
 				}
 			}
 		},
-		onShow: function() {
-			this.tabbarBind()
+		onLoad: async function() {
+			await this.popupReset()
+			this.getQuestionWait()
+			this.getQuestionCompleted()
+			this.getQuestionFinish()
 		}
 	}
 </script>
@@ -533,9 +545,7 @@
 		display: flex;
 		flex-direction: column;
 
-		.tabs {
-			
-		}
+		.tabs {}
 
 		.main {
 			flex: 2;
@@ -568,8 +578,8 @@
 							border-radius: 10rpx;
 							padding: 0 20rpx;
 							box-sizing: border-box;
-							
-							&.no-bottom{
+
+							&.no-bottom {
 								padding-bottom: 10rpx;
 							}
 

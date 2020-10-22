@@ -37,14 +37,15 @@
 				text-align: center;
 				color: #434343;
 				position: relative;
+				margin-right: 30rpx;
 
 				&:active {
 					background: #f9f9f9;
 					opacity: 0.9;
 				}
 
-				&:nth-child(2) {
-					margin: 0 30rpx;
+				&:last-child {
+					margin-right: 0;
 				}
 			}
 

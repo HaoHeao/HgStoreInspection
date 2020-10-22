@@ -68,20 +68,20 @@
 					"disableScroll": true
 				}
 			}, {
-				"path": "seeDetail/seeDetail",
+				"path": "plan/plan",
 				"style": {
 					"navigationBarTitleText": "计划巡检内容",
 					"disableScroll": true
 				}
 			}, {
-				"path": "addQuestion/addQuestion",
+				"path": "submitQuestions/submitQuestions",
 				"style": {
 					"navigationBarTitleText": "提出巡检问题",
 					"disableScroll": true
 				}
 			},
 			{
-				"path": "viewQuestion/viewQuestion",
+				"path": "question/question",
 				"style": {
 					"navigationBarTitleText": "巡检问题",
 					"disableScroll": true

@@ -1,6 +1,10 @@
 const setting = {
 	namespaced: true,
 	state: {
+		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头
+		circular: true,
+		// swiper滑动动画时长
+		swiperDuration: '100',
 		// loadmore加载时图标样式
 		iconType: 'circle',
 		// loadmore各个状态的文本
@@ -22,6 +26,8 @@ const setting = {
 			fontSize: '32rpx',
 			color: '#2979ff',
 		},
+		// 安卓/IOS点击标题scroll-view返回顶部
+		enableBackToTop: true
 	},
 }
 

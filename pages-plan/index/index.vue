@@ -11,10 +11,11 @@
 			<view class="right"></view>
 		</view>
 		<view class="main">
-			<swiper class="swiper" circular duration="100" :current="current" @change="swiperChange">
+			<swiper class="swiper" :circular="setting.circular" :duration="setting.swiperDuration" :current="current" @change="swiperChange">
 				<swiper-item class="swiper-item">
-					<scroll-view class="scroll-view" scroll-y refresher-enabled :refresher-triggered="processingRefresherLoading"
-					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scroll="onViewScroll" :scroll-top="scrollTop">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="processingRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scroll="onViewScroll" :scroll-top="scrollTop">
 						<block v-if="processingData.length">
 							<view class="length">共 {{processingData.length}} 条</view>
 							<view class="item no-bottom" v-for="(item,index) of processingData" :key="index" @click="lookReplay(item)">
@@ -44,8 +45,9 @@
 					</scroll-view>
 				</swiper-item>
 				<swiper-item class="swiper-item">
-					<scroll-view class="scroll-view fadeIn" scroll-y refresher-enabled :refresher-triggered="notSumupRefresherLoading"
-					 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scroll="onViewScroll" :scroll-top="scrollTop" scroll-with-animation>
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="notSumupRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scroll="onViewScroll" :scroll-top="scrollTop">
 						<block v-if="notSumupData.length">
 							<view class="length">共 {{notSumupData.length}} 条</view>
 							<view class="item no-bottom" v-for="(item,index) of notSumupData" :key="index" @click="lookReplay(item)">
@@ -147,7 +149,7 @@
 			},
 			lookReplay(item) {
 				uni.navigateTo({
-					url: "../seeDetail/seeDetail?id=" + item.planid
+					url: "../plan/plan?planid=" + item.planid
 				})
 			},
 			// 计划巡检进行中列表
@@ -155,6 +157,7 @@
 				if (this.processingLoading) return
 				uni.showNavigationBarLoading()
 				this.processingLoading = true
+				// await this.delay(2000)
 				try {
 					let data = await uni.request({
 						method: 'GET',

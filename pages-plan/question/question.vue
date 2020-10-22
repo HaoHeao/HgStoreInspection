@@ -25,7 +25,7 @@
 					<view :class="['status-round',option.data.status == 100?'solve':'']"></view>
 					<view class="status-title">{{option.data.status == 0?'待整改':option.data.status == 1?'已整改':option.data.status == 100?'问题已解决':''}}</view>
 					<view class="confirm-question" v-if="option.data.status == 1 && (option.data.usernumber == userinfo.usernumber || detailInfo.usernumber == userinfo.usernumber || option.data.showRightIs)"
-						 @click="$refs['review'].open(),remark = ''">复核</view>
+					 @click="$refs['review'].open(),remark = ''">复核</view>
 					<block v-if="userinfo.username == option.data.username && new Date(option.data.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && option.data.planinspectionfeedback.length == 0 && option.data.status == 0">
 						<view class="del" @click="delPlanQuestion()">撤回</view>
 					</block>
@@ -59,7 +59,8 @@
 				</view>
 				<!-- 确认部门或人员 -->
 				<view class="info-list" v-if="option.data.planinspectionsolveuser.length">
-					<view class="left"><!-- 复核人员或部门 -->复核部门</view>
+					<view class="left">
+						<!-- 复核人员或部门 -->复核部门</view>
 					<view class="content">
 						<text>
 							<block>{{option.data.planinspectionsolveuser[0].itemname}}</block>
@@ -188,46 +189,78 @@
 </template>
 
 <script>
-    let utils = require('@/util/utils.js');
-	let moment = utils.moment;
-    let request = utils.request;
 	export default {
 		data() {
 			return {
-				uni,
-				usernumber:uni.getStorageSync('userinfo').usernumber,
-				username:uni.getStorageSync('userinfo').username,
-                bottomHeight:'20rpx',
-				keyBoardHeight:"",
-				option: {},
-				// 查看图片
-				seeImgList: [],
-				replyTxt:"",
-				// 此巡检全局数据
-				detailInfo:{},
-				// 此回复数据
-				replyInfo:{},
-				
-				// 重复提交
-				btnClickReply:true,
-				imgList:[],
-				upImgList:[],
-				
+				planid:'',
+				planquestionid:'',
+				inspectionDetail:null,
 				remark:'',
 			}
 		},
 		computed:{
+			setting() {
+				return this.$store.state.setting
+			},
 			userinfo(){
 				return this.utils.getUserInfo(uni)
 			}
 		},
 		methods: {
-			onPullDown(done) { // 下拉刷新
-				this.getDetail(this.option.id,this.option.reply_id);
-				console.log("下拉刷新")
-				setTimeout(() => {
-					done();
-				}, 1800)
+			// 计划巡检获取某一条巡检记录明细
+			async getInspectionDetail(){
+				try {
+					uni.showNavigationBarLoading()
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.plan_getPlaninspectionDetail,
+						data:{
+							planid:this.planid,
+							status:'-1'
+						}
+					})
+					uni.hideNavigationBarLoading()
+					let [err, success] = data
+					console.log('计划巡检获取某一条巡检记录明细--->>>',err, success)
+					if (!err && success.data.success) {
+						// 计划巡检判断 0:未开始 1:执行中 2:已结束 3:已删除
+						let dateStatus = new Date(success.data.data.planinspectionset.sdate.replace(/-/g, "/")).getTime() > new Date().getTime()
+						if(success.data.data.planinspectionset.status == 1000 && dateStatus){
+							success.data.data.planinspectionset.inspectionStatus = 0
+						}else{
+							success.data.data.planinspectionset.inspectionStatus = 1
+						}
+						if(success.data.data.planinspectionset.status == 2000){
+							success.data.data.planinspectionset.inspectionStatus = 2
+						}
+						if(success.data.data.planinspectionset.status == 3000){
+							success.data.data.planinspectionset.inspectionStatus = 3
+						}
+						// 计划巡检权限添加
+						for (let item of success.data.data.planinspectionset.planinspectionquestion) {
+							// 整改部门反馈
+							item.showFeedbackDept = this.showRightIs(item.mapplaninspectiondept, 1)
+							// 整改人员反馈
+							item.showFeedbackUser = this.showRightIs(item.mapplaninspectionuser, 2)
+							// 确认核验权限
+							item.showRightIs = this.showRightIs(item.planinspectionsolveuser, 3);
+							// 是否可以提出巡检问题
+						}
+						this.questionStatusList = success.data.data.planinspectionset.planinspectionquestion
+						this.inspectionDetail = success.data.data.planinspectionset
+						this.setQuestionFilter()
+						this.$forceUpdate()
+					}else{
+						uni.showToast({
+							title: err?err:success.data.errmsg,
+							icon: 'none',
+							duration:3000
+						});
+					}
+				} catch (e) {
+					console.log(e)
+					uni.hideNavigationBarLoading()
+				}
 			},
 			// 撤回整改问题
 			feedbackClick(item){
@@ -906,44 +939,7 @@
 				}
 			}
 		}
-
-		// // 没有更多记录
-		// .replay-null {
-		// 	width: 100%;
-		// 	height: 200rpx;
-
-		// 	.none {
-		// 		width: 100%;
-		// 		height: 20rpx;
-		// 		margin: 40rpx 0rpx;
-		// 		position: relative;
-
-		// 		.txt {
-		// 			width: 136rpx;
-		// 			height: 20rpx;
-		// 			line-height: 20rpx;
-		// 			text-align: center;
-		// 			position: absolute;
-		// 			left: calc(50% - 68rpx);
-		// 			top: 0rpx;
-		// 			z-index: 2;
-		// 			background: #E5EDF1;
-		// 			color: #B6C6D6;
-		// 			font-size: 20rpx;
-		// 		}
-
-		// 		.line {
-		// 			width: 290rpx;
-		// 			height: 1rpx;
-		// 			background: #B6C6D6;
-		// 			position: absolute;
-		// 			left: calc(50% - 145rpx);
-		// 			top: 10rpx;
-		// 			z-index: 1;
-		// 		}
-		// 	}
-		// }
-
+		
 		// 对此记录进行回复
 		.replay-btn {
 			width: calc(100% - 40rpx);
