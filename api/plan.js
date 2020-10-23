@@ -34,6 +34,14 @@ const plan_submitInspectionReview = `${api}/hgInspection/storeapi/plan/confirm`
 // 计划巡检列表
 const plan_getPlanList = `${api}/hgInspection/storeapi/plan/load`
 
+// 计划巡检上传图片
+const plan_uploadImage = `${api}/hgInspection/file/upload-picture`
+
+// 计划巡检问题整改回复
+const plan_getQuestionReply = `${api}/hgInspection/storeapi/plan/reply/save`
+
+// 计划巡检撤回问题整改回复
+const plan_withdrawQuestionFeedBack = `${api}/hgInspection/storeapi/plan/question/del`
 
 export {
 	// 待整改
@@ -56,4 +64,10 @@ export {
 	plan_submitInspectionReview,
 	// 计划巡检列表
 	plan_getPlanList,
+	// 计划巡检上传图片
+	plan_uploadImage,
+	// 计划巡检问题整改回复
+	plan_getQuestionReply,
+	// 计划巡检撤回问题整改回复
+	plan_withdrawQuestionFeedBack,
 }

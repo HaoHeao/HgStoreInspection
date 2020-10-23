@@ -104,9 +104,6 @@ let choiceImgList = () => {
 // 上传图片
 let addImg = (_this) => {
 	uni.chooseImage({
-		// sizeType: ['original', 'compressed'],
-		sizeType: ['compressed'],
-		sourceType: ['camera', 'album'],
 		count: 9,
 		success: function(data) {
 			let imgList = data.tempFiles;
