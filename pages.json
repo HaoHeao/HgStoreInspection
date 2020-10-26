@@ -60,7 +60,7 @@
 			}
 		]
 	}, {
-		"root": "pages-packages/plan",
+		"root": "pages-plan",
 		"pages": [{
 				"path": "index/index",
 				"style": {
@@ -148,9 +148,9 @@
 			"network": "all",
 			"packages": ["pages"]
 		},
-		"pages-packages/plan/index/index": {
+		"pages-plan/index/index": {
 			"network": "all",
-			"packages": ["pages-packages/plan"]
+			"packages": ["pages-plan"]
 		},
 		"pages-packages/meeting/index/index": {
 			"network": "all",

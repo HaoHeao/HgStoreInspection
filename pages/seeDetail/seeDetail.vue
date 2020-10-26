@@ -60,7 +60,7 @@
 					</view>
 					<view class="content" v-if="infoDetail.mapinspectionuser == 0">无通知人员</view>
 				</view>
-				<!-- <view class="detail-item describe">
+				<!-- <view class="detail-item describe" @click="copy(infoDetail.remark)">
 					<view class="item">描述</view>
 					<text class="content">{{infoDetail.remark}}</text>
 				</view> -->
@@ -250,6 +250,10 @@
 			}
 		},
 		methods: {
+			// 复制内容
+			copy:function(data){
+				app.copy(data)
+			},
 			// 权限判断
 			powerUser:function(data){
 				console.log(data)

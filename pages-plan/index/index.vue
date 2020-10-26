@@ -33,9 +33,8 @@
 									<view class="content">{{moment(item.sdate.replace(/-/g,'/')).format('YYYY.MM.DD') + ' - ' + moment(item.edate.replace(/-/g,'/')).format('YYYY.MM.DD')}}</view>
 								</view>
 							</view>
-							<u-loadmore :status="processingLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-							 :margin-bottom="setting.loadmoreMarginBottom" />
+							<u-loadmore class="loadmore" :status="processingLoading?'loading':'nomore'" :icon-type="setting.iconType"
+							 :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!processingData.length">
 							<view class="center">
@@ -66,9 +65,8 @@
 									<view class="content">{{moment(item.sdate.replace(/-/g,'/')).format('YYYY.MM.DD') + ' - ' + moment(item.edate.replace(/-/g,'/')).format('YYYY.MM.DD')}}</view>
 								</view>
 							</view>
-							<u-loadmore :status="notSumupLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-							 :margin-bottom="setting.loadmoreMarginBottom" />
+							<u-loadmore class="loadmore" :status="notSumupLoading?'loading':'nomore'" :icon-type="setting.iconType"
+							 :load-text="setting.loadText" :is-dot="setting.isDot" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!notSumupData.length">
 							<view class="center">

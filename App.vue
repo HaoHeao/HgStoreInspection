@@ -12,6 +12,9 @@
 				appId: "wx252743e71090a061"
 			},
 			openId: "",
+			serverTime: "",
+			/* 会议时预订 */
+			max_booking_date: 14 // 最多可预订至多少天后
 		},
 		onShow: function() {
 			this.upApp();
@@ -29,6 +32,10 @@
 						})
 					}
 				});
+			},
+			// 去掉空格
+			trim: function(str) {
+				return str.replace(/(\s*$)/g, "");
 			},
 			upApp: function() {
 				/**
@@ -68,4 +75,79 @@
 
 <style lang="scss">
 	@import "uview-ui/index.scss";
+	// page {
+	// 	height: auto;
+	// 	font-size: 28rpx;
+	// }
+
+	// .container {
+	// 	width: 100%;
+	// }
+
+	// *::-webkit-scrollbar {
+	// 	display: none;
+	// }
+
+	// *::-webkit-scrollbar {
+	// 	width: 5px;
+	// 	height: 8px;
+	// 	background-color: #aaa;
+	// }
+
+	// /* Add a thumb */
+	// *::-webkit-scrollbar-thumb {
+	// 	background: #000;
+	// }
+
+	image {
+		height: auto;
+	}
+
+	.no-data-view {
+		width: 100%;
+		// min-height: 100%;
+		height: 50vh;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		align-items: center;
+
+		.center {
+			.icon {
+				width: 250rpx;
+				height: 250rpx;
+			}
+
+			.tip {
+				min-width: 100%;
+				font-size: 24rpx;
+				color: #999;
+				text-align: center;
+			}
+		}
+	}
+	
+	// 对此记录进行回复
+	.replay-btn {
+		width: calc(100% - 40rpx);
+		height: 80rpx;
+		line-height: 80rpx;
+		text-align: center;
+		margin: 10rpx 20rpx;
+		border-radius: 40rpx;
+		color: #fff;
+		background: #647484;
+		font-size: 28rpx;
+		position: fixed;
+		left: 0;
+		bottom: 10rpx;
+		z-index: 1;
+		margin-bottom: env(safe-area-inset-bottom);
+		opacity: 0.9;
+		letter-spacing: 10rpx;
+
+		&:active {
+			opacity: 0.8;
+		}
+	}
 </style>

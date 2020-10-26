@@ -101,7 +101,7 @@
 					this.utils.getMarketDeptList(this);
 					this.utils.getMarketUserList(this);
 					uni.reLaunch({
-						url: '/pages-packages/plan/index/index'
+						url: '/pages-plan/index/index'
 					})
 				} else if (type == 'meeting') {
 					uni.reLaunch({
