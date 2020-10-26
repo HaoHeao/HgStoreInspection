@@ -5,7 +5,6 @@ import market from "./modules/market.js"
 import plan from "./modules/plan.js"
 import usermodel from "./userModel.js"
 import metting from "./modules/metting.js"
-import setting from "./modules/setting.js"
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -46,8 +45,7 @@ const store = new Vuex.Store({
 		market,
 		plan,
 		usermodel,
-		metting,
-		setting
+		metting
 	}
 });
 export default store;

@@ -92,6 +92,14 @@ let getMarketUserList = (that) => {
 	})
 }
 
+// {
+// 	that,
+// 	type = true,
+// 	count = 9,
+// 	sizeType = ['original', 'compressed'],
+// 	sourceType = ['camera', 'album'],
+// 	option
+// }
 // 选择图片
 let choiceImgList = () => {
 	return uni.chooseImage({
@@ -195,7 +203,6 @@ let seePicture = (list, index) => {
 		urls: data
 	});
 }
-// 查看图片
 
 // 时间大小补充
 let timeMake = (date) => {

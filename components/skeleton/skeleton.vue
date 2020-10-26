@@ -1,6 +1,6 @@
 <template>
-	<view class="container">
-		<view class="skeleton mode fadeIn">
+	<block v-if="!infoDetail.status">
+		<view class="skeleton mode">
 			<view class="shadow-state backcolor"></view>
 			<view class="shadow-title backcolor"></view>
 			<view class="shadow-border backcolor2"></view>
@@ -30,14 +30,23 @@
 		<view class="skeleton mode"></view>
 		<view class="skeleton mode"></view>
 		<view class="skeleton mode"></view>
-		<view class="skeleton-btn"></view>
-	</view>
+	</block>
 </template>
-<style scoped lang="scss">
-	.container {
-		height: 100vh;
-	}
 
+<script>
+	export default {
+		props: [],
+		data() {
+			return {
+
+			}
+		},
+		onShow() {},
+		methods: {}
+	}
+</script>
+
+<style lang="scss" scoped>
 	.skeleton.mode {
 		background: #f2f2f2;
 	}
@@ -54,7 +63,7 @@
 		border-radius: 10rpx;
 		margin: 20rpx;
 		padding: 20rpx;
-		width: calc(100vw - 40rpx);
+		width: calc(100vw - 80rpx);
 
 		.shadow-state {
 			border-radius: 40rpx;
@@ -92,17 +101,5 @@
 				flex: 2;
 			}
 		}
-	}
-
-	.skeleton-btn {
-		width: calc(100% - 40rpx);
-		height: 80rpx;
-		margin: 10rpx 20rpx;
-		border-radius: 40rpx;
-		background: #e1e1e1;
-		position: fixed;
-		left: 0;
-		bottom: 30rpx;
-		margin-bottom: env(safe-area-inset-bottom);
 	}
 </style>

@@ -39,8 +39,14 @@
 	let utils = require('@/util/utils.js');
 	let request = utils.api;
 	let moment = utils.moment;
+	import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
+	import skeleton from '@/components/skeleton/skeleton.vue'
 	export default {
 		props: ['reflesh'],
+		components: {
+			haoheaoScroll,
+			skeleton,
+		},
 		data() {
 			return {
 				msgList: [],

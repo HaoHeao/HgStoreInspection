@@ -1,6 +1,6 @@
 /* 计划巡检 */
-// const api = 'https://vipapi.hanguangbaihuo.com';
-const api = 'https://vipapi-cs.hanguangbaihuo.com';
+const api = 'https://vipapi.hanguangbaihuo.com';
+// const api = 'https://vipapi-cs.hanguangbaihuo.com';
 // const api = 'http://192.168.128.66:8081'
 
 // 待整改
@@ -31,10 +31,6 @@ const plan_getPlaninspectionDetail = `${api}/hgInspection/storeapi/plan/load/que
 // 计划巡检巡检问题复核
 const plan_submitInspectionReview = `${api}/hgInspection/storeapi/plan/confirm`
 
-// 计划巡检列表
-const plan_getPlanList = `${api}/hgInspection/storeapi/plan/load`
-
-
 export {
 	// 待整改
 	plan_questionWait,
@@ -54,6 +50,4 @@ export {
 	plan_getPlaninspectionDetail,
 	// 计划巡检巡检问题复核
 	plan_submitInspectionReview,
-	// 计划巡检列表
-	plan_getPlanList,
 }
