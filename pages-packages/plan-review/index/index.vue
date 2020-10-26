@@ -10,7 +10,7 @@
 			</view>
 			<view class="right">
 				<view class="filter" @click="filterLoading?($refs['popup'].close(),filterLoading = false):($refs['popup'].open(),filterLoading = true)">
-					<image src="@/static/icon/screen.svg" mode="widthFix" class="icon"></image>
+					<image src="@/static/icon/filter.svg" mode="widthFix" class="icon"></image>
 					筛选
 				</view>
 			</view>

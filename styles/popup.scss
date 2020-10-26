@@ -7,8 +7,8 @@
 	/* IOS XR */
 	padding-bottom: env(safe-area-inset-bottom);
 	/* ------ */
-	max-height: 65vh;
-	overflow-y: scroll;
+	max-height: 80vh;
+	// overflow-y: scroll;
 	// 标题
 	>.title{
 		color: #647484;
@@ -55,6 +55,12 @@
 				}
 				&.del{
 					background: #D56C68;
+				}
+				&.error{
+					background: #D56C68;
+				}
+				&.success{
+					background: #2BA245;
 				}
 			}
 		}

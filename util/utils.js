@@ -92,14 +92,6 @@ let getMarketUserList = (that) => {
 	})
 }
 
-// {
-// 	that,
-// 	type = true,
-// 	count = 9,
-// 	sizeType = ['original', 'compressed'],
-// 	sourceType = ['camera', 'album'],
-// 	option
-// }
 // 选择图片
 let choiceImgList = () => {
 	return uni.chooseImage({
@@ -112,9 +104,6 @@ let choiceImgList = () => {
 // 上传图片
 let addImg = (_this) => {
 	uni.chooseImage({
-		// sizeType: ['original', 'compressed'],
-		sizeType: ['compressed'],
-		sourceType: ['camera', 'album'],
 		count: 9,
 		success: function(data) {
 			let imgList = data.tempFiles;
@@ -203,6 +192,7 @@ let seePicture = (list, index) => {
 		urls: data
 	});
 }
+// 查看图片
 
 // 时间大小补充
 let timeMake = (date) => {

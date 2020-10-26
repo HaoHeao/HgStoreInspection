@@ -1098,5 +1098,28 @@
 			}
 		}
         .popup.depart.user{}
+	
+		// 提出问题
+		.replay-btn {
+			width: calc(100% - 40rpx);
+			height: 80rpx;
+			line-height: 80rpx;
+			text-align: center;
+			margin: 0rpx 20rpx;
+			border-radius: 40rpx;
+			color: #fff;
+			background: #647484;
+			font-size: 28rpx;
+			position: fixed;
+			left: 0;
+			bottom: 10rpx;
+			z-index: 1;
+			// margin-bottom: env(safe-area-inset-bottom);
+			// letter-spacing: 10rpx;
+
+			&:active {
+				opacity: 0.8;
+			}
+		}
     }
 </style>

@@ -1,11 +1,11 @@
-import popup from '@/components/uni-popup/uni-popup.vue'
+import uniPopup from '@/components/uni-popup/uni-popup.vue'
 import haoheaoScroll from '@/components/haoheao-scroll/haoheao-scroll.vue'
 const installComponent = {
 
 	install: function(Vue) {
 
-		Vue.component('popup', popup)
-		Vue.component('haoheaoScroll', haoheaoScroll)
+		Vue.component('uni-popup', uniPopup)
+		Vue.component('haoheao-scroll', haoheaoScroll)
 
 	}
 

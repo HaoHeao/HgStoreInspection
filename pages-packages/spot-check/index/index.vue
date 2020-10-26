@@ -10,7 +10,7 @@
 			<view class="item right">
 				<view class="content">
 					筛选
-					<image src="@/static/icon/screen.svg" mode="widthFix" class="icon"></image>
+					<image src="@/static/icon/filter.svg" mode="widthFix" class="icon"></image>
 				</view>
 			</view>
 		</view>
