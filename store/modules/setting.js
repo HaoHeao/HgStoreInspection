@@ -1,8 +1,6 @@
 const setting = {
 	namespaced: true,
 	state: {
-		// OSS下载规则
-		OSSDownload:"?x-oss-process=image/resize,m_mfit,h_120,w_120",
 		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头
 		circular: true,
 		// swiper滑动动画时长
@@ -15,12 +13,6 @@ const setting = {
 			loading: '努力加载中',
 			nomore: '我是有底线的'
 		},
-		// loadmore问题大小
-		loadmoreFontSize: '24',
-		// 与前一个元素的距离，单位rpx
-		loadmoreMarginTop: '50',
-		// 与后一个元素的距离，单位rpx
-		loadmoreMarginBottom: '120',
 		// loadmore状态为nomore时内容是否显示为一个'·'
 		isDot: false,
 		// 返回顶部按钮
