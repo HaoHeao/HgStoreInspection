@@ -934,6 +934,10 @@
 						// padding: 3rpx;
 						// border-radius: 5rpx;
 						padding: 5rpx 0;
+<<<<<<< HEAD
+=======
+						padding-top: 0;
+>>>>>>> parent of 680e3b0... 0.9.4
 					}
 				}
 			}
