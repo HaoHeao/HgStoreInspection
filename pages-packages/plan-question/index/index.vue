@@ -42,16 +42,10 @@
 									<view class="content">{{item.inspectionplace}}</view>
 								</view>
 								<view class="img-list" v-if="item.planinspectionquestionimg.length">
-									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="previewImage(item.planinspectionquestionimg,ind)">
 										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
 									</view>
 								</view>
-								<!-- <view class="info">
-									<view class="num active">{{item.planinspectionfeedback.length?`${item.planinspectionfeedback.length}条`:'暂未整改'}}</view>
-									<view class="btn-list">
-										<view class="btn">整改</view>
-									</view>
-								</view> -->
 							</view>
 							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
 							 :is-dot="setting.isDot" />
@@ -88,7 +82,7 @@
 									<view class="content">{{item.inspectionplace}}</view>
 								</view>
 								<view class="img-list" v-if="item.planinspectionquestionimg.length">
-									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="previewImage(item.planinspectionquestionimg,ind)">
 										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
 									</view>
 								</view>
@@ -129,7 +123,7 @@
 								</view>
 								<!-- <view class="place"><text class="label">位置：</text>{{item.inspectionplace}}</view> -->
 								<view class="img-list" v-if="item.planinspectionquestionimg.length">
-									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="utils.seePicture(item.planinspectionquestionimg,ind)">
+									<view class="img-view" v-for="(itm,ind) of item.planinspectionquestionimg" :key="ind" @click.stop="previewImage(item.planinspectionquestionimg,ind)">
 										<image class="icon" :src="itm.imgurl" mode="widthFix"></image>
 									</view>
 									<!-- <view class="img-view">
@@ -152,19 +146,6 @@
 								<view class="tip">暂无已完成整改记录</view>
 							</view>
 						</view>
-						<!-- <view class="item">
-							<view class="question">
-								<view class="txt">问题问题问题问题问题</view>
-								<view class="date">2020-09-24 15:33</view>
-							</view>
-							<view class="place"><text class="label">位置：</text>位置位置位置</view>
-							<view class="info">
-								<view class="num active">3条</view>
-								<view class="btn-list">
-									<view class="btn">复核</view>
-								</view>
-							</view>
-						</view> -->
 					</scroll-view>
 				</swiper-item>
 			</swiper>
@@ -242,6 +223,9 @@
 			}
 		},
 		computed: {
+			userinfo(){
+				return this.utils.getUserInfo(uni)
+			},
 			setting() {
 				return this.$store.state.setting
 			}
@@ -296,19 +280,9 @@
 			// 进入反馈
 			lookReplay(item) {
 				console.log('进入反馈', item);
-				if (item.status == 0) {
-					// 进入并回复
-					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' +
-							item.planquestionid
-					})
-				} else if (item.status == 1 || item.status == 100) {
-					// 进入查看不能回复
-					uni.navigateTo({
-						url: '/pages-plan/viewQuestion/viewQuestion?data=' + JSON.stringify(item) + '&id=' + item.planid + '&reply_id=' +
-							item.planquestionid
-					})
-				}
+				uni.navigateTo({
+					url: `/pages-packages/plan/question/question?planid=${item.planid}&planquestionid=${item.planquestionid}`
+				})
 			},
 			selectFloor(data) {
 				this.floor === data.floorvalue ? this.floor = 'all' : this.floor = data.floorvalue;
@@ -318,6 +292,13 @@
 			},
 			swiperChange(e) {
 				this.current = e.target.current
+			},
+			// 查看图片
+			previewImage(list,index){
+				uni.previewImage({
+					current: index,
+					urls: list.filter(item=> item.imgurl).map(item=> item.imgurl)
+				});
 			},
 			async bindDateChange(e) {
 				e.target.id == 'start' ? this.date[0] = e.target.value : e.target.id == 'end' ? this.date[1] = e.target.value : ''
@@ -356,16 +337,15 @@
 					true
 				this.$refs['popup'].close()
 			},
-			// tabbar切换请求数据
-			async tabbarBind() {
-				await this.getQuestionReset()
-				await this.popupReset()
-				await this.getQuestion()
-			},
+			// // tabbar切换请求数据
+			// async tabbarBind() {
+			// 	await this.getQuestionReset()
+			// 	await this.popupReset()
+			// 	await this.getQuestion()
+			// },
 			// 待整改
 			async getQuestionWait() {
 				if (this.waitLoading) return
-				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
 				this.waitLoading = true
 				try {
@@ -375,7 +355,7 @@
 						data: {
 							pagesize: this.pagesize,
 							pageindex: this.waitPageindex,
-							usernumber: userinfo.usernumber,
+							usernumber: this.userinfo.usernumber,
 							floor: this.floor,
 							planid: this.title,
 							sdate: this.date[0],
@@ -408,7 +388,6 @@
 			// 已整改
 			async getQuestionCompleted() {
 				if (this.computedLoading) return
-				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
 				this.computedLoading = true
 				try {
@@ -418,7 +397,7 @@
 						data: {
 							pagesize: this.pagesize,
 							pageindex: this.completedPageindex,
-							usernumber: userinfo.usernumber,
+							usernumber: this.userinfo.usernumber,
 							floor: this.floor,
 							planid: this.title,
 							sdate: this.date[0],
@@ -451,7 +430,6 @@
 			// 已完成
 			async getQuestionFinish() {
 				if (this.finishLoading) return
-				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
 				this.finishLoading = true
 				try {
@@ -461,7 +439,7 @@
 						data: {
 							pagesize: this.pagesize,
 							pageindex: this.finishPageindex,
-							usernumber: userinfo.usernumber,
+							usernumber: this.userinfo.usernumber,
 							floor: this.floor,
 							planid: this.title,
 							sdate: this.date[0],
@@ -493,7 +471,6 @@
 			},
 			// 获取筛选条件
 			async getFilterData() {
-				let userinfo = this.utils.getUserInfo(uni);
 				uni.showNavigationBarLoading()
 				try {
 					let data = await uni.request({
@@ -502,7 +479,7 @@
 						data: {
 							pagesize: 0,
 							pageindex: 1,
-							usernumber: userinfo.usernumber,
+							usernumber: this.userinfo.usernumber,
 							floor: '',
 							planid: 0,
 							sdate: this.date[0],

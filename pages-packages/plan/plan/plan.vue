@@ -823,14 +823,17 @@
 					}
 				}
 			}
-			>.remark{
-				min-height: 200rpx;
-				background: #F3F5F7;
-				border-radius: 10rpx;
+			.textarea-view{
 				padding: 20rpx;
-				font-size: 24rpx;
-				width: 100%;
+				background: #F3F5F7;
 				box-sizing: border-box;
+				border-radius: 10rpx;
+				overflow: hidden;
+				.remark{
+					min-height: 200rpx;
+					font-size: 28rpx;
+					width: 100%;
+				}
 			}
 			>.bottom-control {
 				padding: 20rpx 20rpx;

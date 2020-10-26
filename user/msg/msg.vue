@@ -20,16 +20,14 @@
 						</view>
 					</view>
 				</view>
-				<view class="null-data">
-					<view class="text">以上为全部消息</view>
-					<view class="line"></view>
-				</view>
+				<u-loadmore status="nomore" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
+				 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
 			</view>
-			<view class="no-data" v-if="!msgList.length">
-				<view class="img-v">
-					<image class="img" src="../../static/data_null.png" mode="widthFix"></image>
+			<view class="no-data-view fadeIn" v-if="!msgList.length">
+				<view class="center">
+					<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
+					<view class="tip">暂无新消息</view>
 				</view>
-				<view class="txt">暂无新消息</view>
 			</view>
 		</haoheao-scroll>
 	</view>
@@ -46,6 +44,14 @@
 				msgList: [],
 				pagenum: "",
 				pageindex: 1
+			}
+		},
+		computed: {
+			setting() {
+				return this.$store.state.setting
+			},
+			userinfo() {
+				return this.utils.getUserInfo(uni)
 			}
 		},
 		watch: {
@@ -82,7 +88,7 @@
 				let setMsg = {
 					msgviewid: 0,
 					imlogid: item.imlogid,
-					usernumber: uni.getStorageSync('userinfo').usernumber,
+					usernumber: this.userinfo.usernumber,
 					username: '',
 					deptid: 0,
 					deptname: '',
@@ -92,28 +98,23 @@
 				if (item.itype == 1) {
 					if (item.questionid == 0) {
 						uni.navigateTo({
-							url: "../../pages/seeDetail/seeDetail?id=" + item.inspectionid + "&reply_id=" + item.questionid +
-								"&msg=" + 'true' + '&postThereTrue=' + "true" + "&previs=" + true
+							url: `/pages-packages/plan/plan/plan?planid=${item.inspectionid}&planquestionid=${item.questionid}`
 						})
 						return;
 					}
 					uni.navigateTo({
-						url: "../../pages/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +
-							"&msg=" + 'true' + '&postThereTrue=' + "true" + "&previs=" + true
+						url: `/pages-packages/plan/question/question?planid=${item.inspectionid}&planquestionid=${item.questionid}`
 					})
 				} else if (item.itype == 2) {
 					if (item.questionid == 0) {
 						uni.navigateTo({
-							url: "../../pages-plan/seeDetail/seeDetail?id=" + item.inspectionid + "&reply_id=" + item.questionid +
-								"&msg=" + 'true' + '&postThereTrue=' + "true" + "&previs=" + 'true'
+							url: `/pages-packages/plan/plan/plan?planid=${item.inspectionid}&planquestionid=${item.questionid}`
 						})
 						return;
 					}
-					console.log("计划巡检-回复")
 					uni.navigateTo({
-						url: "../../pages-plan/viewQuestion/viewQuestion?id=" + item.inspectionid + "&reply_id=" + item.questionid +
-							"&previs=" + 'true' + "&room=" + 'msg'
-					});
+						url: `/pages-packages/plan/question/question?planid=${item.inspectionid}&planquestionid=${item.questionid}&navigatePage=1`
+					})
 				}
 			},
 			getMsg(pageindex, done) {
@@ -124,8 +125,8 @@
 					title: '加载中'
 				});
 				let option = {
-					usernumber: uni.getStorageSync("userinfo").usernumber,
-					deptid: uni.getStorageSync("userinfo").deptid,
+					usernumber: this.userinfo.usernumber,
+					deptid: this.userinfo.deptid,
 					pagesize: this.$store.state.plan.pagesize,
 					// pagesize: 10,
 					pageindex
@@ -135,12 +136,6 @@
 				request.getMsg(option).then(res => {
 					let [err, data] = res;
 					console.log("消息请求成功：", err, data.data);
-					// for (let item of data.data.data) {
-					// 	console.log(item)
-					// 	if (item.msgtype == 3) {
-					// 		console.log(item.msg.substring(item.msg.length - 10))
-					// 	}
-					// }
 					if (done) done();
 					uni.hideLoading();
 					if (err == null) {

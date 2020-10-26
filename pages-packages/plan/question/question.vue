@@ -12,11 +12,11 @@
 					</view>
 					<view class="msg-list">
 						<view class="left">巡查日期</view>
-						<view class="content">{{inspectionDetail.sdate1?inspectionDetail.sdate1:'' + '-' + inspectionDetail.edate1?inspectionDetail.edate1:''}}</view>
+						<view class="content">{{moment(inspectionDetail.sdate.replace(/-/g, "/")).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace(/-/g, "/")).format('YYYY.MM.DD')}}</view>
 					</view>
 					<view class="msg-list">
 						<view class="left">检查重点</view>
-						<view class="content">{{inspectionDetail.content}}</view>
+						<rich-text :nodes="inspectionDetail.content?inspectionDetail.content:'无描述'" class="content"></rich-text>
 					</view>
 					<view class="msg-list">
 						<view class="left">巡检级别</view>
@@ -118,7 +118,7 @@
 					</view>
 				</block>
 			</block>
-			<u-loadmore status="nomore" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
+			<u-loadmore :status="getDataLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
 			 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
 		</scroll-view>
 		<view class="replay-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
@@ -179,6 +179,7 @@
 				inspectionDetail:null,
 				// 巡检问题明细
 				inspectionQuestionDetail:null,
+				getDataLoading:false,
 				getDataRefresherLoading:false,
 				remark:'',
 				// 待上传图片列表
@@ -272,8 +273,10 @@
 			},
 			// 计划巡检获取某一条巡检记录明细
 			async getInspectionDetail(){
+				if (this.getDataLoading) return
+				this.getDataLoading = true
+				uni.showNavigationBarLoading()
 				try {
-					uni.showNavigationBarLoading()
 					let data = await uni.request({
 						method: 'GET',
 						url: this.api.plan_getPlaninspectionDetail,
@@ -284,6 +287,7 @@
 					})
 					uni.hideNavigationBarLoading()
 					let [err, success] = data
+					this.getDataLoading = false
 					console.log('计划巡检获取某一条巡检记录明细--->>>',err, success)
 					if (!err && success.data.success) {
 						// 计划巡检判断 0:未开始 1:执行中 2:已结束 3:已删除
@@ -316,6 +320,7 @@
 					}
 				} catch (e) {
 					console.log(e)
+					this.getDataLoading = false
 					uni.hideNavigationBarLoading()
 				}
 			},
@@ -404,6 +409,7 @@
 			chooseImgage(){
 				let _this = this;
 				uni.chooseImage({
+					sizeType:['original'],
 					success: function (res) {
 						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item=> item.path))
 					}
@@ -515,10 +521,9 @@
 				}
 			},
 			// 顶部点击回到巡检计划主页plan
-			navigateToPlan(item){
-				console.log(item);
+			navigateToPlan(){
 				uni.navigateTo({
-					url:"../plan/plan?planid=" + item.planid
+					url:"/pages-packages/plan/plan/plan?planid=" + this.planid
 				})
 			},
 			// 巡检复核
@@ -629,6 +634,10 @@
 				font-size: 26rpx;
 				box-sizing: border-box;
 				border-radius: 10rpx;
+				
+				&.msg{
+					margin-bottom: 20rpx;
+				}
 				
 				// 问题的状态显示
 				.question-status{
@@ -983,7 +992,10 @@
 				}
 			}
 			&.review{
-				.bottom-control {
+				.bottom-control {						
+					.item {
+						line-height: 60rpx;
+					}
 					.content{
 						padding: 20rpx 0;
 					}

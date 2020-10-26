@@ -93,13 +93,6 @@
 							</block>
 						</view>
 					</block>
-					<!-- <view class="title">保安：</view>
-					<view class="item-list">
-						<view class="item">保安</view>
-						<view class="item">工程</view>
-						<view class="item">总办</view>
-						<view class="item">人事</view>
-					</view> -->
 					<view class="popup-down"></view>
 				</view>
 				<view class="control">
@@ -798,69 +791,66 @@
 				}
             }
             // 部门或人员
-            .item-view.label-add{
-                width:100%;
-                display:flex;
-                justify-content:flex-start;
-				flex-wrap: wrap;
-                .item-true{
-                    width: calc(100%/3 - 36rpx);
-                    height: 38rpx;
-                    line-height: 38rpx;
-                    padding: 10rpx 10rpx;
-                    margin-right:13rpx;
-                    margin-bottom:13rpx;
-                    border:1rpx solid #F3F5F7;
-                    background: #F3F5F7;
-                    color: #647685;
-                    text-align:center;
-                    font-size:24rpx;
-                    border-radius:6rpx;
-                    white-space:nowrap;
-                    text-overflow:ellipsis;
-					border: 2rpx solid #F3F5F7;
-                    
-                    &:active{
-                        opacity:0.9;
-                        background:#f9f9f9;
-                    }
-					&.active{
-						border: 2rpx solid #40A9FF;
-						background: #fff;
-						box-shadow: 0 0 10rpx -8rpx #000;
-					}
-					&.item-true-btn{
-						width:92rpx;
-						border:1rpx dashed #B6C6D6;
-						background: #fff;
-						color: #647484;
+            .item-view{
+				&.label-add{
+					width:100%;
+					display:flex;
+					justify-content:flex-start;
+					flex-wrap: wrap;
+					.item-true{
+						width: calc(100%/3 - 36rpx);
+						height: 38rpx;
+						line-height: 38rpx;
+						padding: 10rpx 10rpx;
+						margin-right:13rpx;
+						margin-bottom:13rpx;
+						border:1rpx solid #F3F5F7;
+						background: #F3F5F7;
+						color: #647685;
+						text-align:center;
+						font-size:24rpx;
+						border-radius:6rpx;
+						white-space:nowrap;
+						text-overflow:ellipsis;
+						border: 2rpx solid #F3F5F7;
 						
 						&:active{
 							opacity:0.9;
 							background:#f9f9f9;
-							border:1rpx dotted #B6C6D6;
+						}
+						&.active{
+							border: 2rpx solid #40A9FF;
+							background: #fff;
+							box-shadow: 0 0 10rpx -8rpx #000;
+						}
+						&.item-true-btn{
+							width:92rpx;
+							border:1rpx dashed #B6C6D6;
+							background: #fff;
+							color: #647484;
+							
+							&:active{
+								opacity:0.9;
+								background:#f9f9f9;
+								border:1rpx dotted #B6C6D6;
+							}
+						}
+						&:nth-child(3n) {
+							margin-right: 0;
 						}
 					}
-					&:nth-child(3n) {
-						margin-right: 0;
-					}
-                }
-				&.floor{
-					.item-true{
-						width: calc(14% - 36rpx);
-						&:nth-child(3n) {
-							margin-right: 13rpx;
+					&.floor{
+						.item-true{
+							width: calc(22% - 27rpx);
+							&:nth-child(3n) {
+								margin-right: 13rpx;
+							}
 						}
 					}
 				}
-            }
+			}
             // 图片
             .item-view.label-add{
-                width:100%;
-                display:flex;
-                justify-content:flex-start;
-				flex-wrap: wrap;
-                
                 .item-img-true{
 					width:110rpx;
 					height:110rpx;

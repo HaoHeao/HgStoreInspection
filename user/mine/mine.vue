@@ -12,34 +12,6 @@
             <open-data type="userNickName" lang="zh_CN" class="text"></open-data>
         </view>
         <view class="user-info">{{userInfo.deptname}} - {{userInfo.username}}</view>
-        <!-- <view :class="['modules',menulist > 3?'modules-item-big':'']">
-            <view class="item" @click="moduleTo(1)">
-                <view class="icon">
-                    <image src="../../static/module1.png" mode="widthFix" class="img"></image>
-                </view>
-                <view class="title">卖场巡检</view>
-            </view>
-            <view class="item" @click="moduleTo(2)">
-                <view class="icon">
-                    <image src="../../static/module2.png" mode="widthFix" class="img"></image>
-                </view>
-                <view class="title">主题巡检</view>
-            </view>
-            <view class="item plan" @click="moduleTo(3)">
-                <view class="icon">
-                    <image src="../../static/module3.png" mode="widthFix" class="img"></image>
-                    <view class="date">{{new Date().getDate()}}</view>
-                </view>
-                <view class="title">日常巡检</view>
-            </view>
-            <view class="item plan" @click="moduleTo(4)">
-                <view class="icon">
-                    <image src="../../static/module3.png" mode="widthFix" class="img"></image>
-                    <view class="date">{{new Date().getDate()}}</view>
-                </view>
-                <view class="title">日常巡检</view>
-            </view>
-        </view> -->
         <view class="control">
             <view class="item" @click="navigator(1)">
                 <image src="../../static/phone1.png" mode="widthFix" class="icon"></image>
@@ -215,7 +187,6 @@
             overflow: hidden;
 
             .item {
-                width: calc(100% - 52rpx);
                 padding: 26rpx 26rpx;
                 display: flex;
                 justify-content: flex-start;

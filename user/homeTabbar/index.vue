@@ -15,16 +15,16 @@
 		</view>
 		<view class="work_view" v-if="work_view">
 			<view class="content">
-				<view class="mark fadeIn500" @click="work_show()"></view>
+				<view class="mark fadeIn500" @click="work_view = !work_view"></view>
 				<view class="module_list fadeIn" v-if="userModelList.length">
 					<block v-if="userModelList.length">
-						<view class="item fadeIn" v-for="(item,index) of userModelList" :key="index" @click="work_go(item.mcode)">
+						<view class="item fadeIn" v-for="(item,index) of userModelList" :key="index" @click="toModule(item.mcode)">
 							<view class="icon-view">
 								<image :src="require(`@/static/tabbar/work/${item.mcode?item.mcode:'item'}.svg`)" mode="widthFix" class="icon"></image>
 							</view>
 							<view class="txt">{{item.mname}}</view>
 						</view>
-						<!-- <view class="item" @click="work_go('spot-check')">
+						<!-- <view class="item" @click="toModule('spot-check')">
 							<view class="icon-view">
 								<image src="@/static/tabbar/work/spot-check.svg" mode="widthFix" class="icon"></image>
 							</view>
@@ -85,10 +85,7 @@
 				}
 				this.$store.commit("changeHomeTabbar", index);
 			},
-			work_show() {
-				this.work_view = false;
-			},
-			async work_go(type) {
+			async toModule(type) {
 				if (type == 'store') {
 					this.utils.getMarketDeptList(this);
 					this.utils.getMarketUserList(this);
