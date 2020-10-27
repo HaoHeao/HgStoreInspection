@@ -124,7 +124,7 @@
 		<view class="replay-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="reply" type="bottom">
-			<view class="popup reply">
+			<view class="popup reply top">
 				<view class="title">
 					<text class="content">整改</text>
 					<view class="close" @click="$refs['reply'].close()">关闭</view>
@@ -149,7 +149,7 @@
 			</view>
 		</uni-popup>
 		<uni-popup ref="review" type="bottom">
-			<view class="popup review">
+			<view class="popup review top">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
 				<view class="textarea-view">
 					<textarea class="remark" fixed auto-height v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" />

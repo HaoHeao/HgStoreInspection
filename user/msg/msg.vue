@@ -34,11 +34,8 @@
 </template>
 
 <script>
-	let utils = require('@/util/utils.js');
-	let request = utils.api;
-	let moment = utils.moment;
+	let request = require('@/util/utils.js').api;
 	export default {
-		props: ['reflesh'],
 		data() {
 			return {
 				msgList: [],
@@ -53,17 +50,6 @@
 			userinfo() {
 				return this.utils.getUserInfo(uni)
 			}
-		},
-		watch: {
-			reflesh(news, old) {
-				this.pageindex = 1;
-				this.msgList = [];
-				// 获取信息
-				this.getMsg(this.pageindex);
-			}
-		},
-		onHide() {
-			uni.hideLoading();
 		},
 		methods: {
 			onPullDown(done) { // 下拉刷新
@@ -81,10 +67,10 @@
 				}
 			},
 			navigator(item) {
-				utils.getMarketDeptList(this);
-				utils.getMarketUserList(this);
+				this.utils.getMarketDeptList(this);
+				this.utils.getMarketUserList(this);
 				console.log("查看信息参数", item);
-				let insertdate = moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
+				let insertdate = this.moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
 				let setMsg = {
 					msgviewid: 0,
 					imlogid: item.imlogid,
@@ -127,8 +113,7 @@
 				let option = {
 					usernumber: this.userinfo.usernumber,
 					deptid: this.userinfo.deptid,
-					pagesize: this.$store.state.plan.pagesize,
-					// pagesize: 10,
+					pagesize: 20,
 					pageindex
 				};
 				let _this = this;
@@ -139,7 +124,7 @@
 					if (done) done();
 					uni.hideLoading();
 					if (err == null) {
-						utils.timerDateString(data.data.data);
+						_this.utils.timerDateString(data.data.data);
 						_this.msgList = _this.msgList.concat(data.data.data);
 						if (!this.pagenum) {
 							this.pagenum = data.data.pagenum
@@ -156,7 +141,13 @@
 					uni.hideLoading();
 				})
 			}
-		}
+		},
+		onHide() {
+			uni.hideLoading();
+		},
+		created:function(){
+			this.getMsg(this.pageindex);
+		},
 	}
 </script>
 

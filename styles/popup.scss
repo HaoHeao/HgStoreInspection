@@ -2,13 +2,23 @@
 /* popup */
 .popup {
 	background: #fff;
-	// border-top-left-radius: 20rpx;
-	// border-top-right-radius: 20rpx;
 	/* IOS XR */
 	padding-bottom: env(safe-area-inset-bottom);
 	/* ------ */
 	max-height: 80vh;
 	// overflow-y: scroll;
+	
+	// 从上往下
+	&.top{
+		border-top-left-radius: 20rpx;
+		border-top-right-radius: 20rpx;
+	}
+	
+	// 从下网上
+	&.bottom{
+		border-bottom-left-radius: 20rpx;
+		border-bottom-right-radius: 20rpx;
+	}
 	// 标题
 	>.title{
 		color: #647484;

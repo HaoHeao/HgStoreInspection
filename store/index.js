@@ -3,6 +3,7 @@ import Vuex from "vuex"
 import tabbar from "./modules/tabbar.js"
 import market from "./modules/market.js"
 import plan from "./modules/plan.js"
+import storeshop from "./modules/storeshop.js"
 import usermodel from "./userModel.js"
 import metting from "./modules/metting.js"
 import setting from "./modules/setting.js"
@@ -44,6 +45,7 @@ const store = new Vuex.Store({
 	modules: {
 		tabbar,
 		market,
+		storeshop,
 		plan,
 		usermodel,
 		metting,

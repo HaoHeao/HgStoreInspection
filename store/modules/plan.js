@@ -1,37 +1,7 @@
 export default {
 	state: {
-		pagesize: 20,
-		// 添加项目问题
-		questionSend: {
-			deptlist: [],
-			userlist: []
-		},
-		// 确认人和部门
-		questionSendConfirm: {
-			deptlist: [],
-			userlist: []
-		},
+		// 楼层、整改部门、整改人员、复核部门或复核人员提前加载
 		// 添加楼层
-		planAddQuestionFloorList:[]
-	},
-	mutations: {
-		setQuestionSend(state, data) {
-			state.questionSend = data
-		},
-		setQuestionDeptSend(state, data) {
-			state.questionSend.deptlist = data;
-		},
-		setQuestionUserSend(state, data) {
-			state.questionSend.userlist = data;
-		},
-		setQuestionSendConfirm(state, data) {
-			state.questionSendConfirm = data
-		},
-		setQuestionDeptSendConfirm(state, data) {
-			state.questionSendConfirm.deptlist = data;
-		},
-		setQuestionUserSendConfirm(state, data) {
-			state.questionSendConfirm.userlist = data;
-		},
+		planAddQuestionFloorList: [],
 	}
 }
