@@ -578,7 +578,6 @@
 </script>
 
 <style scoped lang="scss">
-	@import '@/styles/popup.scss';
 	page{
 		background: #E5EDF1;
 	}

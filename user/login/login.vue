@@ -78,7 +78,7 @@
 										uni.hideLoading();
 										if (err == null && res.data.success) {
 											globalData.userinfo = res.data.data.userinfo;
-											utils.getModelList(globalData.userinfo.usernumber, this);
+											// utils.getModelList(globalData.userinfo.usernumber, this);
 
 											// 存入storage
 											uni.setStorageSync("userinfo", res.data.data.userinfo);

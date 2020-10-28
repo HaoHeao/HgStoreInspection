@@ -25,6 +25,23 @@
 		padding: 0 10rpx;
 		margin-bottom: 20rpx;
 	}
+	
+	>.title{
+		display: flex;
+		font-size: 30rpx;
+		.content{
+			flex: 2;
+		}
+		.close{
+			padding: 4rpx 15rpx;
+			border-radius: 5rpx;
+			&:active{
+				color: #1BA1F3;
+				background: #f2f2f2;
+			}
+		}
+	}
+	
 	// 底部控制
 	.bottom-control{
 		display: flex;

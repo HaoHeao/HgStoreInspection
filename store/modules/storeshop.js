@@ -1,4 +1,5 @@
 export default {
+	namespaced: true,
 	state: {
 		pagesize: 20,
 		// 添加项目问题

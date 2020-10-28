@@ -2,8 +2,8 @@
 	<view class="container">
 		<!-- <navbar></navbar> -->
 		<view class="main">
-			<msg :reflesh='reflesh' v-if="homeTabbarIndex == 0"></msg>
-			<mine v-if="homeTabbarIndex == 2"></mine>
+			<msg :reflesh='reflesh' v-if="tabbarIndex == 0"></msg>
+			<mine v-if="tabbarIndex == 2"></mine>
 		</view>
 		<tabbar></tabbar>
 	</view>
@@ -25,21 +25,20 @@
 			}
 		},
 		computed: {
-			homeTabbarIndex: function() {
+			tabbarIndex: function() {
 				this.reflesh += 1;
-				return this.$store.state.homeIndex
+				return this.$store.state.home.tabbarIndex
 			}
 		},
 		onLoad: function() {
 			// 隐藏微信小程序tabbar
 			wx.hideHomeButton();
-			// this.$store.commit("changeHomeTabbar", 0);
 			uni.setNavigationBarTitle({
 				title: "我的消息"
 			});
 		},
 		onShow: function() {
-			if (this.homeTabbarIndex == 0) {
+			if (this.tabbarIndex == 0) {
 				this.reflesh += 1;
 				console.log("user index onShow");
 			}

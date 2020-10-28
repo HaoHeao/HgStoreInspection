@@ -4,7 +4,7 @@
 			<view class="line"></view>
 		</view>
 		<view class="main">
-			<block v-for="(item,index) of tabbarList" :key="index">
+			<block v-for="(item,index) of tabbar" :key="index">
 				<view :class="index == tabbarIndex?'item active':'item'" @click="selectTabbar(index)">
 					<view class="image">
 						<image :src="index == tabbarIndex?item.iconPath:item.selectedIconPath" mode="widthFix" class="icon"></image>
@@ -16,9 +16,9 @@
 		<view class="work_view" v-if="work_view">
 			<view class="content">
 				<view class="mark fadeIn500" @click="work_view = !work_view"></view>
-				<view class="module_list fadeIn" v-if="userModelList.length">
-					<block v-if="userModelList.length">
-						<view class="item fadeIn" v-for="(item,index) of userModelList" :key="index" @click="toModule(item.mcode)">
+				<view class="module_list fadeIn" v-if="authList.length">
+					<block v-if="authList.length">
+						<view class="item fadeIn" v-for="(item,index) of authList" :key="index" @click="toModule(item.mcode)">
 							<view class="icon-view">
 								<image :src="require(`@/static/tabbar/work/${item.mcode?item.mcode:'item'}.svg`)" mode="widthFix" class="icon"></image>
 							</view>
@@ -32,7 +32,7 @@
 						</view> -->
 					</block>
 				</view>
-				<view class="no-model" v-if="!userModelList.length">
+				<view class="no-model" v-if="!authList.length">
 					<view class="tips">您没有任何权限！</view>
 					<view class="refresh" @click="refreshModel()">重新获取权限</view>
 				</view>
@@ -43,60 +43,48 @@
 
 <script>
 	export default {
-		props: ['index'],
 		data() {
 			return {
 				work_view: false
 			}
 		},
 		computed: {
-			tabbarList() {
-				return this.$store.state.homeTabbar;
+			tabbar() {
+				return this.$store.state.home.tabbar;
 			},
 			tabbarIndex() {
-				return this.$store.state.homeIndex;
+				return this.$store.state.home.tabbarIndex;
 			},
-			userModelList() {
-				return this.$store.state.usermodel.modelList;
-			}
-		},
-		created() {
-			if (this.index) {
-				this.$store.commit("changeHomeTabbar", JSON.parse(this.index))
+			authList() {
+				return this.utils.getUserInfo(uni).menulist
 			}
 		},
 		methods: {
 			selectTabbar(index) {
 				if (index == 0) {
-					this.work_view = false;
 					uni.setNavigationBarTitle({
 						title: "我的消息"
 					});
 				} else if (index == 1) {
 					// 加载查看权限
-					this.utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 					this.work_view = !this.work_view;
 					return;
 				} else if (index == 2) {
-					this.work_view = false;
 					uni.setNavigationBarTitle({
 						title: "我的主页"
 					})
 				}
-				this.$store.commit("changeHomeTabbar", index);
+				this.work_view = false;
+				this.$store.state.home.tabbarIndex = index
 			},
 			async toModule(type) {
 				if (type == 'store') {
 					this.utils.getMarketDeptList(this);
 					this.utils.getMarketUserList(this);
-					this.$store.commit("changeTabbar", 0);
 					uni.reLaunch({
 						url: '/pages/index/index'
 					})
 				} else if (type == 'plan') {
-					this.request.getPlanFloorList()
-					this.utils.getMarketDeptList(this);
-					this.utils.getMarketUserList(this);
 					uni.reLaunch({
 						url: '/pages-packages/plan/index/index'
 					})
@@ -119,7 +107,7 @@
 				}
 			},
 			refreshModel() {
-				this.utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
+				// this.utils.getModelList(uni.getStorageSync('userinfo').usernumber, this);
 			}
 		}
 	}

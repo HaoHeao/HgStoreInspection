@@ -11,9 +11,19 @@ const getFloorlist = `${api}/hgInspection/storeapi/baseinfo/floor/load`
 // 解析导购工牌
 const getSalerqrcodeInfo = `${api}/hgInspection/storeapi/plan/salerinfo`
 
+// 获取部门列表
+const getDeptList = `${api}/hgInspection/storeapi/baseinfo/deptlist`
+
+// 获取人员列表
+const getUserList = `${api}/hgInspection/storeapi/baseinfo/userlist`
+
 export {
 	// 获取楼层列表
 	getFloorlist,
 	// 解析导购工牌
 	getSalerqrcodeInfo,
+	// 获取部门列表
+	getDeptList,
+	// 获取人员列表
+	getUserList,
 }

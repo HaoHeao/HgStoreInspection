@@ -10,7 +10,7 @@
 					<view class="item-title">楼层</view>
 					<view class="item-view label-add floor">
 						<view :class="['item',item.floorvalue == floor?'active':'']" v-for="(item,index) of floorList" :key="index"
-						 @click="selectFloor(item.floorvalue)">{{item.floorname}}</view>
+						 @click="floor == item.floorvalue?floor = '':floor = item.floorvalue">{{item.floorname}}</view>
 					</view>
 				</block>
 				<view class="item-title">位置</view>
@@ -20,32 +20,32 @@
 				</view>
 				<view class="item-title">整改部门</view>
 				<view class="item-view label-add">
-					<view class="item" v-for="(item,index) of deptList" :key="index">{{item.deptname}}</view>
-					<view class="item item-add" @click="openSelect(1)">+</view>
+					<view class="item" v-for="(item,index) of deptList" :key="index" v-if="item.rectifyLabel">{{item.deptname}}</view>
+					<view class="item item-add" @click="$refs['rectifyDept'].open()">+</view>
 				</view>
 				<view class="item-title">整改人员</view>
 				<view class="item-view label-add">
-					<view class="item" v-for="(item,index) of userList.leaderlist" :key="index">{{item.username}}</view>
-					<view class="item" v-for="(item,index) of userListOnce" :key="index">{{item.username}}</view>
+					<view class="item" v-for="(item,index) of userList.leaderlist" :key="index" v-if="item.rectifyLabel">{{item.username}}</view>
+					<block v-for="(item,index) of userList.deptuserlist" :key="index">
+						<view class="item" v-for="(itm,ind) of item.userlist" :key="ind" v-if="itm.rectifyLabel">{{itm.username}}</view>
+					</block>
 					<view class="item item-add" @click="openSelect(2)">+</view>
 				</view>
 				<view class="item-title">添加图片</view>
 				<view class="item-view image-list">
-					<view class="item" v-for="(item,index) of upImgList" :key="index" @click="delImg(index)">
-						<image :src="item.path + setting.OSSDownload" class="icon"></image>
+					<view class="item" v-for="(item,index) of tempFilePaths" :key="index" @click="tempFilePaths.splice(index,1)">
+						<image :src="item" class="icon" mode="widthFix"></image>
 					</view>
-					<view class="item item-add" @click="addImg();">
-						<!-- <view class="icon">+</view>
-						<view class="text">添加图片</view> -->
+					<view class="choose-image" @click="chooseImgage();">
 						<image class="icon" src="@/static/icon/add_img.svg" mode="widthFix"></image>
 					</view>
 				</view>
 				<view class="item-title">复核部门或人员</view>
 				<view class="item-view label-add">
-					<view class="item" v-for="(item,index) of deptListConfirm" :key="index">{{item.deptname}}</view>
-					<view class="item" v-for="(item,index) of userListConfirm.leaderlist" :key="index">{{item.username}}</view>
-					<block v-for="(item,index) of userListConfirm.deptuserlist" :key="index">
-						<view class="item" v-for="(item,index) of item.userlist" :key="index">{{item.username}}</view>
+					<view class="item" v-for="(item,index) of deptList" :key="index" v-if="item.reviewLabel">{{item.deptname}}</view>
+					<view class="item" v-for="(item,index) of userList.leaderlist" :key="index" v-if="item.reviewLabel">{{item.username}}</view>
+					<block v-for="(item,index) of userList.deptuserlist" :key="index">
+						<view class="item" v-for="(itm,ind) of item.userlist" :key="ind" v-if="itm.reviewLabel">{{itm.username}}</view>
 					</block>
 					<view class="item item-add" @click="openSelect(3)">+</view>
 				</view>
@@ -56,6 +56,26 @@
 			</view>
 		</scroll-view>
 		<view class="replay-btn" @click="submit()">提交</view>
+		<uni-popup ref="rectifyDept" type="bottom" :maskClick="false">
+			<view class="popup rectify-dept top">
+				<view class="title">
+					<text class="content">整改部门</text>
+					<view class="close" @click="$refs['rectifyDept'].close()">关闭</view>
+				</view>
+				<view class="data-list">
+					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
+						<view class="title">{{item.deptname}}</view>
+						<!-- <view class="position">{{item.position}}</view> -->
+					</view>
+				</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="close" @click="deptList.filter(item=>{item.rectifyLabel = false})">重置</view>
+						<!-- <view class="item">关闭</view> -->
+					</view>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -71,14 +91,19 @@
 				floorList: [],
 				// 位置
 				place: "",
-				// 整改部门列表
+				// 部门列表
 				deptList: [],
-				// 整改人员
-				dserList: [],
-				// 图片上传列表
-				upImageList: [],
+				// 人员列表
+				userList: [],
+				// 待上传图片列表
+				tempFilePaths: [],
+				// 上传成功的有效已选择的图片
+				successUploadFileImages: [],
 				// 复核部门或人员
-				reviewDeptUserList: []
+				reviewDeptUserList: [],
+
+				// 提交loading
+				submitLoading: false
 			}
 		},
 		computed: {
@@ -90,6 +115,47 @@
 			}
 		},
 		methods: {
+			// 选择图片
+			chooseImgage() {
+				let _this = this;
+				uni.chooseImage({
+					sizeType: ['original'],
+					success: function(res) {
+						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item => item.path))
+					}
+				});
+			},
+			// 上传图片
+			async uploadFileImage() {
+				this.successUploadFileImages = []
+				let _this = this;
+				for (let item of this.tempFilePaths) {
+					try {
+						let uploadResult = await uni.uploadFile({
+							url: _this.api.plan_uploadImage,
+							filePath: item,
+							name: 'file',
+							method: "POST",
+						})
+						let [err, success] = uploadResult
+						if (!err && JSON.parse(success.data).code == 0) {
+							this.successUploadFileImages.push(JSON.parse(success.data).data.url)
+						} else {
+							uni.showToast({
+								title: err ? err : success.data,
+								icon: 'none',
+								duration: 3000
+							});
+						}
+					} catch (e) {
+						uni.showToast({
+							title: e,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				}
+			},
 			// 扫码
 			scanCode() {
 				let _this = this
@@ -110,7 +176,7 @@
 					})
 					let [err, success] = data
 					uni.hideNavigationBarLoading()
-					console.log('解析导购工牌请求成功------>>>', success)
+					console.log('解析导购工牌请求成功------>>>', err, success)
 					if (success.data.success) {
 						this.floor = success.data.data.salerinfo.floorvalue
 						this.place = success.data.data.salerinfo.conername
@@ -130,25 +196,38 @@
 			async getPlanDeptList() {
 				try {
 					let data = await uni.request({
-						method: 'POST',
-						url: this.api.getSalerqrcodeInfo + `?salerqrcode=${salerqrcode}`,
+						method: 'GET',
+						url: this.api.getDeptList
 					})
 					let [err, success] = data
-					console.log('部门列表请求成功------>>>', success)
+					console.log('部门列表请求成功------>>>', err, success)
 					if (success.data.success) {
-						this.floor = success.data.data.salerinfo.floorvalue
-						this.place = success.data.data.salerinfo.conername
-					} else {
-						uni.showToast({
-							title: err ? err : success.data.errmsg,
-							icon: 'none',
-							duration: 3000
-						});
+						for (let item of success.data.data.deptlist) {
+							item.rectifyLabel = false
+						}
+						this.deptList = success.data.data.deptlist
 					}
 				} catch (e) {
 					console.log(e)
 				}
 			},
+			// 请求人员列表
+			async getPlanUserList() {
+				try {
+					let data = await uni.request({
+						method: 'GET',
+						url: this.api.getUserList
+					})
+					let [err, success] = data
+					console.log('人员列表请求成功------>>>', err, success)
+					if (success.data.success) {
+						this.userList = success.data.data
+					}
+				} catch (e) {
+					console.log(e)
+				}
+			},
+			// 请求楼层列表
 			async getPlanFloorList() {
 				try {
 					let data = await uni.request({
@@ -156,7 +235,7 @@
 						url: this.api.getFloorlist
 					})
 					let [err, success] = data
-					console.log('计划巡检楼层请求成功------>>>', success)
+					console.log('楼层列表请求成功------>>>', err, success)
 					if (success.data.success) {
 						this.floorList = success.data.data.floor
 					}
@@ -400,6 +479,8 @@
 		onLoad: function(option) {
 			console.log(option)
 			this.planid = option.planid
+			this.getPlanDeptList()
+			this.getPlanUserList()
 			this.getPlanFloorList()
 		},
 		onShow: function() {
@@ -409,8 +490,6 @@
 </script>
 
 <style scoped lang="scss">
-	@import '@/styles/popup.scss';
-
 	.container {
 		width: 100%;
 		min-height: 100vh;
@@ -427,7 +506,7 @@
 			border-radius: 10rpx;
 			padding: 0rpx 30rpx;
 			margin: 20rpx;
-			margin-bottom: 140rpx;
+			margin-bottom: 110rpx;
 
 			// 标题
 			.item-title {
@@ -479,17 +558,15 @@
 					flex-wrap: wrap;
 
 					.item {
-						width: calc(100%/3 - 36rpx);
-						height: 60rpx;
-						margin-right: 13rpx;
-						margin-bottom: 13rpx;
+						width: calc(100%/3 - 12rpx);
+						min-height: 60rpx;
+						margin-right: 15rpx;
+						margin-bottom: 15rpx;
 						background: #F3F5F7;
 						color: #647685;
 						text-align: center;
 						font-size: 24rpx;
 						border-radius: 6rpx;
-						white-space: nowrap;
-						// text-overflow: ellipsis;
 						border: 2rpx solid #F3F5F7;
 						display: flex;
 						align-items: center;
@@ -498,11 +575,11 @@
 						&.active {
 							border-color: #40A9FF;
 							background: #fff;
-							box-shadow: 0 0 10rpx -8rpx #000;
+							box-shadow: 4rpx 8rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
 						}
 
 						&.item-add {
-							width: 100rpx;
+							width: 116rpx;
 							border: 1rpx dashed #B6C6D6;
 							background: #fff;
 							color: #647484;
@@ -517,10 +594,14 @@
 				// 楼层
 				&.floor {
 					.item {
-						width: calc(22% - 27rpx);
+						width: calc(100%/5 - 12rpx);
 
 						&:nth-child(3n) {
-							margin-right: 13rpx;
+							margin-right: 15rpx;
+						}
+
+						&:nth-child(5n) {
+							margin-right: 0rpx;
 						}
 					}
 				}
@@ -555,39 +636,58 @@
 				// 添加图片
 				&.image-list {
 					display: flex;
+					flex-wrap: wrap;
 
 					.item {
-						width: 50rpx;
-						height: 50rpx;
-						margin-right: 10rpx;
-						margin-bottom: 10rpx;
+						width: 116rpx;
+						height: 116rpx;
+						margin-bottom: 15rpx;
+						margin-right: 15rpx;
 						display: flex;
 						align-items: center;
 						justify-content: center;
+						overflow: hidden;
+						position: relative;
 
 						>.icon {
 							width: 100%;
 							min-height: 100%;
 						}
 
-						&.item-add {
-							width: 100rpx;
-							height: 100rpx;
-							border: 1rpx dashed #B6C6D6;
-							background: #fff;
-							color: #647484;
-							display: flex;
-							align-items: center;
-							justify-content: center;
-							flex-wrap: wrap;
+						&:before {
+							content: "×";
+							border-radius: 50%;
+							font-size: 16rpx;
+							width: 20rpx;
+							height: 20rpx;
+							background: #D56C68;
+							color: #fff;
+							text-align: center;
+							line-height: 20rpx;
+							position: absolute;
+							top: 5rpx;
+							right: 5rpx;
+						}
+					}
 
-							.icon {
-								width: 40rpx;
-							}
+					.choose-image {
+						width: 116rpx;
+						height: 116rpx;
+						margin-bottom: 15rpx;
+						border: 1rpx dashed #B6C6D6;
+						background: #fff;
+						color: #647484;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						flex-wrap: wrap;
 
-							.text {
-								width: 100%;
-							}
+						.icon {
+							width: 40rpx;
+						}
+
+						.text {
+							width: 100%;
 						}
 					}
 				}
@@ -614,6 +714,63 @@
 
 			&:active {
 				opacity: 0.8;
+			}
+		}
+
+		.popup {
+			padding: 30rpx;
+			padding-bottom: 0;
+
+			&.rectify-dept {
+				.data-list {
+					display: flex;
+					flex-wrap: wrap;
+					white-space: nowrap;
+
+					.item {
+						width: calc(100%/3 - 18rpx);
+						min-height: 60rpx;
+						border-radius: 6rpx;
+						background-color: #F3F5F7;
+						margin-right: 18rpx;
+						margin-bottom: 18rpx;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						flex-wrap: wrap;
+						text-align: center;
+						padding: 14rpx 10rpx;
+						white-space: normal;
+						border: 2rpx solid #F3F5F7;
+
+						&.active {
+							border-color: #40A9FF;
+							background: #fff;
+							box-shadow: 4rpx 8rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+						}
+
+						.title {
+							width: 100%;
+							font-size: 24rpx;
+							color: #647685;
+						}
+
+						.position {
+							font-size: 20rpx;
+							color: #999;
+						}
+					}
+				}
+			}
+
+			>.bottom-control {
+				padding: 20rpx 20rpx;
+				padding-right: 0;
+				background: #fff;
+
+				.item {
+					line-height: 60rpx;
+				}
 			}
 		}
 	}

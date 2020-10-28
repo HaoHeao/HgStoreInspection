@@ -2,7 +2,7 @@ const setting = {
 	namespaced: true,
 	state: {
 		// OSS下载规则
-		OSSDownload:"?x-oss-process=image/resize,m_mfit,h_120,w_120",
+		OSSDownload: "?x-oss-process=image/resize,m_mfit,h_120,w_120",
 		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头
 		circular: true,
 		// swiper滑动动画时长

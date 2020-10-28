@@ -135,8 +135,9 @@
 		</scroll-view>
 		<view class="replay-btn" @click="submitQuestions()" v-if="inspectionDetail && inspectionDetail.submitQuestion">提出巡检问题</view>
 		<uni-popup ref="review" type="bottom">
-			<view class="popup">
-				<view class="title"><text class="content">复核问题</text>
+			<view class="popup top">
+				<view class="title">
+					<text class="content">复核问题</text>
 					<view class="close" @click="$refs['review'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
@@ -375,7 +376,6 @@
 </script>
 
 <style scoped lang="scss">
-	@import '@/styles/popup.scss';
 	page{
 		background: #E5EDF1;
 	}
@@ -809,20 +809,6 @@
 		.popup {
 			padding: 30rpx;
 			padding-bottom: 0;
-			>.title{
-				display: flex;
-				.content{
-					flex: 2;
-				}
-				.close{
-					padding: 4rpx 15rpx;
-					border-radius: 5rpx;
-					&:active{
-						color: #1BA1F3;
-						background: #f2f2f2;
-					}
-				}
-			}
 			.textarea-view{
 				padding: 20rpx;
 				background: #F3F5F7;

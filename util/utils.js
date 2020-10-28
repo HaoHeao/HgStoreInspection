@@ -229,23 +229,23 @@ let timerDateString = (data, _this) => {
 
 
 // 获取用户权限
-let getModelList = (usernumber, that) => {
-	api.getModelPower({
-			usernumber
-		})
-		.then(data => {
-			let [err, res] = data;
-			console.log("用户权限获取", err, res)
-			if (err == null) {
-				that.$store.commit("setUserModel", res.data.data.menulist);
-			} else {
-				uni.hideLoading();
-				uni.showModal({
-					title: "权限获取失败,请检查网络!"
-				})
-			}
-		})
-}
+// let getModelList = (usernumber, that) => {
+// 	api.getModelPower({
+// 			usernumber
+// 		})
+// 		.then(data => {
+// 			let [err, res] = data;
+// 			console.log("用户权限获取", err, res)
+// 			if (err == null) {
+// 				that.$store.commit("setUserModel", res.data.data.menulist);
+// 			} else {
+// 				uni.hideLoading();
+// 				uni.showModal({
+// 					title: "权限获取失败,请检查网络!"
+// 				})
+// 			}
+// 		})
+// }
 
 let getUserInfo = (_uni) => {
 	return _uni.getStorageSync('userinfo');
@@ -267,7 +267,7 @@ export {
 	seePicture,
 	// 时间日期格式字符化过滤
 	timerDateString,
-	getModelList,
+	// getModelList,
 	// 获取用户信息
 	getUserInfo
 }

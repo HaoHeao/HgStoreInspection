@@ -1,4 +1,5 @@
 export default {
+	namespaced: true,
 	state: {
 		tabbarList: [{
 				"pagePath": "question",
@@ -18,20 +19,6 @@ export default {
 				"selectedIconPath": "/static/tabbar/lately.png",
 				"index": 2
 			},
-			// {
-			// 	"pagePath": "whole",
-			// 	"text": "全部",
-			// 	"iconPath": "/static/tabbar/whole_select.png",
-			// 	"selectedIconPath": "/static/tabbar/whole.png",
-			// 	"index": 3
-			// },
-			// {
-			// 	"pagePath": "mine",
-			// 	"text": "我的",
-			// 	"iconPath": "/static/tabbar/mine_select.png",
-			// 	"selectedIconPath": "/static/tabbar/mine.png",
-			// 	"index": 4
-			// }
 		],
 		index: 0
 	},
