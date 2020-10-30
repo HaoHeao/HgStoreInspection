@@ -62,12 +62,20 @@
 					<text class="content">整改部门</text>
 					<view class="close" @click="$refs['rectifyDept'].close()">关闭</view>
 				</view>
-				<view class="data-list">
+				<scroll-view scroll-y class="data-list">
 					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
 						<view class="title">{{item.deptname}}</view>
 						<!-- <view class="position">{{item.position}}</view> -->
 					</view>
-				</view>
+					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
+						<view class="title">{{item.deptname}}</view>
+						<!-- <view class="position">{{item.position}}</view> -->
+					</view>
+					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
+						<view class="title">{{item.deptname}}</view>
+						<!-- <view class="position">{{item.position}}</view> -->
+					</view>
+				</scroll-view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="deptList.filter(item=>{item.rectifyLabel = false})">重置</view>
@@ -648,6 +656,7 @@
 						justify-content: center;
 						overflow: hidden;
 						position: relative;
+						border-radius: 6rpx;
 
 						>.icon {
 							width: 100%;
@@ -720,12 +729,15 @@
 		.popup {
 			padding: 30rpx;
 			padding-bottom: 0;
+			display: flex;
+			flex-direction: column;
 
 			&.rectify-dept {
 				.data-list {
 					display: flex;
 					flex-wrap: wrap;
 					white-space: nowrap;
+					flex: 2;
 
 					.item {
 						width: calc(100%/3 - 18rpx);
