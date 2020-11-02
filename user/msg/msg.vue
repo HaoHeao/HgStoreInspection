@@ -58,17 +58,11 @@
 				this.getMsg(this.pageindex, done);
 			},
 			onLoadMore(e) {
-				// console.log(e);
-				// console.log(this.pageindex)
-				// console.log(this.pagenum)
 				if (this.pageindex <= this.pagenum && this.pagenum != 1) {
 					this.getMsg(this.pageindex);
-					// this.pageindex += 1;
 				}
 			},
 			navigator(item) {
-				this.utils.getMarketDeptList(this);
-				this.utils.getMarketUserList(this);
 				console.log("查看信息参数", item);
 				let insertdate = this.moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
 				let setMsg = {

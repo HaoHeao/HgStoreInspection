@@ -43,6 +43,9 @@ const plan_getQuestionReply = `${api}/hgInspection/storeapi/plan/reply/save`
 // 计划巡检撤回问题整改回复
 const plan_withdrawQuestionFeedBack = `${api}/hgInspection/storeapi/plan/question/del`
 
+// 计划巡检提出问题
+const plan_submitQuestion = `${api}/hgInspection/storeapi/plan/question/save`
+
 export {
 	// 待整改
 	plan_questionWait,
@@ -70,4 +73,6 @@ export {
 	plan_getQuestionReply,
 	// 计划巡检撤回问题整改回复
 	plan_withdrawQuestionFeedBack,
+	// 计划巡检提出问题
+	plan_submitQuestion,
 }

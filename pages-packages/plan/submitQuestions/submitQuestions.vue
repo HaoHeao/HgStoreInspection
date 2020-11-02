@@ -4,7 +4,7 @@
 			<view class="main">
 				<view class="item-title">问题描述</view>
 				<view class="item-view textarea-view">
-					<textarea v-model="remark" auto-height fixed maxlength="200" class="textarea" placeholder="在此填写问题描述"></textarea>
+					<textarea v-model="question" auto-height fixed maxlength="200" class="textarea" placeholder="在此填写问题描述"></textarea>
 				</view>
 				<block v-if="floorList.length">
 					<view class="item-title">楼层</view>
@@ -29,7 +29,7 @@
 					<block v-for="(item,index) of userList.deptuserlist" :key="index">
 						<view class="item" v-for="(itm,ind) of item.userlist" :key="ind" v-if="itm.rectifyLabel">{{itm.username}}</view>
 					</block>
-					<view class="item item-add" @click="openSelect(2)">+</view>
+					<view class="item item-add" @click="$refs['rectifyUser'].open()">+</view>
 				</view>
 				<view class="item-title">添加图片</view>
 				<view class="item-view image-list">
@@ -47,7 +47,7 @@
 					<block v-for="(item,index) of userList.deptuserlist" :key="index">
 						<view class="item" v-for="(itm,ind) of item.userlist" :key="ind" v-if="itm.reviewLabel">{{itm.username}}</view>
 					</block>
-					<view class="item item-add" @click="openSelect(3)">+</view>
+					<view class="item item-add" @click="$refs['review'].open()">+</view>
 				</view>
 				<view class="item-title tip">
 					<image src="@/static/icon/tip.svg" mode="widthFix" class="icon"></image>
@@ -62,23 +62,92 @@
 					<text class="content">整改部门</text>
 					<view class="close" @click="$refs['rectifyDept'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y class="data-list">
-					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
-						<view class="title">{{item.deptname}}</view>
-						<!-- <view class="position">{{item.position}}</view> -->
+				<view class="popup-content">
+					<view class="data-list">
+						<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
+							<view class="title">{{item.deptname}}</view>
+						</view>
 					</view>
-					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
-						<view class="title">{{item.deptname}}</view>
-						<!-- <view class="position">{{item.position}}</view> -->
-					</view>
-					<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
-						<view class="title">{{item.deptname}}</view>
-						<!-- <view class="position">{{item.position}}</view> -->
-					</view>
-				</scroll-view>
+				</view>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="close" @click="deptList.filter(item=>{item.rectifyLabel = false})">重置</view>
+						<view class="close" @click="dataListReset('rectifyDept')">重置</view>
+						<!-- <view class="item">关闭</view> -->
+					</view>
+				</view>
+			</view>
+		</uni-popup>
+		<uni-popup ref="rectifyUser" type="bottom" :maskClick="false">
+			<view class="popup rectify-user top">
+				<view class="title">
+					<text class="content">整改人员</text>
+					<view class="close" @click="$refs['rectifyUser'].close()">关闭</view>
+				</view>
+				<view class="popup-content">
+					<block v-if="userList.leaderlist.length">
+						<view class="label-title">主要领导</view>
+						<view class="data-list">
+							<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of userList.leaderlist" :key="index"
+							 @click="userList.leaderlist.filter(itm => itm.usernumber == item.usernumber)[0].rectifyLabel = ! userList.leaderlist.filter(itm => itm.usernumber == item.usernumber)[0].rectifyLabel">
+								<view class="title">{{item.username}}</view>
+								<view class="position" v-if="item.postion">{{item.postion}}</view>
+							</view>
+						</view>
+					</block>
+					<block v-for="(item,index) of userList.deptuserlist" :key="index">
+						<view class="label-title">{{item.deptname}}</view>
+						<view class="data-list">
+							<view :class="['item',itm.rectifyLabel?'active':'']" v-for="(itm,ind) of item.userlist" :key="ind" @click="deptUserSelect(itm,'rectify')">
+								<view class="title">{{itm.username}}</view>
+								<view class="position" v-if="itm.postion">{{itm.postion}}</view>
+							</view>
+						</view>
+					</block>
+				</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="close" @click="dataListReset('rectifyUser')">重置</view>
+						<!-- <view class="item">关闭</view> -->
+					</view>
+				</view>
+			</view>
+		</uni-popup>
+		<uni-popup ref="review" type="bottom" :maskClick="false">
+			<view class="popup review top">
+				<view class="title">
+					<text class="content">复核部门或人员</text>
+					<view class="close" @click="$refs['review'].close()">关闭</view>
+				</view>
+				<view class="popup-content">
+					<view class="label-title">复核部门</view>
+					<view class="data-list">
+						<view :class="['item',item.reviewLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel">
+							<view class="title">{{item.deptname}}</view>
+						</view>
+					</view>
+					<block v-if="userList.leaderlist.length">
+						<view class="label-title">主要领导</view>
+						<view class="data-list">
+							<view :class="['item',item.reviewLabel?'active':'']" v-for="(item,index) of userList.leaderlist" :key="index"
+							 @click="userList.leaderlist.filter(itm => itm.usernumber == item.usernumber)[0].reviewLabel = ! userList.leaderlist.filter(itm => itm.usernumber == item.usernumber)[0].reviewLabel">
+								<view class="title">{{item.username}}</view>
+								<view class="position" v-if="item.postion">{{item.postion}}</view>
+							</view>
+						</view>
+					</block>
+					<block v-for="(item,index) of userList.deptuserlist" :key="index">
+						<view class="label-title">{{item.deptname}}</view>
+						<view class="data-list">
+							<view :class="['item',itm.reviewLabel?'active':'']" v-for="(itm,ind) of item.userlist" :key="ind" @click="deptUserSelect(itm,'review')">
+								<view class="title">{{itm.username}}</view>
+								<view class="position" v-if="itm.postion">{{itm.postion}}</view>
+							</view>
+						</view>
+					</block>
+				</view>
+				<view class="bottom-control">
+					<view class="content">
+						<view class="close" @click="dataListReset('review')">重置</view>
 						<!-- <view class="item">关闭</view> -->
 					</view>
 				</view>
@@ -123,6 +192,230 @@
 			}
 		},
 		methods: {
+			// 提交
+			async submit() {
+				if (!this.question) {
+					uni.showToast({
+						icon: 'none',
+						title: "请填写问题描述",
+						duration: 3000
+					})
+					return;
+				}
+				if (!this.place) {
+					uni.showToast({
+						icon: 'none',
+						title: "请填写位置",
+						duration: 3000
+					})
+					return;
+				}
+				// 整改人员或部门必须选择一个
+				if (!this.deptList.filter(item => item.rectifyLabel).length &&
+					!this.userList.leaderlist.filter(item => item.rectifyLabel).length &&
+					!this.userList.deptuserlist.filter(item => item.userlist.filter(itm => itm.rectifyLabel).length).length
+				) {
+					uni.showToast({
+						icon: 'none',
+						title: "请选择整改人员或部门",
+						duration: 3000
+					})
+					return;
+				}
+				try {
+					// 上传图片
+					await this.uploadFileImage()
+
+					let mapplaninspectiondept = [],
+						mapplaninspectionuser = [],
+						planinspectionsolveuser = [],
+						planinspectionquestionImg = [];
+
+					// 整改部门
+					this.deptList.filter(item => item.rectifyLabel).forEach(i => {
+						mapplaninspectiondept.push({
+							mpidid: 0,
+							planquestionid: 0,
+							deptid: i.deptid,
+							deptname: i.deptname,
+							insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+						})
+					})
+					// 整改人员
+					// 主要人员
+					this.userList.leaderlist.filter(item => item.rectifyLabel).forEach(i => {
+						mapplaninspectionuser.push({
+							mpiuid: 0,
+							planquestionid: 0,
+							userid: i.userid, //通知人的id
+							usernumber: i.usernumber, //通知人的工号
+							username: i.username, //通知人的姓名
+							mobile: i.mobile, //通知人的手机号
+							deptid: i.deptid, //通知人的部门id
+							deptname: i.deptname, //通知人的部门名称
+							insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+						})
+					})
+					// 其他人员
+					this.userList.deptuserlist.forEach(item => {
+						item.userlist.filter(itm => itm.rectifyLabel).forEach(i => {
+							mapplaninspectionuser.push({
+								mpiuid: 0,
+								planquestionid: 0,
+								userid: i.userid, //通知人的id
+								usernumber: i.usernumber, //通知人的工号
+								username: i.username, //通知人的姓名
+								mobile: i.mobile, //通知人的手机号
+								deptid: i.deptid, //通知人的部门id
+								deptname: i.deptname, //通知人的部门名称
+								insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+							})
+						})
+					})
+					// 复核部门或人员
+					// 部门
+					this.deptList.filter(item => item.reviewLabel).forEach(i => {
+						planinspectionsolveuser.push({
+							solveid: 0,
+							planquestionid: 0,
+							solvetype: 1, //1为部门，2为人员
+							itemno: i.deptno,
+							itemname: i.deptname,
+							status: 1000,
+							insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss'),
+							lstupdatedate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+						})
+					})
+					// 复核主要人员
+					this.userList.leaderlist.filter(item => item.reviewLabel).forEach(i => {
+						planinspectionsolveuser.push({
+							solveid: 0,
+							planquestionid: 0,
+							solvetype: 2, // 1为部门，2为人员
+							itemno: i.usernumber,
+							itemname: i.username,
+							status: 1000,
+							insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss'),
+							lstupdatedate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+						})
+					})
+					// 其他人员
+					this.userList.deptuserlist.forEach(item => {
+						item.userlist.filter(i => i.reviewLabel).forEach(i => {
+							planinspectionsolveuser.push({
+								solveid: 0,
+								planquestionid: 0,
+								solvetype: 2, // 1为部门，2为人员
+								itemno: i.usernumber,
+								itemname: i.username,
+								status: 1000,
+								insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss'),
+								lstupdatedate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+							})
+						})
+					})
+					// 上传图片
+					this.successUploadFileImages.forEach(imgurl => {
+						planinspectionquestionImg.push({
+							planquestionimgid: 0,
+							planquestionid: 0,
+							planid: this.planid,
+							imgurl,
+							uploaddate: this.moment().format('YYYY-MM-DD hh:mm:ss')
+						})
+					})
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.plan_submitQuestion,
+						data: {
+							planinspectionquestion: {
+								planquestionid: 0,
+								planid: this.planid, //计划id
+								pitemid: 0, //巡检项目id
+								iname: "", //巡检项目名称
+								question: this.question, //问题
+								inspectionplace: this.place, //位置
+								remark: "", //备注
+								usernumber: this.userinfo.usernumber, //提交人工号
+								username: this.userinfo.username, //提交人
+								insertdate: this.moment().format('YYYY-MM-DD hh:mm:ss'), //提交时间，可以为空
+								deptid: this.userinfo.deptid, //提交人部门id
+								deptno: "", //提交人部门名称
+								deptname: this.userinfo.deptname,
+								lstupdatedate: this.moment().format('YYYY-MM-DD hh:mm:ss'), //修改时间 可为空
+								lstuserid: "", //修改人
+								status: 1000, //状态
+								other1: this.floor, //楼层
+								other2: "", //为空
+								confirmuserid: "", //为空
+								confirmdate: "", //为空
+								isnormal: 0, //为0即可
+								planinspectionquestionImg,
+								mapplaninspectiondept,
+								mapplaninspectionuser,
+								planinspectionsolveuser
+							}
+						}
+					})
+					let [err, success] = data
+					console.log('提交结果--->>>', err, success)
+					if (!err && success.data.success) {
+						uni.showToast({
+							title: '提交成功！',
+							icon: 'none'
+						});
+						await this.delay(300)
+						uni.navigateBack();
+					} else {
+						uni.showToast({
+							title: err ? err : success.data.errmsg,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				} catch (e) {
+					console.log(e)
+				}
+			},
+			// 部门人员选择重置
+			dataListReset(type) {
+				if (type == 'rectifyDept') {
+					this.deptList.forEach(item => {
+						item.rectifyLabel = false
+					})
+				} else if (type == 'rectifyUser') {
+					for (let item of this.userList.leaderlist) {
+						item.rectifyLabel = false
+					}
+					for (let item of this.userList.deptuserlist) {
+						for (let itm of item.userlist) {
+							itm.rectifyLabel = false
+						}
+					}
+				} else if (type == 'review') {
+					for (let item of this.userList.leaderlist) {
+						item.reviewLabel = false
+					}
+					for (let item of this.userList.deptuserlist) {
+						for (let itm of item.userlist) {
+							itm.reviewLabel = false
+						}
+					}
+					this.deptList.forEach(item => {
+						item.reviewLabel = false
+					})
+				}
+			},
+			// 选择二级人员
+			deptUserSelect(item, type) {
+				for (let itm of this.userList.deptuserlist) {
+					for (let it of itm.userlist) {
+						if (it.usernumber == item.usernumber && type == 'rectify') it.rectifyLabel = !it.rectifyLabel
+						if (it.usernumber == item.usernumber && type == 'review') it.reviewLabel = !it.reviewLabel
+						this.$forceUpdate()
+					}
+				}
+			},
 			// 选择图片
 			chooseImgage() {
 				let _this = this;
@@ -212,6 +505,7 @@
 					if (success.data.success) {
 						for (let item of success.data.data.deptlist) {
 							item.rectifyLabel = false
+							item.reviewLabel = false
 						}
 						this.deptList = success.data.data.deptlist
 					}
@@ -229,6 +523,16 @@
 					let [err, success] = data
 					console.log('人员列表请求成功------>>>', err, success)
 					if (success.data.success) {
+						for (let item of success.data.data.leaderlist) {
+							item.rectifyLabel = false
+							item.reviewLabel = false
+						}
+						for (let item of success.data.data.deptuserlist) {
+							for (let itm of item.userlist) {
+								itm.rectifyLabel = false
+								item.reviewLabel = false
+							}
+						}
 						this.userList = success.data.data
 					}
 				} catch (e) {
@@ -732,46 +1036,65 @@
 			display: flex;
 			flex-direction: column;
 
-			&.rectify-dept {
-				.data-list {
+			.label-title {
+				font-size: 30rpx;
+				font-weight: 800;
+				color: #647484;
+				padding-left: 10rpx;
+				padding-bottom: 10rpx;
+			}
+
+			.popup-content {
+				flex: 2;
+				overflow-y: auto;
+			}
+
+			.data-list {
+				display: flex;
+				flex-wrap: wrap;
+				white-space: nowrap;
+
+				.item {
+					width: calc(100%/3 - 18rpx);
+					min-height: 60rpx;
+					border-radius: 6rpx;
+					background-color: #F3F5F7;
+					margin-right: 18rpx;
+					margin-bottom: 18rpx;
 					display: flex;
+					justify-content: center;
+					align-items: center;
 					flex-wrap: wrap;
-					white-space: nowrap;
-					flex: 2;
+					text-align: center;
+					padding: 14rpx 10rpx;
+					white-space: normal;
+					border: 2rpx solid #F3F5F7;
 
-					.item {
-						width: calc(100%/3 - 18rpx);
-						min-height: 60rpx;
-						border-radius: 6rpx;
-						background-color: #F3F5F7;
-						margin-right: 18rpx;
-						margin-bottom: 18rpx;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						flex-wrap: wrap;
-						text-align: center;
-						padding: 14rpx 10rpx;
-						white-space: normal;
-						border: 2rpx solid #F3F5F7;
-
-						&.active {
-							border-color: #40A9FF;
-							background: #fff;
-							box-shadow: 4rpx 8rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
-						}
-
-						.title {
-							width: 100%;
-							font-size: 24rpx;
-							color: #647685;
-						}
-
-						.position {
-							font-size: 20rpx;
-							color: #999;
-						}
+					&.active {
+						border-color: #40A9FF;
+						background: #fff;
+						box-shadow: 4rpx 8rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
 					}
+
+					.title {
+						width: 100%;
+						font-size: 24rpx;
+						color: #647685;
+					}
+
+					.position {
+						font-size: 20rpx;
+						color: #999;
+					}
+				}
+			}
+
+			&.rectify-dept {}
+
+			&.rectify-user,
+			&.review {
+				.data-list {
+					margin-bottom: 20rpx;
 				}
 			}
 
