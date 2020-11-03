@@ -43,27 +43,8 @@
 					<view class="info">
 						<view class="user">{{item.deptname}} - {{item.username}}</view>
 						<view class="date">{{item.insertdate}}</view>
-						<!-- <view class="reply-btn">
-							<view class="img-btn">
-								<image class="img" src="../../static/reply.png" mode="widthFix"></image>
-							</view>
-							<text class="txt">回复</text>
-						</view> -->
 					</view>
 					<view class="content">{{item.reason}}</view>
-					<!-- <view class="reply-list">
-						<view class="item">(人资部)张章：回复了一个内容，文字显示，文字显示，文字显示，文字显示。</view>
-						<view class="item">(人资部)张章：回复了一个内容，文字显示，文字显示。</view>
-						<view class="item">(人资部)张章：回复了一个内容。</view>
-						<view class="item">(人资部)张章：回复了一个内容，文字显示，文字显示，文字显示，文字显示。</view>
-					</view>
-					<view class="reply-view">
-						<textarea class="reply-input" placeholder-style="color:#B6C6D6;" value="" placeholder="对此条讨论进行发言" />
-						<view class="reply-confirm-btn">
-						<view class="left"></view>
-						<view class="cancel">取消</view>
-						<view class="confirm">确认</view>
-					</view> -->
 				</view>
 			</view>
 			<!-- off -->
@@ -475,44 +456,6 @@
 				}
 			}
 		}
-
-		// // 没有更多记录
-		// .replay-null {
-		// 	width: 100%;
-		// 	height: 200rpx;
-
-		// 	.none {
-		// 		width: 100%;
-		// 		height: 20rpx;
-		// 		margin: 40rpx 0rpx;
-		// 		position: relative;
-
-		// 		.txt {
-		// 			width: 136rpx;
-		// 			height: 20rpx;
-		// 			line-height: 20rpx;
-		// 			text-align: center;
-		// 			position: absolute;
-		// 			left: calc(50% - 68rpx);
-		// 			left: 0;
-		// 			top: 0rpx;
-		// 			z-index: 2;
-		// 			background: #E5EDF1;
-		// 			color: #B6C6D6;
-		// 			font-size: 20rpx;
-		// 		}
-
-		// 		.line {
-		// 			width: 290rpx;
-		// 			height: 1rpx;
-		// 			background: #B6C6D6;
-		// 			position: absolute;
-		// 			left: calc(50% - 145rpx);
-		// 			top: 10rpx;
-		// 			z-index: 1;
-		// 		}
-		// 	}
-		// }
 
 		// 对此记录进行回复
 		.replay-btn {

@@ -1,6 +1,9 @@
 /* 全局接口 */
 const global = require('./global.js')
 
+/* 卖场巡检 */
+const store = require('./store.js')
+
 /* 计划巡检 */
 const plan = require('./plan.js')
 
@@ -10,7 +13,4 @@ const meeting = require('./meeting.js')
 /* 店面抽盘 */
 const spotcheck = require('./spotcheck.js')
 
-/* 考核项目 */
-const assessment = require('./assessment.js')
-
-export default Object.assign(global, plan, meeting, spotcheck, assessment);
+export default Object.assign(global, store, plan, meeting, spotcheck);

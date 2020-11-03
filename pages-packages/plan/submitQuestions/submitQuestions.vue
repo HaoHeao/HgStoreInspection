@@ -62,13 +62,13 @@
 					<text class="content">整改部门</text>
 					<view class="close" @click="$refs['rectifyDept'].close()">关闭</view>
 				</view>
-				<view class="popup-content">
+				<scroll-view scroll-y enable-flex="true" class="popup-content">
 					<view class="data-list">
 						<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
 							<view class="title">{{item.deptname}}</view>
 						</view>
 					</view>
-				</view>
+				</scroll-view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('rectifyDept')">重置</view>
@@ -83,7 +83,7 @@
 					<text class="content">整改人员</text>
 					<view class="close" @click="$refs['rectifyUser'].close()">关闭</view>
 				</view>
-				<view class="popup-content">
+				<scroll-view scroll-y enable-flex="true" class="popup-content">
 					<block v-if="userList.leaderlist.length">
 						<view class="label-title">主要领导</view>
 						<view class="data-list">
@@ -103,7 +103,7 @@
 							</view>
 						</view>
 					</block>
-				</view>
+				</scroll-view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('rectifyUser')">重置</view>
@@ -118,7 +118,7 @@
 					<text class="content">复核部门或人员</text>
 					<view class="close" @click="$refs['review'].close()">关闭</view>
 				</view>
-				<view class="popup-content">
+				<scroll-view scroll-y enable-flex="true" class="popup-content">
 					<view class="label-title">复核部门</view>
 					<view class="data-list">
 						<view :class="['item',item.reviewLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel">
@@ -144,7 +144,7 @@
 							</view>
 						</view>
 					</block>
-				</view>
+				</scroll-view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('review')">重置</view>
@@ -365,7 +365,7 @@
 							icon: 'none'
 						});
 						await this.delay(300)
-						uni.navigateBack();
+						this.UpdateNavigationBack()
 					} else {
 						uni.showToast({
 							title: err ? err : success.data.errmsg,
@@ -426,6 +426,15 @@
 					}
 				});
 			},
+			// 返回上一页并更新
+			UpdateNavigationBack() {
+				let pages = getCurrentPages();
+				let beforePage = pages[pages.length - 2];
+				beforePage.$vm.getInspectionDetail('-1');
+				wx.navigateBack({
+					delta: 1
+				})
+			},
 			// 上传图片
 			async uploadFileImage() {
 				this.successUploadFileImages = []
@@ -450,7 +459,7 @@
 						}
 					} catch (e) {
 						uni.showToast({
-							title: e,
+							title: e.msg,
 							icon: 'none',
 							duration: 3000
 						});
@@ -555,238 +564,6 @@
 					console.log(e)
 				}
 			},
-			// // 提交问题
-			// sendQuestion:function(){
-			// 	// if(!this.btnClick) {return;}
-			// 	// this.btnClick = false;
-			// 	if(this.question == ''){
-			// 		uni.showToast({
-			// 			icon:"none",
-			// 			title:"请填写问题描述!"
-			// 		});
-			// 		return;
-			// 	}
-			// 	if(this.place == ''){
-			// 		uni.showToast({
-			// 			icon:"none",
-			// 			title:"请填写位置信息!"
-			// 		});
-			// 		return;
-			// 	}
-			// 	let insertdate = this.moment().format('yyyy-MM-dd hh:mm:ss');
-			// 	// 条件
-			// 	let option = {
-			// 		planinspectionquestion:{
-			// 			planquestionid: 0,
-			// 			planid: this.option.id,//计划id
-			// 			pitemid:0,//巡检项目id
-			// 			iname:"", //巡检项目名称
-			// 			question: this.question,//问题
-			// 			inspectionplace: this.place,//位置
-			// 			remark: "",//备注
-			// 			usernumber: uni.getStorageSync("userinfo").usernumber,//提交人工号
-			// 			username: uni.getStorageSync("userinfo").username,//提交人
-			// 			insertdate,//提交时间，可以为空
-			// 			deptid:uni.getStorageSync("userinfo").deptid,//提交人部门id
-			// 			deptno: "",//提交人部门名称
-			// 			deptname:uni.getStorageSync("userinfo").deptname,
-			// 			lstupdatedate: insertdate,//修改时间 可为空
-			// 			lstuserid: "",//修改人
-			// 			status: 1000,//状态
-			// 			other1: this.floor,//楼层
-			// 			other2: "",//为空
-			// 			confirmuserid: "",//为空
-			// 			confirmdate: "",//为空
-			// 			isnormal:0,//为0即可
-			// 			planinspectionquestionImg: [{
-			// 				planquestionimgid:0,
-			// 				planquestionid:0,
-			// 				planid:1,
-			// 				imgurl:"",//图片路径
-			// 				uploaddate:"",//可为空
-			// 			}], 
-			// 			mapplaninspectiondept:[{
-			// 				mpidid: 0,
-			// 				planquestionid: 0,
-			// 				deptid: 10,
-			// 				deptname: "总办",
-			// 				insertdate
-			// 			}],
-			// 			mapplaninspectionuser: [{
-			// 				mpiuid:0,
-			// 				planquestionid:0,
-			// 				userid:0,//通知人的id
-			// 				usernumber:"",//通知人的工号
-			// 				username:"",//通知人的姓名
-			// 				mobile:'',//通知人的手机号
-			// 				deptid:0,//通知人的部门id
-			// 				deptname:"",//通知人的部门名称
-			// 				insertdate
-			// 			}],
-			// 			planinspectionsolveuser:[{
-			// 				solveid:0,
-			// 				planquestionid:0,
-			// 				solvetype:1,//1为部门，2为人员
-			// 				itemno:'',
-			// 				itemname:'',
-			// 				status:1000,
-			// 				insertdate: "2019-08-29 09:50:37",
-			// 				lstupdatedate:"2019-08-29 09:50:37"
-			// 			}],
-			// 		}
-			// 	};
-			// 	option.planinspectionquestion.mapplaninspectiondept = [];
-			// 	option.planinspectionquestion.mapplaninspectionuser = [];
-			// 	option.planinspectionquestion.planinspectionquestionImg = [];
-			// 	option.planinspectionquestion.planinspectionsolveuser = [];
-			// 	// 部门写入
-			// 	for(let item of this.deptList){
-			// 		if(item.select == true){
-			// 			let it = {
-			// 				mpidid: 0,
-			// 				planquestionid: 0,
-			// 				deptid: item.deptid,
-			// 				deptname: item.deptname,
-			// 				insertdate
-			// 			}
-			// 			option.planinspectionquestion.mapplaninspectiondept.push(it)
-			// 		}
-			// 	}
-			// 	// 人员写入
-			// 	for(let item of this.userList.leaderlist){
-			// 		if(item.select == true){
-			// 			let it = {
-			// 				mpiuid:0,
-			// 				planquestionid:0,
-			// 				userid:item.userid,//通知人的id
-			// 				usernumber:item.usernumber,//通知人的工号
-			// 				username:item.username,//通知人的姓名
-			// 				mobile:'',//通知人的手机号
-			// 				deptid:item.deptid,//通知人的部门id
-			// 				deptname:item.deptname,//通知人的部门名称
-			// 				insertdate
-			// 			}
-			// 			option.planinspectionquestion.mapplaninspectionuser.push(it);
-			// 		}
-			// 	}
-			// 	for(let item of this.userListOnce){
-			// 		if(item.select == true){
-			// 			let it = {
-			// 				mpiuid:0,
-			// 				planquestionid:0,
-			// 				userid:item.userid,//通知人的id
-			// 				usernumber:item.usernumber,//通知人的工号
-			// 				username:item.username,//通知人的姓名
-			// 				mobile:'',//通知人的手机号
-			// 				deptid:item.deptid,//通知人的部门id
-			// 				deptname:item.deptname,//通知人的部门名称
-			// 				insertdate
-			// 			}
-			// 			option.planinspectionquestion.mapplaninspectionuser.push(it);
-			// 		}
-			// 	}
-			// 	// 整改部门整改人员必须选择一个
-			// 	if(!(option.planinspectionquestion.mapplaninspectiondept.length || option.planinspectionquestion.mapplaninspectionuser.length)){
-			// 		uni.showToast({
-			// 			icon:"none",
-			// 			title:"请选择整改部门或整改人员!"
-			// 		});
-			// 		return;
-			// 	}
-			// 	// 复核人或部门选择判断
-			// 	// if(!this.deptListConfirm.filter(item=> item.select).length && 
-			// 	// 	!this.userListConfirm.leaderlist.filter(item=> item.select).length && 
-			// 	// 	!this.userListConfirm.deptuserlist.filter(item=>{if(item.userlist.filter(itm=> itm.select).length) return true}).length){
-			// 	// 	uni.showToast({
-			// 	// 		icon:"none",
-			// 	// 		title:"请选择复核部门或复核人员!"
-			// 	// 	});
-			// 	// 	return;
-			// 	// }
-			// 	// 复核部门和人员写入
-			// 	for(let item of this.deptListConfirm){
-			// 		if(item.select == true){
-			// 			let it = {
-			// 				solveid:0,
-			// 				planquestionid:0,
-			// 				solvetype:1,//1为部门，2为人员
-			// 				itemno:item.deptno,
-			// 				itemname:item.deptname,
-			// 				status:1000,
-			// 				insertdate: "2019-08-29 09:50:37",
-			// 				lstupdatedate:"2019-08-29 09:50:37"
-			// 			}
-			// 			option.planinspectionquestion.planinspectionsolveuser.push(it);
-			// 		}
-			// 	}
-			// 	for(let item of this.userListConfirm.leaderlist){
-			// 		if(item.select == true){
-			// 			let it = {
-			// 				solveid:0,
-			// 				planquestionid:0,
-			// 				solvetype:2,//1为部门，2为人员
-			// 				itemno:item.usernumber,
-			// 				itemname:item.username,
-			// 				status:1000,
-			// 				insertdate: "2019-08-29 09:50:37",
-			// 				lstupdatedate:"2019-08-29 09:50:37"
-			// 			}
-			// 			option.planinspectionquestion.planinspectionsolveuser.push(it);
-			// 		}
-			// 	}
-			// 	for(let item of this.userListConfirm.deptuserlist){
-			// 		for(let itm of item.userlist){
-			// 			if(itm.select == true){
-			// 				let it = {
-			// 					solveid:0,
-			// 					planquestionid:0,
-			// 					solvetype:2,//1为部门，2为人员
-			// 					itemno:itm.usernumber,
-			// 					itemname:itm.username,
-			// 					status:1000,
-			// 					insertdate: "2019-08-29 09:50:37",
-			// 					lstupdatedate:"2019-08-29 09:50:37"
-			// 				}
-			// 				option.planinspectionquestion.planinspectionsolveuser.push(it);
-			// 			}
-			// 		}
-			// 	}
-			// 	// 图片插入
-			// 	for(let item of this.upImgList){
-			// 		let obj = {
-			// 			planquestionimgid:0,
-			// 			planquestionid:0,
-			// 			planid:1,
-			// 			imgurl:item.path,//图片路径
-			// 			uploaddate:insertdate,//可为空
-			// 		}
-			// 		option.planinspectionquestion.planinspectionquestionImg.push(obj)
-			// 	}
-			// 	console.log(option)
-			// 	console.log(JSON.stringify(option))
-			// 	uni.showLoading({
-			// 		title:"正在添加反馈问题...",
-			// 		mask:true
-			// 	})
-			// 	// 反馈
-			// 	request.sendPlanReply(option).then(data=>{
-			// 		let [err,res] = data;
-			// 		console.log("上传回复结果:",err,res)
-			// 		if (!err && res.data.success) {
-			// 			this.resetOption();
-			// 			uni.navigateBack({
-			// 				delta:1
-			// 			})
-			// 		}else{
-			// 			uni.showToast({
-			// 				title: err?err:res.data.errmsg,
-			// 				icon: 'none',
-			// 				duration:3000
-			// 			});
-			// 			this.reserveLoading = false
-			// 		}
-			// 	})
-			// },
 		},
 		onLoad: function(option) {
 			console.log(option)
@@ -807,7 +584,7 @@
 		min-height: 100vh;
 		background: #F6F7F9;
 
-		.scroll-view {
+		>.scroll-view {
 			max-height: 100vh;
 		}
 
@@ -1045,8 +822,8 @@
 			}
 
 			.popup-content {
-				flex: 2;
-				overflow-y: auto;
+				min-height: 300rpx;
+				max-height: 60vh;
 			}
 
 			.data-list {

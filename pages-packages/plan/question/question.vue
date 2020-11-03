@@ -28,9 +28,6 @@
 						<view :class="['status-round',inspectionQuestionDetail.status == 100?'solve':'']"></view>
 						<view class="status-title">{{inspectionQuestionDetail.status == 0?'待整改':inspectionQuestionDetail.status == 1?'已整改':inspectionQuestionDetail.status == 100?'问题已解决':''}}</view>
 						<view class="confirm-question" v-if="inspectionQuestionDetail.review" @click="openReviewPpup()">复核</view>
-						<!-- <block v-if="userinfo.username == inspectionQuestionDetail.username && new Date(inspectionQuestionDetail.insertdate).getTime() < (new Date(moment().format('yyyy-MM-dd')).getTime() + 24*60*60*1000 - 1) && inspectionQuestionDetail.planinspectionfeedback.length == 0 && inspectionQuestionDetail.status == 0">
-							<view class="del" @click="delPlanQuestion()">撤回</view>
-						</block> -->
 						<view v-if="inspectionQuestionDetail.withdrawQuestion" class="del" @click="delPlanQuestion()">撤回</view>
 					</view>
 					<view class="question-info">
@@ -439,7 +436,7 @@
 						}
 					}catch(e){
 						uni.showToast({
-							title: e,
+							title: e.msg,
 							icon: 'none',
 							duration: 3000
 						});
@@ -749,7 +746,8 @@
 
 						.img {
 							width: 100%;
-							height: 100%;
+							min-height: 100%;
+							background: #f2f2f2;
 						}
 					}
 				}
@@ -837,6 +835,7 @@
 							.icon {
 								width: 100%;
 								min-height: 100%;
+								background: #f2f2f2;
 							}
 						}
 					}

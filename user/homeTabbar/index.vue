@@ -4,10 +4,10 @@
 			<view class="line"></view>
 		</view>
 		<view class="main">
-			<block v-for="(item,index) of tabbar" :key="index">
-				<view :class="index == tabbarIndex?'item active':'item'" @click="selectTabbar(index)">
+			<block v-for="(item,index) of home.tabbar" :key="index">
+				<view :class="index == home.tabbarIndex?'item active':'item'" @click="selectTabbar(index)">
 					<view class="image">
-						<image :src="index == tabbarIndex?item.iconPath:item.selectedIconPath" mode="widthFix" class="icon"></image>
+						<image :src="index == home.tabbarIndex?item.iconPath:item.selectedIconPath" mode="widthFix" class="icon"></image>
 					</view>
 					<view class="text">{{item.text}}</view>
 				</view>
@@ -16,9 +16,9 @@
 		<view class="work_view" v-if="work_view">
 			<view class="content">
 				<view class="mark fadeIn500" @click="work_view = !work_view"></view>
-				<view class="module_list fadeIn" v-if="authList.length">
-					<block v-if="authList.length">
-						<view class="item fadeIn" v-for="(item,index) of authList" :key="index" @click="toModule(item.mcode)">
+				<view class="module_list fadeIn" v-if="userinfo.menulist.length">
+					<block v-if="userinfo.menulist.length">
+						<view class="item fadeIn" v-for="(item,index) of userinfo.menulist" :key="index" @click="toModule(item.mcode)">
 							<view class="icon-view">
 								<image :src="require(`@/static/tabbar/work/${item.mcode?item.mcode:'item'}.svg`)" mode="widthFix" class="icon"></image>
 							</view>
@@ -32,7 +32,7 @@
 						</view> -->
 					</block>
 				</view>
-				<view class="no-model" v-if="!authList.length">
+				<view class="no-model" v-if="!userinfo.menulist.length">
 					<view class="tips">您没有任何权限！</view>
 					<view class="refresh" @click="refreshModel()">重新获取权限</view>
 				</view>
@@ -49,14 +49,11 @@
 			}
 		},
 		computed: {
-			tabbar() {
-				return this.$store.state.home.tabbar;
+			home(){
+				return this.$store.state.home;
 			},
-			tabbarIndex() {
-				return this.$store.state.home.tabbarIndex;
-			},
-			authList() {
-				return this.utils.getUserInfo(uni).menulist
+			userinfo() {
+				return this.utils.getUserInfo(uni);
 			}
 		},
 		methods: {
@@ -79,10 +76,10 @@
 			},
 			async toModule(type) {
 				if (type == 'store') {
-					this.utils.getMarketDeptList(this);
-					this.utils.getMarketUserList(this);
+					// this.utils.getMarketDeptList(this);
+					// this.utils.getMarketUserList(this);
 					uni.reLaunch({
-						url: '/pages/index/index'
+						url: '/pages-packages/store/index/index'
 					})
 				} else if (type == 'plan') {
 					uni.reLaunch({

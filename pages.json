@@ -23,7 +23,7 @@
 		}
 	],
 	"subPackages": [{
-		"root": "pages",
+		"root": "pages-packages/store",
 		"pages": [{
 				"path": "index/index",
 				"style": {
@@ -144,21 +144,29 @@
 		}]
 	}],
 	"preloadRule": {
-		"pages/index/index": {
+		"pages-packages/store/index/index": {
 			"network": "all",
-			"packages": ["pages"]
+			"packages": ["pages-packages/store"]
 		},
 		"pages-packages/plan/index/index": {
 			"network": "all",
 			"packages": ["pages-packages/plan"]
 		},
+		"pages-packages/spot-check/index/index": {
+			"network": "all",
+			"packages": ["pages-packages/spot-check"]
+		},
 		"pages-packages/meeting/index/index": {
 			"network": "all",
 			"packages": ["pages-packages/meeting"]
 		},
-		"pages-packages/spot-check/index/index": {
+		"pages-packages/plan-question/index/index": {
 			"network": "all",
-			"packages": ["pages-packages/spot-check"]
+			"packages": ["pages-packages/plan-question"]
+		},
+		"pages-packages/plan-review/index/index": {
+			"network": "all",
+			"packages": ["pages-packages/plan-review"]
 		}
 	},
 	"globalStyle": {

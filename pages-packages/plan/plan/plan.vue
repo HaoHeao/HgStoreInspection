@@ -706,11 +706,13 @@
 										padding: 0;
 										flex-wrap: wrap;
 										text-align: center;
+										overflow: hidden;
 
 										.icon {
 											width: 100%;
 											min-height: 100%;
 											border-radius: 6rpx;
+											background: #f2f2f2;
 										}
 									}
 								}

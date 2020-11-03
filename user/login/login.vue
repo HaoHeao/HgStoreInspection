@@ -136,7 +136,7 @@
 									console.log("登录中...", res);
 									// 存入storage
 									globalData.userinfo = res.data.data.userinfo;
-									utils.getModelList(globalData.userinfo.usernumber, this);
+									// utils.getModelList(globalData.userinfo.usernumber, this);
 									uni.setStorageSync("userinfo", res.data.data.userinfo);
 									this.requestLogin();
 								} else {
@@ -175,7 +175,7 @@
 							globalData.userinfo = res.data.data.userinfo;
 							// 存入storage
 							uni.setStorageSync("userinfo", res.data.data.userinfo);
-							utils.getModelList(globalData.userinfo.usernumber, this);
+							// utils.getModelList(globalData.userinfo.usernumber, this);
 							uni.redirectTo({
 								url: '../index/index'
 							});
@@ -190,23 +190,11 @@
 			}
 		},
 		onShow() {
-			// if (uni.getStorageSync('userinfo')) {
-			// 	globalData.userinfo = uni.getStorageSync('userinfo');
-			// 	utils.getModelList(globalData.userinfo.usernumber, this);
-			// 	uni.redirectTo({
-			// 		url: '../index/index'
-			// 	});
-			// 	return;
-			// }
 			// 静默登录
 			this.login()
-			// utils.getModelList(globalData.userinfo.usernumber, this);
 		},
 		// 分享
 		onShareAppMessage() {
-			return {
-				path: 'user/login/login'
-			}
 		}
 	}
 </script>

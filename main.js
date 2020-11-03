@@ -36,7 +36,6 @@
  *                    ..:isssssrrii;::::::;;iirsssssr;:..                    
  *                         .,::iiirsssssssssrri;;:.                      
  *
- *		写这段代码的时候，只有上帝和我知道它是干嘛的
  */
 
 import Vue from 'vue'
@@ -59,9 +58,6 @@ Vue.prototype.api = api;
 
 const utils = require('@/util/utils.js')
 Vue.prototype.utils = utils;
-
-const request = require('@/util/request.js')
-Vue.prototype.request = request;
 
 import uView from 'uview-ui';
 Vue.use(uView);

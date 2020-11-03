@@ -1,6 +1,11 @@
 const setting = {
 	namespaced: true,
 	state: {
+		version: "0.9.4T",
+		lastmodify: "2020/11/03",
+		systemName: "北京汉光巡检系统",
+		appId: "wx252743e71090a061",
+		
 		// OSS下载规则
 		OSSDownload: "?x-oss-process=image/resize,m_mfit,h_120,w_120",
 		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头
@@ -25,9 +30,11 @@ const setting = {
 		isDot: false,
 		// 返回顶部按钮
 		customStyle: {
-			boxShadow: '0 1px 8px -4rpx rgba(0,0,0,0.5)',
+			boxShadow: '0 1px 8px -4rpx rgba(0,0,0,0.3)',
 			bottom: '100rpx',
-			zoom: '1.2'
+			zoom: '1.2',
+			background: '#fff',
+			opacity: '0.8'
 		},
 		// 返回顶部按钮图标样式
 		iconStyle: {

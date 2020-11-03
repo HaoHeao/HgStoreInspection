@@ -11,7 +11,7 @@
 					</view>
 					<view class="right">
 						<view class="sender">{{item.deptname}} - {{item.username}}</view>
-						<view class="timer">{{item.insertdate1}}</view>
+						<view class="timer">{{item.insertdate}}</view>
 						<view class="desc">
 							<text class="type" v-if="item.msgtype == 1">[@您]</text>
 							<text class="type" v-if="item.msgtype == 2">[回复]</text>
@@ -118,7 +118,6 @@
 					if (done) done();
 					uni.hideLoading();
 					if (err == null) {
-						_this.utils.timerDateString(data.data.data);
 						_this.msgList = _this.msgList.concat(data.data.data);
 						if (!this.pagenum) {
 							this.pagenum = data.data.pagenum
