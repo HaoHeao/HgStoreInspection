@@ -1,368 +1,523 @@
 <template>
-    <view class="container">
-        <screen :current="current" index="2" isScreen="false" @transfer="getCurrent"></screen>
-        <view class="main">
-            <swiper class="swiper" circular="true" :autoplay="false" duration="100" :current="current" @change="swiperChange">
-                <swiper-item class="swiper-item">
-                    <data-list-item :dataList="dataList0" state="0" @again="getState" @againMore="againMore"></data-list-item>
-                </swiper-item>
-                <swiper-item class="swiper-item">
-                    <data-list-item :dataList="dataList1" state="1" @again="getState" @againMore="againMore"></data-list-item>
-                </swiper-item>
-            </swiper>
-        </view>
-    </view>
+	<view class="container">
+		<view class="tabs">
+			<view class="left"></view>
+			<view class="center">
+				<view class="btn-list">
+					<view :class="['item', current == 0?'active':'']" @click="current = 0">待解决</view>
+					<view :class="['item', current == 1?'active':'']" @click="current = 1">已解决</view>
+				</view>
+			</view>
+			<view class="right"></view>
+		</view>
+		<view class="main">
+			<swiper class="swiper" :circular="setting.circular" :duration="setting.swiperDuration" :current="current" @change="swiperChange">
+				<swiper-item class="swiper-item">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="waitRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scrolltolower="onTolower">
+						<block v-if="waitData.length">
+							<view class="length">共 {{waitDataInfo}} 条</view>
+							<view class="item no-bottom" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
+								<view class="question">
+									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
+									<view class="date">{{item.insertdate}}</view>
+								</view>
+								<view class="info-view">
+									<!-- <view class="title">问题描述</view> -->
+									<view class="content">{{item.remark}}</view>
+								</view>
+							</view>
+							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+							 :is-dot="setting.isDot" />
+						</block>
+						<view class="no-data-view fadeIn" v-if="!waitData.length">
+							<view class="center">
+								<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
+								<view class="tip">暂无待解决记录</view>
+							</view>
+						</view>
+					</scroll-view>
+				</swiper-item>
+				<swiper-item class="swiper-item">
+					<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+					 :refresher-triggered="solvedRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+					 @scrolltolower="onTolower">
+						<block v-if="solvedData.length">
+							<view class="length">共 {{solvedDataInfo}} 条</view>
+							<view class="item no-bottom" v-for="(item,index) of solvedData" :key="index" @click="lookReplay(item)">
+								<view class="question">
+									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
+									<view class="date">{{item.insertdate}}</view>
+								</view>
+								<view class="info-view">
+									<!-- <view class="title">问题描述</view> -->
+									<view class="content">{{item.remark}}</view>
+								</view>
+							</view>
+							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType"
+							 :load-text="setting.loadText" :is-dot="setting.isDot" />
+						</block>
+						<view class="no-data-view fadeIn" v-if="!solvedData.length">
+							<view class="center">
+								<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
+								<view class="tip">暂无已解决记录</view>
+							</view>
+						</view>
+					</scroll-view>
+				</swiper-item>
+			</swiper>
+		</view>
+	</view>
 </template>
 
 <script>
-    import dataListItem from "@/components/pageDataList";
-    import screen from '@/components/screen/screen'
-    let globalData = getApp().globalData;
-    let utils = require('@/util/utils.js');
-    let request = utils.request;
-    export default {
-        props: ['update'],
-        components: {
-            dataListItem,
-            screen
-        },
-        data() {
-            return {
-                current: 0,
-                dataList0: [],
-                dataList1: [],
-                dataIndex0: 1,
-                dataIndex1: 1,
-                pageNum1: 0,
-                pageNum0: 0,
-            }
-        },
-        computed: {
-            filterNear() {
-                return this.$store.state.market.filterNear;
-            }
-        },
-        // 自动更新
-        watch: {
-            update() {
-                this.current = 0;
-                this.pageConfig();
-                this.getDataList();
-            }
-        },
-        methods: {
-            // 把页数设为1
-            pageConfig: function() {
-                this.dataIndex0 = 1;
-                this.dataIndex1 = 1;
-                this.dataList0 = [];
-                this.dataList1 = [];
-            },
-            swiperChange: function(e) {
-                this.current = e.detail.current;
-                this.pageConfig();
-                this.getData();
-            },
-            // 父组件传值
-            getCurrent(current) {
-                this.current = current;
-                this.pageConfig();
-                this.getData();
-            },
-            // 修改筛选信息
-            getFilter() {
-                this.pageConfig();
-                this.getData();
-            },
-            // 刷新
-            getState() {
-                this.pageConfig();
-                this.getData();
-            },
-            // 加载更多
-            againMore() {
-                let index = 1;
-                if (this.current) {
-                    if (this.pageNum1 == this.dataIndex1) {
-                        return;
-                    } else {
-                        this.dataIndex1 = this.dataIndex1 + 1;
-                    }
-                    // this.pageNum1 == this.dataIndex1?'':this.dataIndex1 = this.dataIndex1 + 1;
-                    index = this.dataIndex1;
-                } else {
-                    if (this.pageNum0 == this.dataIndex0) {
-                        return;
-                    } else {
-                        this.dataIndex0 = this.dataIndex0 + 1;
-                    }
-                    // this.pageNum0 == this.dataIndex0?'':this.dataIndex0 = this.dataIndex0 + 1;
-                    index = this.dataIndex0;
-                }
-                this.getData(true);
-            },
-            // 请求数据       
-            getData: function(more) {
-                let index = 1;
-                if (this.current) {
-                    index = this.dataIndex1;
-                } else {
-                    index = this.dataIndex0;
-                }
-                this.getDataList(this.current, index, more);
-            },
-            // 获取数据
-            getDataList: function(status, pageindex, more) {
-                uni.showNavigationBarLoading();
-                let _this = this;
-                // 默认请求未解决的
-                let option = this.filterNear;
-                let senddpetid = [];
-                for (let item of option.deptSelect) {
-                    senddpetid.push(item.deptid);
-                }
-                let data = {
-                    usernumber: globalData.userinfo.usernumber,
-                    sdate: option.sdate,
-                    edate: option.edate,
-                    status,
-                    senddpetid,
-                    inspectioncode: "",
-                    pagesize: option.pagesize,
-                    pageindex
-                };
-                console.log("最近列表数据请求参数:", data)
-                request.getNearList(data).then(data => {
-                    let [err, res] = data;
-                    console.log("最近页列表数据：", err, res)
-                    if (err == null && res.data.success) {
-                        let list = res.data.data;
-                        if (status) {
-                            more ? _this.dataList1 = _this.dataList1.concat(list) : _this.dataList1 = list;
-                            // _this.dataList1 = list;
-                            _this.pageNum1 = res.data.pagenum;
-                        } else {
-                            more ? _this.dataList0 = _this.dataList0.concat(list) : _this.dataList0 = list;
-                            // _this.dataList0 = list;
-                            _this.pageNum0 = res.data.pagenum;
-                        }
-                    } else {
-                        uni.showToast({
-                            icon: "none",
-                            duration: 2500,
-                            title: "查找失败"
-                        })
-                        uni.hideNavigationBarLoading();
-                        return;
-                    }
-                    _this.$forceUpdate();
-                    uni.hideNavigationBarLoading();
-                })
-            }
-        },
-        created: function() {
-            console.log("lately created");
-        }
-    }
+	export default {
+		data() {
+			return {
+				pagesize: 20,
+				current: 0,
+				// 待解决
+				waitData: [],
+				waitDataInfo: '',
+				waitPageindex: 1,
+				waitPageNum: '',
+				// 已解决
+				solvedData: [],
+				solvedDataInfo: '',
+				solvedPageindex: 1,
+				solvedNum: '',
+				// 待解决loading
+				waitLoading: false,
+				waitRefresherLoading: false,
+				// 已解决loading
+				solvedLoading: false,
+				solvedRefresherLoading: false,
+				// 默认时间
+				normalDay: 30,
+				// 时间
+				date: [],
+			}
+		},
+		computed: {
+			userinfo() {
+				return this.utils.getUserInfo(uni)
+			},
+			setting() {
+				return this.$store.state.setting
+			}
+		},
+		methods: {
+			// 触发下拉刷新
+			async onRefresh() {
+				console.log('下拉刷新')
+				if (this.current == 0) {
+					this.waitRefresherLoading = true
+					await this.getQuestionReset()
+					await this.getQuestion()
+					this.waitRefresherLoading = false
+				} else if (this.current == 1) {
+					this.solvedRefresherLoading = true
+					await this.getQuestionReset()
+					await this.getQuestion()
+					this.solvedRefresherLoading = false
+				}
+			},
+			// 刷新完成/重置
+			onRestore() {
+				if (this.current == 0) this.waitRefresherLoading = false;
+				if (this.current == 1) this.solvedRefresherLoading = false;
+				console.log("onRestore");
+			},
+			// 滚动触底
+			async onTolower() {
+				console.log('滚动触底')
+				if (this.current == 0) {
+					if (!(this.waitPageindex <= this.waitPageNum && this.waitPageNum != 1)) {
+						return
+					}
+				} else if (this.current == 1) {
+					if (!(this.completedPageindex <= this.completedNum && this.completedNum != 1)) {
+						return
+					}
+				}
+				console.log('加载更多------>>>')
+				await this.getQuestion()
+			},
+			// 进入反馈
+			lookReplay(item) {
+				console.log('进入明细', item);
+				uni.navigateTo({
+					url: `/pages-packages/store/detail/detail?inspectionlogid=${item.inspectionlogid}`
+				})
+			},
+			swiperChange(e) {
+				this.current = e.target.current
+			},
+			getQuestionReset() {
+				if (this.current == 0) {
+					this.waitPageindex = 1
+					this.waitPageNum = ''
+					this.waitData = []
+				} else if (this.current == 1) {
+					this.solvedPageindex = 1
+					this.solvedNum = ''
+					this.solvedData = []
+				}
+			},
+			getQuestion() {
+				this.current == 0 ? this.getWaitData() : this.current == 1 ? this.getSolvedData() : true
+			},
+			// 待解决
+			async getWaitData() {
+				if (this.waitLoading) return
+				uni.showNavigationBarLoading()
+				this.waitLoading = true
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.store_getQuestonNearList,
+						data: {
+							usernumber: this.userinfo.usernumber,
+							sdate: this.moment(new Date().getTime() - this.normalDay * 24 * 60 * 60 * 1000).format("YYYY-MM-DD"),
+							edate: this.moment().format("YYYY-MM-DD"),
+							status: 0,
+							senddpetid: [],
+							inspectioncode: "",
+							pagesize: this.pagesize,
+							pageindex: this.waitPageindex,
+						}
+					})
+					uni.hideNavigationBarLoading()
+					this.waitLoading = false
+					let [err, success] = data
+					console.log('待解决请求成功------>>>', err, success)
+					if (!err && success.data.success) {
+						this.waitData = this.waitData.concat(success.data.data)
+						this.waitDataInfo = success.data.pagenum
+						this.waitPageNum ? '' : this.waitPageNum = success.data.pagenum
+						this.waitPageindex += 1
+					} else {
+						uni.showToast({
+							title: err ? err : success.data.errmsg,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				} catch (e) {
+					uni.hideNavigationBarLoading()
+					this.waitLoading = false
+					console.log(e)
+				}
+			},
+			// 已解决
+			async getSolvedData() {
+				if (this.solvedLoading) return
+				uni.showNavigationBarLoading()
+				this.solvedLoading = true
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.store_getQuestonNearList,
+						data: {
+							usernumber: this.userinfo.usernumber,
+							sdate: this.moment(new Date().getTime() - this.normalDay * 24 * 60 * 60 * 1000).format("YYYY-MM-DD"),
+							edate: this.moment().format("YYYY-MM-DD"),
+							status: 1,
+							senddpetid: [],
+							inspectioncode: "",
+							pagesize: this.pagesize,
+							pageindex: this.solvedPageindex,
+						}
+					})
+					uni.hideNavigationBarLoading()
+					this.solvedLoading = false
+					let [err, success] = data
+					console.log('已解决请求成功------>>>', success)
+					if (!err && success.data.success) {
+						this.solvedData = this.solvedData.concat(success.data.data)
+						this.solvedDataInfo = success.data.pagenum
+						this.solvedNum ? '' : this.completedNum = success.data.pagenum
+						this.solvedPageindex += 1
+					} else {
+						uni.showToast({
+							title: err ? err : success.data.errmsg,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				} catch (e) {
+					this.solvedLoading = false
+					uni.hideNavigationBarLoading()
+					console.log(e)
+				}
+			},
+		},
+		created: async function() {
+			this.getWaitData()
+			this.getSolvedData()
+		}
+	}
 </script>
 
 <style scoped lang="scss">
-    .container {
-        width: 100%;
-        height: 100%;
-        background: #f6f7f9;
+	.container {
+		background: #F6F7F9;
+		display: flex;
+		flex-direction: column;
 
-        .head {
-            width: 100%;
-            height: 70rpx;
-            box-sizing: border-box;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #fff;
-            z-index: 999;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1rpx solid #E5EDF1;
+		.tabs {}
 
-            .left {
-                flex: 1;
-            }
+		.main {
+			flex: 2;
+			display: flex;
+			flex-direction: column;
 
-            .center {
-                flex: 2;
-                display: flex;
-                justify-content: center;
-                text-align: center;
+			.swiper {
+				height: calc(100vh - 70rpx - 100rpx);
 
-                .btn-list {
-                    width: 340rpx;
-                    line-height: 70rpx;
-                    display: flex;
-                    justify-content: space-around;
-                    align-items: center;
+				.swiper-item {
+					display: flex;
+					flex-direction: column;
 
-                    .item {
-                        width: 50%;
-                        height: 100%;
-                        font-size: 26rpx;
-                        text-align: center;
-                        color: #434343;
-                        position: relative;
+					.scroll-view {
+						height: 100%;
 
-                        &:active {
-                            background: #f9f9f9;
-                            opacity: 0.9;
-                        }
-                    }
+						.length {
+							font-size: 24rpx;
+							color: #333;
+							font-weight: 700;
+							padding: 20rpx;
+							padding-bottom: 0;
+						}
 
-                    .item.active {
-                        color: #323436;
-                        font-size: 28rpx;
-                        font-weight: 700;
+						.item {
+							width: calc(100% - 40rpx);
+							margin: 20rpx;
+							margin-bottom: 0;
+							background: #fff;
+							border-radius: 10rpx;
+							padding: 0 20rpx;
+							box-sizing: border-box;
 
-                        &::before {
-                            content: '';
-                            display: block;
-                            width: 100rpx;
-                            height: 4rpx;
-                            position: absolute;
-                            left: 35rpx;
-                            bottom: 0;
-                            background: #1BA1F3;
-                        }
-                    }
-                }
+							&.no-bottom {
+								padding-bottom: 10rpx;
+							}
 
-                .bottom-line {
-                    width: 110rpx;
-                    height: 6rpx;
-                    background: #ff0036;
-                    position: absolute;
-                    bottom: 0;
-                    left: 5rpx;
-                }
-            }
-        }
+							.question {
+								padding: 20rpx 0rpx;
+								font-size: 28rpx;
+								display: flex;
+								align-items: flex-start;
 
-        .right {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 34rpx;
+								.txt {
+									flex: 2;
+									color: #647484;
+									font-size: 26rpx;
+								}
 
-            .title {
-                color: #647484;
-                font-size: 28rpx;
-                padding-right: 14rpx;
-            }
+								.date {
+									white-space: nowrap;
+									color: #B6C6D6;
+									margin-left: 20rpx;
+									font-size: 24rpx;
+									font-weight: 500;
+								}
+							}
 
-            .icon {
-                width: 26rpx;
-                height: 24rpx;
-            }
-        }
+							.info-view {
+								display: flex;
+								font-size: 24rpx;
+								padding-bottom: 10rpx;
 
-        .main {
-            margin-top: 70rpx;
+								.title {
+									color: #A4B1BE;
+									width: 4em;
+									margin-right: 20rpx;
+									white-space: nowrap;
+									text-align-last: justify;
+								}
 
-            .swiper {
-                width: 100%;
-                height: calc(100vh - 100rpx - 70rpx);
+								.content {
+									color: #647484;
+								}
+							}
 
-                .swiper-item {
-                    width: 100%;
-                    height: 100%;
-                    overflow-y: scroll;
-                }
-            }
-        }
+							.img-list {
+								margin-top: 10rpx;
+								display: flex;
+								flex-wrap: wrap;
 
-        // 筛选
-        .screen {
-            width: 750rpx;
-            height: calc(100vh - 70rpx);
-            background: #fff;
-            margin-top: 70rpx;
-            overflow-y: scroll;
+								.img-view {
+									margin-right: 10rpx;
+									margin-bottom: 10rpx;
+									width: calc(100%/5 - 10rpx);
+									height: 124rpx;
+									display: flex;
+									align-items: center;
+									justify-content: center;
+									overflow: hidden;
 
-            .top {
-                width: 100%;
-                background: #FBFCFD;
-                height: 30rpx;
-            }
+									.icon {
+										border-radius: 10rpx;
+										width: 100%;
+										min-height: 100%;
+										height: 100%;
+									}
+								}
+							}
 
-            .line {
-                width: 100%;
-                height: 1rpx;
-                background: #EDEEEF;
-            }
+							.info {
+								display: flex;
+								align-items: center;
+								padding: 20rpx 0;
+								padding-top: 0;
 
-            .title {
-                padding: 30rpx;
-                padding-bottom: 0;
-                font-size: 24rpx;
-                color: #A4B1BE;
-            }
+								.num {
+									color: #e2e2e2;
+									font-size: 24rpx;
 
-            .set-time {
-                display: flex;
-                align-items: center;
-                padding: 30rpx;
-                padding-top: 10rpx;
-                padding-bottom: 20rpx;
+									&.active {
+										color: #1BA1F3;
+									}
+								}
 
-                .date {
-                    width: 100%;
-                    height: 38rpx;
-                    line-height: 38rpx;
-                    background: #F3F5F7;
-                    color: #647685;
-                    padding: 16rpx 0rpx;
-                    text-align: center;
-                    border-radius: 6rpx;
+								.btn-list {
+									flex: 2;
+									display: flex;
+									justify-content: flex-end;
+									font-size: 24rpx;
 
-                    &:active {
-                        background: #fff;
-                    }
-                }
+									.btn {
+										color: #1BA1F3;
+										border: 1rpx solid #1BA1F3;
+										width: 130rpx;
+										text-align: center;
+										line-height: 48rpx;
+										border-radius: 24rpx;
+									}
+								}
+							}
 
-                .center {
-                    padding: 0rpx 22rpx;
-                }
-            }
+							&:active {
+								background: #F6F6F6;
 
-            .department-list {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                padding: 30rpx;
-                padding-top: 10rpx;
+								.btn-list {
+									.btn {
+										background: #1BA1F3;
+										color: #fff;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 
-                .item {
-                    width: calc(33.3% - 10.5rpx);
-                    height: 38rpx;
-                    line-height: 38rpx;
-                    background: #F3F5F7;
-                    color: #647685;
-                    padding: 10rpx 0rpx;
-                    margin-bottom: 16rpx;
-                    text-align: center;
-                    border-radius: 6rpx;
-                    border: 1rpx solid #F3F5F7;
+		.popup {
+			width: 100vw;
+			min-height: 50vh;
+			max-height: 80vh;
+			background: #fff;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
 
-                    &:active {
-                        background: #fff;
-                    }
-                }
+			.content {
+				font-size: 24rpx;
+				box-sizing: border-box;
+				padding: 20rpx;
+				padding-bottom: 80rpx;
+				flex: 2;
 
-                .item.active {
-                    border: 1rpx solid #1BA1F3;
-                    color: #1BA1F3;
-                    background: #fff;
-                }
-            }
-        }
-    }
+				.title {
+					padding: 10rpx 0rpx 10rpx 5rpx;
+					color: #A4B1BE;
+				}
+
+				.item {
+					margin-bottom: 10rpx;
+					color: #647685;
+
+					&.date {
+						line-height: 70rpx;
+						display: flex;
+						align-items: center;
+
+						.time {
+							border-radius: 10rpx;
+							background: #F3F5F7;
+							width: 250rpx;
+							text-align: center;
+
+							&:active {
+								opacity: 0.8;
+							}
+						}
+
+						.txt {
+							padding: 0 20rpx;
+						}
+					}
+
+					&.dept {
+						display: flex;
+						flex-wrap: wrap;
+
+						.view {
+							width: calc(100%/3 - 18rpx);
+							min-height: 60rpx;
+							border-radius: 6rpx;
+							background-color: #F3F5F7;
+							margin-right: 18rpx;
+							margin-bottom: 18rpx;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							flex-wrap: wrap;
+							text-align: center;
+							padding: 14rpx 10rpx;
+							white-space: normal;
+							border: 2rpx solid #F3F5F7;
+
+							&.active {
+								border-color: #40A9FF;
+								background: #fff;
+								box-shadow: 4rpx 8rpx 16rpx 0rpx rgba(0, 0, 0, 0.1);
+							}
+						}
+					}
+				}
+			}
+
+			.btn-list {
+				display: flex;
+				align-items: center;
+				position: sticky;
+				bottom: 0;
+				overflow: hidden;
+
+				.btn {
+					flex: 2;
+					text-align: center;
+					line-height: 100rpx;
+					background: #F6F7F9;
+
+					&:active {
+						opacity: 0.9;
+					}
+
+					&.reset {
+						color: #ff0036;
+					}
+
+					&.search {
+						color: #fff;
+						background: #647685;
+					}
+				}
+			}
+		}
+	}
 </style>

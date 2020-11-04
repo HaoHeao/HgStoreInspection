@@ -5,7 +5,7 @@
 		</view>
 		<view class="main">
 			<block v-for="(item,index) of storeshop.tabbar" :key="index">
-				<view :class="index == storeshop.tabbarIndex?'item active':'item'" v-if="index != 1" @click="selectTabbar(index)">
+				<view :class="['item',index == storeshop.tabbarIndex?'active':'']" v-if="index != 1" @click="selectTabbar(index)">
 					<view class="image">
 						<image :src="index == storeshop.tabbarIndex?item.iconPath:item.selectedIconPath" mode="widthFix" class="icon"></image>
 					</view>
@@ -35,7 +35,7 @@
 			selectTabbar(index) {
 				if (index == 1) {
 					uni.navigateTo({
-						url: '../../pages/add/add'
+						url: '/pages-packages/store/submitQuestions/submitQuestions'
 					})
 					return;
 				}

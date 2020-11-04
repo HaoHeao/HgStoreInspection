@@ -32,29 +32,23 @@
 				}
 			},
 			{
-				"path": "seeDetail/seeDetail",
+				"path": "detail/detail",
 				"style": {
-					"navigationBarTitleText": "查看巡检记录",
+					"navigationBarTitleText": "巡检记录",
 					"disableScroll": true
 				}
 			},
 			{
-				"path": "viewQuestion/viewQuestion",
+				"path": "discuss/discuss",
 				"style": {
 					"navigationBarTitleText": "问题讨论",
 					"disableScroll": true
 				}
 			},
 			{
-				"path": "add/add",
+				"path": "submitQuestions/submitQuestions",
 				"style": {
-					"navigationBarTitleText": "添加卖场巡检记录",
-					"disableScroll": true
-				}
-			},
-			{
-				"path": "addSelect/addSelect",
-				"style": {
+					"navigationBarTitleText": "提出巡检问题",
 					"disableScroll": true
 				}
 			}

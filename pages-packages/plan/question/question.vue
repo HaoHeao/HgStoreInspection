@@ -33,7 +33,7 @@
 					<view class="question-info">
 						<view class="user">{{inspectionQuestionDetail.deptname?inspectionQuestionDetail.deptname:''}} -
 							{{inspectionQuestionDetail.username?inspectionQuestionDetail.username:''}}</view>
-						<view class="timer">{{inspectionQuestionDetail.insertdate1}}</view>
+						<view class="timer">{{inspectionQuestionDetail.insertdate}}</view>
 					</view>
 					<view class="info-list">
 						<view class="left">巡检问题</view>
@@ -95,7 +95,7 @@
 						<view class="reply-item" v-for="(item,index) of inspectionQuestionDetail.planinspectionfeedback" :key="index">
 							<view class="top">
 								<view class="user">{{item.deptname}} - {{item.username}}</view>
-								<view class="date">{{item.insertdate1}}</view>
+								<view class="date">{{item.insertdate}}</view>
 								<view class="back-btn" v-if="item.withdrawQuestionReply" @click="feedbackClick(item)">撤回</view>
 							</view>
 							<view class="remark">{{item.content}}</view>

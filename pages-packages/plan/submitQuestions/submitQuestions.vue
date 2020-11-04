@@ -4,7 +4,7 @@
 			<view class="main">
 				<view class="item-title">问题描述</view>
 				<view class="item-view textarea-view">
-					<textarea v-model="question" auto-height fixed maxlength="200" class="textarea" placeholder="在此填写问题描述"></textarea>
+					<textarea v-model="question" auto-height fixed maxlength="500" class="textarea" placeholder="在此填写问题描述"></textarea>
 				</view>
 				<block v-if="floorList.length">
 					<view class="item-title">楼层</view>
@@ -55,7 +55,9 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view class="replay-btn" @click="submit()">提交</view>
+		<view :class="['replay-btn',submitLoading?'loading':'']" @click="submit()">
+			<u-loading v-if="submitLoading" class="loading" mode="circle" size="28"></u-loading>提交
+		</view>
 		<uni-popup ref="rectifyDept" type="bottom" :maskClick="false">
 			<view class="popup rectify-dept top">
 				<view class="title">
@@ -72,7 +74,6 @@
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('rectifyDept')">重置</view>
-						<!-- <view class="item">关闭</view> -->
 					</view>
 				</view>
 			</view>
@@ -107,7 +108,6 @@
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('rectifyUser')">重置</view>
-						<!-- <view class="item">关闭</view> -->
 					</view>
 				</view>
 			</view>
@@ -148,7 +148,6 @@
 				<view class="bottom-control">
 					<view class="content">
 						<view class="close" @click="dataListReset('review')">重置</view>
-						<!-- <view class="item">关闭</view> -->
 					</view>
 				</view>
 			</view>
@@ -222,7 +221,9 @@
 					})
 					return;
 				}
+				if (this.submitLoading) return;
 				try {
+					this.submitLoading = true
 					// 上传图片
 					await this.uploadFileImage()
 
@@ -357,6 +358,7 @@
 							}
 						}
 					})
+					this.submitLoading = false
 					let [err, success] = data
 					console.log('提交结果--->>>', err, success)
 					if (!err && success.data.success) {
@@ -375,6 +377,7 @@
 					}
 				} catch (e) {
 					console.log(e)
+					this.submitLoading = false
 				}
 			},
 			// 部门人员选择重置
@@ -799,11 +802,13 @@
 			left: 0;
 			bottom: 10rpx;
 			z-index: 1;
-			// margin-bottom: env(safe-area-inset-bottom);
-			// letter-spacing: 10rpx;
 
-			&:active {
-				opacity: 0.8;
+			&.loading {
+				background: #b2b2b2;
+			}
+
+			.loading {
+				margin-right: 10rpx;
 			}
 		}
 
