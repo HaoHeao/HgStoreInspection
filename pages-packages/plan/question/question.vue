@@ -664,10 +664,10 @@
 						height: 48rpx;
 						line-height: 48rpx;
 						text-align: center;
-						 &:active{
-							 background:#1BA1F3;
-							 color:#fff;
-						 }
+						&:active{
+							background:#1BA1F3;
+							color:#fff;
+						}
 					}
 					.del{
 						marign-right:10rpx;

@@ -291,15 +291,13 @@
 			},
 			// 返回上一页并更新
 			UpdateNavigationBack() {
-				this.$store.state.storeshop.tabbarIndex = 2
 				// let pages = getCurrentPages();
 				// let beforePage = pages[pages.length - 2];
 				// console.log(pages,beforePage)
 				// beforePage.$vm.getWaitData();
 				// beforePage.$vm.getSolvedData();
-				wx.navigateBack({
-					delta: 1
-				})
+				this.$store.state.storeshop.tabbarIndex == 0?this.$store.state.storeshop.tabbarIndex = 2:this.$store.state.storeshop.tabbarIndex = 0
+				uni.navigateBack()
 			},
 			// 上传图片
 			async uploadFileImage() {

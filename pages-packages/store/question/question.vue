@@ -22,7 +22,8 @@
 					 :refresher-triggered="waitRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
 					 @scrolltolower="onTolower">
 						<block v-if="waitData.length">
-							<view class="length">共 {{waitDataInfo}} 条</view>
+							<!-- <view class="length">共 {{waitDataInfo}} 条</view> -->
+							<view class="length"></view>
 							<view class="item no-bottom" v-for="(item,index) of waitData" :key="index" @click="lookReplay(item)">
 								<view class="question">
 									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>
@@ -49,7 +50,8 @@
 					 :refresher-triggered="solvedRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
 					 @scrolltolower="onTolower">
 						<block v-if="solvedData.length">
-							<view class="length">共 {{solvedDataInfo}} 条</view>
+							<!-- <view class="length">共 {{solvedDataInfo}} 条</view> -->
+							<view class="length"></view>
 							<view class="item no-bottom" v-for="(item,index) of solvedData" :key="index" @click="lookReplay(item)">
 								<view class="question">
 									<view class="txt">{{item.deptname}}{{` - ${item.username}`}}</view>

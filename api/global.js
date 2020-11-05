@@ -17,6 +17,9 @@ const getDeptList = `${api}/hgInspection/storeapi/baseinfo/deptlist`
 // 获取人员列表
 const getUserList = `${api}/hgInspection/storeapi/baseinfo/userlist`
 
+// 图片上传
+const uploadImage = `${api}/hgInspection/file/upload-picture`
+
 export {
 	// 获取楼层列表
 	getFloorlist,
@@ -26,4 +29,6 @@ export {
 	getDeptList,
 	// 获取人员列表
 	getUserList,
+	// 图片上传
+	uploadImage,
 }
