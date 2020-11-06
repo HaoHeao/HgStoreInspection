@@ -1,652 +1,738 @@
 <template>
 	<view class="container">
-		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
-			<view class="question msg" @click="navigitorShowDeail(detailInfo)" v-if="option.previs == 'true'">
-				<view class="msg-title">{{detailInfo.title}}</view>
-				<view class="msg-list">
-					<view class="left">上传人</view>
-					<view class="content">{{detailInfo.deptname}} - {{detailInfo.lstuserid}}</view>
-				</view>
-				<view class="msg-list">
-					<view class="left">巡检日期</view>
-					<view class="content">{{detailInfo.insertdate}}</view>
-				</view>
-				<view class="msg-list">
-					<view class="left">描述</view>
-					<view class="content">{{detailInfo.remark}}</view>
-				</view>
-				<view class="msg-list-img">
-					<view class="item" v-for="(item,index) of detailInfo.loginspectionimg" :key="index">
-						<image :src="item.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode="" class="img"></image>
+		<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+		 :refresher-triggered="getDataRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore">
+			<view class="top-placeholder"></view>
+			<block v-if="inspectionDetail">
+				<view class="question msg" @click.stop="navigateToPlan()" v-if="navigatePage">
+					<view class="msg-title">{{inspectionDetail.title}}</view>
+					<view class="msg-list">
+						<view class="left">问题原因</view>
+						<view class="content">{{inspectionDetail.deptname?inspectionDetail.deptname:'' + '-' + inspectionDetail.username?inspectionDetail.username:''}}</view>
+					</view>
+					<view class="msg-list">
+						<view class="left">巡查日期</view>
+						<view class="content">{{moment(inspectionDetail.sdate.replace(/-/g, "/")).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace(/-/g, "/")).format('YYYY.MM.DD')}}</view>
+					</view>
+					<view class="msg-list">
+						<view class="left">描述</view>
+						<view class="content">{{moment(inspectionDetail.sdate.replace(/-/g, "/")).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace(/-/g, "/")).format('YYYY.MM.DD')}}</view>
+					</view>
+					<view class="msg-list image-list">
+						<view class="left">图片</view>
+						<view class="content">{{moment(inspectionDetail.sdate.replace(/-/g, "/")).format('YYYY.MM.DD') + ' - ' + moment(inspectionDetail.edate.replace(/-/g, "/")).format('YYYY.MM.DD')}}</view>
 					</view>
 				</view>
-			</view>
-			<view class="question">
-				<view class="question-txt">
-					<view class="title" v-if="option.data.remark">问题原因:</view>
-					<view class="title" v-if="!option.data.remark">说明:</view>
-					<view class="content">{{option.data.reason}}</view>
-				</view>
-				<view class="question-txt" v-if="option.data.remark">
-					<view class="title">处理方法:</view>
-					<view class="content">{{option.data.remark}}</view>
-				</view>
-				<view class="question-img">
-					<view class="item" v-for="(item,index) of option.data.loginspectionquestionimg" :key="index" @click="seePicture(option.data.loginspectionquestionimg,index)">
-						<image class="img" :src="item.imgurl + '?x-oss-process=image/resize,m_mfit,h_120,w_120'" mode=""></image>
+				<view class="question" v-if="inspectionQuestionDetail">
+					<view class="question-info">
+						<view class="user">
+							{{inspectionQuestionDetail.deptname}} - {{inspectionQuestionDetail.username}}
+						</view>
+						<view class="timer">{{inspectionQuestionDetail.insertdate}}</view>
+					</view>
+					<view class="info-list">
+						<view class="left">说明</view>
+						<view class="content">{{inspectionQuestionDetail.remark}}</view>
+					</view>
+					<!-- 图片 -->
+					<view class="question-img" v-if="inspectionQuestionDetail.loginspectionquestionimg.length">
+						<view class="item" v-for="(item,index) of inspectionQuestionDetail.loginspectionquestionimg" :key="index" @click="previewImage(inspectionQuestionDetail.loginspectionquestionimg,index)">
+							<image class="img" :src="item.imgurl + setting.OSSDownload" mode="widthFix"></image>
+						</view>
 					</view>
 				</view>
-			</view>
-			<view class="question-discuss-title" v-if="option.data.loginspectionanswers.length">问题讨论</view>
-			<view class="discuss-list" v-if="option.data.loginspectionanswers.length">
-				<view :class="['discuss-item',option.previs == 'true' && item.questionid == option.id?'that-item':'']" v-for="(item,index) of option.data.loginspectionanswers" :key="index">
-					<view class="info">
-						<view class="user">{{item.deptname}} - {{item.username}}</view>
-						<view class="date">{{item.insertdate}}</view>
+				<block v-if="inspectionQuestionDetail.planinspectionfeedback.length">
+					<view class="reply-list-title">整改记录</view>
+					<view class="reply-list">
+						<view class="reply-item" v-for="(item,index) of inspectionQuestionDetail.planinspectionfeedback" :key="index">
+							<view class="top">
+								<view class="user">{{item.deptname}} - {{item.username}}</view>
+								<view class="date">{{item.insertdate}}</view>
+								<view class="back-btn" v-if="item.withdrawQuestionReply" @click="feedbackClick(item)">撤回</view>
+							</view>
+							<view class="remark">{{item.content}}</view>
+							<view class="img-list">
+								<view class="item" v-for="(itm,ind) of item.planinspectionfeedbackimg" :key="ind" @click="previewImage(item.planinspectionfeedbackimg,ind)">
+									<image class="icon" :src="itm.imgurl + setting.OSSDownload" mode="widthFix"></image>
+								</view>
+							</view>
+							<!-- 复核记录 -->
+							<view class="review-result" v-if="item.confirmresult">
+								<view :class="['title',item.confirmresult == '通过'?'':'not']">复核结果：<span>{{item.confirmresult}}</span></view>
+								<view class="date">{{item.confirmuserid}}</view>
+								<view class="title by" v-if="item.confirmdate">复核时间：{{item.confirmdate}}</span></view>
+								<view class="remark" v-if="item.confirmresult == '不通过'">原因：{{item.confirmremark}}</view>
+							</view>
+						</view>
 					</view>
-					<view class="content">{{item.reason}}</view>
+				</block>
+			</block>
+			<u-loadmore :status="getDataLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
+			 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+		</scroll-view>
+		<view class="replay-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
+		<!-- uni-popup的底部蒙层 -->
+		<uni-popup ref="reply" type="bottom">
+			<view class="popup reply top">
+				<view class="title">
+					<text class="content">整改</text>
+					<view class="close" @click="$refs['reply'].close()">关闭</view>
 				</view>
-			</view>
-			<!-- off -->
-			<view class="replay-null" v-if="option.data.loginspectionanswers.length == 0">
-				<view class="none">
-					<view class="txt">暂时无人回复</view>
-					<view class="line"></view>
-				</view>
-			</view>
-			<view class="replay-null" v-if="option.data.loginspectionanswers.length != 0">
-				<view class="none">
-					<view class="txt">没有更多记录</view>
-					<view class="line"></view>
-				</view>
-			</view>
-		</haoheao-scroll>
-		<view class="replay-btn" @click="thatReply()" v-if="detailInfo.status == 0 && option.postThereTrue">对此问题发起讨论...</view>
-
-		<uni-popup ref="popup" type="top">
-			<view class="popup-reply">
 				<view class="textarea-view">
-					<textarea auto-height="true" fixed="true" class="input-view solve" maxlength="200" placeholder-style="color:#B6C6D6;"
-					 value="" placeholder="请输入处理方法或建议(200字以内)" v-model="replyTxt" />
+					<textarea class="remark" fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;" placeholder="请输入处理方法或建议"
+					 v-model="remark" />
 					</view>
-				<view class="control-view">
-					<view class="control">
-						<view class="left"></view>
-						<view class="btn reply-close" @click="thatReplyClose()">取消</view>
-						<view class="btn reply-btn" @click="addReply()">回复</view>
+				<view class="bottom-control">
+					<view class="imgage-list">
+						<view class="image fadeIn" v-for="(item,index) of tempFilePaths" :key="index" @click="tempFilePaths.splice(index,1)">
+							<image class="icon" :src="item" mode="widthFix"></image>
+						</view>
+						<view class="choose-imgage" @click="chooseImgage()">
+							<image class="icon" src="@/static/icon/add_img.svg" mode="widthFix"></image>
+						</view>
+					</view>
+					<view class="content">
+						<view :class="['item',getFeedBackLoading?'loading':'']" @click="getFeedBack()"><u-loading v-if="getFeedBackLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
 					</view>
 				</view>
 			</view>
-		</uni-popup>
+		</uni-popup>=
 	</view>
 </template>
 
 <script>
-    let utils = require('@/util/utils.js');
-    let request = utils.request;
 	export default {
 		data() {
 			return {
-				option: {},
-				// 查看图片
-				seeImgList: [],
-				replyTxt:"",
-				// 此巡检全局数据
-				detailInfo:{},
-				// 此回复数据
-				// 重复提交
-				btnClickReply:true,
-				replyInfo:{},
-				// 信息页传过来的数据
-				msg:{}
+				inspectionlogid:'',
+				questionid:'',
+				// 是否其他页面跳过来的
+				navigatePage:false,
+				// 巡检明细
+				inspectionDetail:null,
+				// 巡检问题明细
+				inspectionQuestionDetail:null,
+				remark:'',
+				getFeedBackLoading:false
+			}
+		},
+		computed:{
+			setting() {
+				return this.$store.state.setting
+			},
+			userinfo(){
+				return this.utils.getUserInfo(uni)
 			}
 		},
 		methods: {
-			onPullDown(done) { // 下拉刷新
-				this.getDetail(this.option.id,this.option.reply_id,done);
-				console.log("下拉刷新")
+			// 触发下拉刷新
+			async onRefresh() {
+				this.getDataRefresherLoading = true
+				await this.getInspectionDetail();
+				this.getDataRefresherLoading = false
 			},
-			// 查看图片
-			seePicture:function(list,index){
-				utils.seePicture(list,index);
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataRefresherLoading = false
 			},
-			// 打开回复框
-			thatReply:function(){
-				this.$refs['popup'].open()
-			},
-			// 关闭回复框并且清空详细信息
-			thatReplyClose:function(){
-				this.replyTxt = "";
-				this.$refs['popup'].close()
-			},
-			// 获取巡检数据
-			getDetail: function(id,reply_id,done) {
+			// 是否可以回复和讨论
+			feedbackFilter() {
 				let _this = this;
-				request.getDetail({
-					id,
-					usernumber:uni.getStorageSync("userinfo").usernumber
-				})
-				.then(data => {
-					let [err, res] = data;
-					console.log("获取巡检信息:",err,res);
-					// 巡检单信息
-					this.detailInfo = res.data.data.loginspection;
-					console.log("巡检单信息:",this.detailInfo)
-					// 巡检信息
-					for(let item of res.data.data.loginspection.loginspectionquestion){
-						if(item.questionid == reply_id){
-							this.option.data = item;
-							console.log(item)
+				let feedback = (function(){
+					// 通知部门
+					for(let dept of _this.inspectionDetail.mapinspectiondept){
+						if (_this.userinfo.deptlist.filter(i => i.deptid == dept.deptid).length) return true;
+					}
+					// 通知人员
+					for(let user of _this.inspectionDetail.mapinspectionuser){
+						if (user.usernumber == _this.userinfo.usernumber) return true;
+					}
+					// 上传人
+					if(_this.inspectionDetail.usernumber == _this.userinfo.usernumber) return true
+				}())
+				// 巡检问题状态
+				this.inspectionDetail.feedback = (feedback && this.inspectionDetail.status == 0)?true:false
+			},
+			// 卖场巡检获取明细
+			async getInspectionDetail(){
+				if (this.getDataLoading) return
+				this.getDataLoading = true
+				uni.showNavigationBarLoading()
+				try {
+					let data = await uni.request({
+						url: this.api.store_getQuestionDetail,
+						data:{
+							id:this.inspectionlogid,
+							usernumber:this.userinfo.usernumber
 						}
-					}
-					console.log("获取巡检数据",this.option)
-					if(done) done();
-				})
-			},
-			// 讨论回复
-			addReply:function(){
-				if(!this.btnClickReply){return;}
-				this.btnClickReply = false;
-				let _this = this;
-				if(this.replyTxt == ""){
-					uni.showToast({
-						icon:'none',
-						title:"请填写讨论内容"
 					})
-					this.btnClickReply = true;
-					return;
-				}
-				let data = {
-					 //讨论
-					loginspectionanswers:{
-						answered:0,//传0就行
-						questionid:_this.option.data.questionid,//这个是对应讨论的主键"
-						reason:_this.replyTxt,//回复的内容
-						remark:"",//为空就行,
-						parentid:0,//传0就行
-						insertdate:"",
-						userid:uni.getStorageSync("userinfo").userid,//登录人id,
-						usernumber:uni.getStorageSync("userinfo").usernumber,//登录人工号,
-						username:uni.getStorageSync("userinfo").username,//名称, 
-						deptid:uni.getStorageSync("userinfo").deptid, //登录人部门id 
-						deptname: uni.getStorageSync("userinfo").deptname //部门名称
-					}
-				}
-				console.log("二级回复参数：",data)
-				console.log("二级回复参数JSON：",JSON.stringify(data))
-				uni.request({
-					url:request.replyQiestion,
-					method:"POST",
-					data
-				})
-				.then(data=>{
-					let [err,res] = data;
-					console.log("二级回复信息：",err,res)
-					if(err == null && res.data.success){
-						// 重新刷新页面
-						let option = _this.option;
-						_this.getDetail(option.id,option.reply_id);
-						_this.thatReplyClose();
+					uni.hideNavigationBarLoading()
+					let [err, success] = data
+					this.getDataLoading = false
+					console.log('卖场巡检获取明细--->>>',err, success)
+					if (!err && success.data.success) {
+						this.inspectionDetail = success.data.data.loginspection	
+						this.inspectionQuestionDetail = success.data.data.loginspection.loginspectionquestion.filter(item=> item.inspectionlogid == this.inspectionlogid)[0]
+						console.log('卖场巡检数据--->>>',this.inspectionDetail,'卖场巡检回复数据--->>>',this.inspectionQuestionDetail)
+						this.$forceUpdate()
 					}else{
 						uni.showToast({
-							icon:"none",
-							title:"回复失败:" + err.errmsg
-						})
+							title: err?err:success.data.errmsg,
+							icon: 'none',
+							duration:3000
+						});
 					}
-					this.btnClickReply = true;
+				} catch (e) {
+					console.log(e)
+					this.getDataLoading = false
+					uni.hideNavigationBarLoading()
+				}
+			},
+			// 打开复核popup
+			openReviewPpup(){
+				this.$refs['review'].open()
+				this.remark = ''
+			},
+			// 查看图片
+			previewImage(list,index){
+				uni.previewImage({
+					current: index,
+					urls: list.filter(item=> item.imgurl).map(item=> item.imgurl)
+				});
+			},
+			// 讨论回复
+			async getFeedBack(){
+				let _this = this;
+				if(!this.remark){
+					uni.showToast({
+						icon:'none',
+						title:"请输入处理方法或建议",
+						duration:3000
+					})
+					return;
+				}
+				if(this.getFeedBackLoading) return;
+				try{
+					this.getFeedBackLoading = true
+					// 上传图片
+					await this.uploadFileImage()
+					// 生成上传图片列表
+					let planinspectionfeedbackimg = [];
+					this.successUploadFileImages.map(imgurl=>{
+						planinspectionfeedbackimg.push({
+							planquestionimgid:0,
+							planfeedbackid:0,
+							planquestionid:1,
+							imgurl,
+							uploaddate:this.moment().format('YYYY-MM-dd hh:mm:ss')
+						})
+					})
+					console.log('生成好的图片上传列表--->>>',planinspectionfeedbackimg)
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.plan_getQuestionReply,
+						data:{
+							planinspectionfeedback:{
+								planfeedbackid:0,
+								planquestionid:this.planquestionid,
+								planid:this.planid,
+								content:this.remark,// 反馈内容
+								deptno:'',// 反馈部门编码
+								deptname:this.userinfo.deptname,// 反馈部门名称
+								usernumber:this.userinfo.usernumber,// 反馈人工号
+								username:this.userinfo.username,// 反馈人姓名
+								status:1000,
+								insertdate:this.moment().format('YYYY-MM-dd hh:mm:ss'),
+								lstupdatedate:this.moment().format('YYYY-MM-dd hh:mm:ss'),
+								lstuserid:"",
+								planinspectionfeedbackimg
+							}
+						}
+					})
+					let [err, success] = data
+					this.getFeedBackLoading = false
+					console.log('整改回复结果--->>>',err, success)
+					if (!err && success.data.success) {
+						this.getInspectionDetail()
+						this.$refs['reply'].close()
+					}else{
+						uni.showToast({
+							title: err?err:success.data.errmsg,
+							icon: 'none',
+							duration:3000
+						});
+					}
+				}catch(e){
+					console.log(e)
+					this.getFeedBackLoading = false
+				}
+			},
+			// 顶部点击回到巡检计划主页plan
+			navigateToPlan(){
+				uni.navigateTo({
+					url:"/pages-packages/plan/plan/plan?planid=" + this.planid
 				})
 			},
-			// 返回详情页
-			navigitorShowDeail:function(item){
-				uni.navigateTo({
-					url:"../seeDetail/seeDetail?id=" + item.inspectionlogid
-				})
-			}
 		},
-		onLoad: function(option) {
-			console.log("pages viewQuestion option：", option);
-			if(option.msg){
-				this.msg = option.msg;
-				// uni.showLoading({
-				// 	title:"正在加载数据...",
-				// 	mask:true
-				// })
-				this.getDetail(option.id,option.reply_id);
-			}
-			if(option.data){
-				option.data = JSON.parse(option.data);
-				this.getDetail(option.id,option.reply_id);
-			}
-			this.option = option;
+		onLoad(option) {
+			this.inspectionlogid = option.inspectionlogid
+			this.questionid = option.questionid
+			console.log(this.inspectionlogid,this.questionid)
+			option.navigatePage == 1?this.navigatePage = true:this.navigatePage = false;
+			this.getInspectionDetail()
+		},
+		onShow:function(){
 		}
 	}
 </script>
 
 <style scoped lang="scss">
-	.container {
-		min-height: 100vh;
-		width: 100%;
+	page{
 		background: #E5EDF1;
-		padding-bottom: 50rpx;
+	}
+	.container {
+		height: 100vh;
+		background: #E5EDF1;
 		padding-bottom: env(safe-area-inset-bottom);
-		box-sizing: border-box;
-		// 消息页进入显示问题内容
-		.question.msg{
-			// box-shadow:0rpx 0rpx 8rpx -2rpx #40A9FF;
-			border: 4rpx solid #40A9FF;
-			font-size:26rpx;
-			
-			.msg-title{
-				font-weight:700;
-				font-size:28rpx;
-				padding-bottom:10rpx;
+		
+		.scroll-view{
+			height: 100vh;
+			// 顶部20rpx间隔
+			.top-placeholder{
+				height: 20rpx;
 			}
-			
-			.msg-list{
-				display: flex;
-				padding-bottom:5rpx;
-				color:#A4B1BE;
-				.left{
-					width:125rpx;
+			// 消息页进入显示问题内容
+			.question.msg{
+				// box-shadow:0rpx 0rpx 8rpx -2rpx #40A9FF;
+				border: 4rpx solid #40A9FF;
+				font-size:26rpx;
+				
+				.msg-title{
+					font-weight:700;
+					font-size:28rpx;
+					padding-bottom:10rpx;
 				}
-				.content{
-					flex:2;
-					color:#323436;
-				}
-			}
-			.msg-list-img{
-				margin-top: 20rpx;
-				width: 100%;
-				display: flex;
-				justify-content: flex-start;
-				flex-wrap: wrap;
-
-				.item {
-					width: 119rpx;
-					height: 119rpx;
-					overflow: hidden;
-					margin-right: 15rpx;
-					margin-bottom: 15rpx;
-					border-radius: 6rpx;
-
-					.img {
-						width: 100%;
-						height: 100%;
-					}
-				}
-			}
-			
-			&:active{
-				background:#f2f2f2;
-				animation: fadeIn 300ms;
-			}
-		}
-		.question {
-			background: #fff;
-			width: calc(100% - 40rpx);
-			margin: 20rpx;
-			padding: 30rpx 20rpx;
-			padding-bottom: 10rpx;
-			font-size: 24rpx;
-			box-sizing: border-box;
-			border-radius: 10rpx;
-			margin-top: 20rpx;
-
-
-			.question-txt {
-
-				.title {
-					color: #A4B1BE;
-					font-weight: 800;
-				}
-
-				.content {
-					color: #647484;
-					margin-bottom: 20rpx;
-				}
-			}
-
-			.question-img {
-				width: 100%;
-				display: flex;
-				justify-content: flex-start;
-				flex-wrap: wrap;
-
-				.item {
-					width: 120rpx;
-					height: 120rpx;
-					overflow: hidden;
-					margin-right: 15rpx;
-					margin-bottom: 15rpx;
-					border-radius: 6rpx;
-
-					.img {
-						width: 100%;
-						height: 100%;
-					}
-				}
-			}
-		}
-
-		.question-discuss-title {
-			// padding-top: 74rpx;
-			padding-bottom: 20rpx;
-			color: #424242;
-			font-size: 28rpx;
-			text-align: center;
-			width: 100%;
-			font-weight:700;
-		}
-
-		// 回复列表
-		.discuss-list {
-			width: 100%;
-			// position: relative;
-
-			.discuss-item {
-				width: calc(100% - 40rpx);
-				margin: 20rpx;
-				margin-top: 0;
-				background: #fff;
-				border-radius: 10rpx;
-				box-sizing: border-box;
-				padding: 20rpx;
-				padding-top: 0;
-
-				// &:active {
-				// 	opacity: 0.9;
-				// }
-
-				.info {
-					border-bottom: 1rpx solid #EDEEEF;
-					padding: 26rpx 0rpx;
+				
+				.msg-list{
 					display: flex;
-					justify-content: flex-start;
-					align-items: center;
-
-					.user {
-						color: #647484;
-						font-size: 24rpx;
-						flex: 2;
+					padding-bottom:5rpx;
+					color:#A4B1BE;
+					.left{
+						width:125rpx;
 					}
-
-					.date {
-						height: 20rpx;
-						line-height: 20rpx;
-						font-size: 20rpx;
-						color: #B6C6D6;
-					}
-
-					.reply-btn {
-						height: 48rpx;
-						border: 1rpx solid #8ABAF5;
-						border-radius: 48rpx;
-						margin-left: 20rpx;
-						padding: 0rpx 20rpx;
-						display: flex;
-						align-items: center;
-						justify-content: flex-start;
-						background: #fff;
-
-						&:active {
-							background: #f9f9f9;
-						}
-
-						.img-btn {
-							width: 28rpx;
-							height: 28rpx;
-							margin-right: 6rpx;
-
-							.img {
-								width: 100%;
-							}
-						}
-
-						.txt {
-							color: #1474EA;
-							font-size: 22rpx;
-						}
+					.content{
+						flex:2;
+						color:#323436;
+						word-break:break-word;
 					}
 				}
-
-				.content {
-					color: #647484;
-					font-size: 24rpx;
-					margin-bottom: 16rpx;
-					margin-top: 20rpx;
-				}
-
-
-				.reply-list {
-					position: relative;
-					margin-top: 32rpx;
-					background: #F6F7F9;
-					border-radius: 10rpx;
-					padding: 20rpx;
-					box-sizing: border-box;
-					font-size: 22rpx;
-					color: #A4B1BE;
-
-					// 三角
-					&:before {
-						display: block;
-						content: '';
-						position: absolute;
-						left: 50rpx;
-						top: -32rpx;
-						border: 16rpx transparent dashed;
-						border-bottom: 16rpx #F6F7F9 solid; //F6F7F9
-						// border-top: 16rpx transparent dashed;
-						// border-left: 16rpx transparent dashed;
-						// border-right: 16rpx transparent dashed;
-					}
-
-					.item {
-						margin-bottom: 6rpx;
-					}
-				}
-			}
-			.that-item{
-				border:1rpx solid #647484;
-				background:#e2e2e2;
 				
 				&:active{
-					border:0rpx solid #647484;
-					background:#fff;
+					background:#f2f2f2;
+					animation: fadeIn 300ms;
+				}
+			}
+			
+			.question {
+				background: #fff;
+				width: calc(100% - 40rpx);
+				margin: 0 20rpx;
+				padding: 20rpx;
+				padding-bottom: 10rpx;
+				font-size: 26rpx;
+				box-sizing: border-box;
+				border-radius: 10rpx;
+				
+				&.msg{
+					margin-bottom: 20rpx;
+				}
+				
+				// 问题的状态显示
+				.question-status{
+					display:flex;
+					align-items: center;
+					font-size: 26rpx;
+
+					.status-round{
+						width:22rpx;
+						height: 22rpx;
+						border-radius:22rpx;
+						background:#D56C68;
+						margin-right:10rpx;
+					}
+					.status-round.solve{
+						background:#7ED58C;
+					}
+					.status-title{
+						flex:2;
+					}
+					.confirm-question{
+						background:#fff;
+						border:1rpx solid #1BA1F3;
+						color:#1BA1F3;
+						border-radius:40rpx;
+						font-size: 22rpx;
+						width: 130rpx;
+						height: 48rpx;
+						line-height: 48rpx;
+						text-align: center;
+						&:active{
+							background:#1BA1F3;
+							color:#fff;
+						}
+					}
+					.del{
+						marign-right:10rpx;
+						color:#27A6F4;
+						padding: 3px 6px;
+						border-radius: 2px;
+						&:hover{
+							background: #f2f2f2;
+						}
+					}
+				}
+
+				.item-title{
+					color:#333;
+					font-weight:700;
+				}
+				.question-info{
+					display:flex;
+					justify-content:flex-start;
+					color:#647484;
+					padding:20rpx 0rpx;
+					
+					.timer{
+						flex:2;
+						text-align:right;
+						color:#B6C6D6;
+					}
+				}
+				
+				.info-list{
+					display: flex;
+					color:#A4B1BE;
+					margin-bottom:5rpx;
+					
+					.left{
+						min-width:4em;
+						text-align-last: justify;
+						padding-right:10rpx;
+						margin-right:10rpx;
+					}
+					
+					.content{
+						flex:2;
+						color:#647484;
+						word-break:break-word;
+					}
+				}
+				
+				.question-txt {
+					.title {
+						color: #A4B1BE;
+						font-weight: 800;
+					}
+
+					.content {
+						color: #647484;
+						margin-bottom: 20rpx;
+						word-break:break-word;
+					}
+				}
+
+				.question-img {
+					width: 100%;
+					display: flex;
+					justify-content: flex-start;
+					flex-wrap: wrap;
+					padding-top:20rpx;
+
+					.item {
+						width: 120rpx;
+						height: 120rpx;
+						overflow: hidden;
+						margin-right: 15rpx;
+						margin-bottom: 15rpx;
+						border-radius: 6rpx;
+
+						.img {
+							width: 100%;
+							min-height: 100%;
+							background: #f2f2f2;
+						}
+					}
+				}
+			}
+
+			.reply-list-title {
+				padding: 20rpx 0;
+				color: #424242;
+				font-size: 28rpx;
+				text-align: center;
+				width: 100%;
+				font-weight:700;
+			}
+
+			// 回复列表
+			.reply-list {
+				width: 100%;
+
+				.reply-item {
+					width: calc(100% - 40rpx);
+					margin:0 20rpx;
+					margin-bottom: 20rpx;
+					background: #fff;
+					border-radius: 10rpx;
+					box-sizing: border-box;
+
+					.top {
+						border-bottom: 1rpx solid #EDEEEF;
+						padding: 26rpx 0rpx;
+						display: flex;
+						justify-content: flex-start;
+						align-items: center;
+						font-size: 24rpx;
+						margin: 0 20rpx;
+
+						.user {
+							color: #647484;
+							flex: 2;
+						}
+
+						.date {
+							height: 20rpx;
+							line-height: 20rpx;
+							color: #B6C6D6;
+						}
+						
+						/* 撤回按钮 */
+						.back-btn{
+							color: #1BA1F3;
+							padding: 5rpx 10rpx;
+							margin-left: 20rpx;
+							border-radius: 5rpx;
+							// background:#E5EDF1;
+							&:active{
+								color: #666;
+							}
+						}
+					}
+
+					>.remark {
+						color: #647484;
+						font-size: 24rpx;
+						padding: 20rpx;
+						word-wrap: break-word;
+						word-break: normal;
+					}
+					
+					.img-list{
+						width: 100%;
+						display: flex;
+						flex-wrap: wrap;
+						padding: 0 20rpx;
+					
+						.item {
+							width: 120rpx;
+							height: 120rpx;
+							overflow: hidden;
+							margin-right: 15rpx;
+							margin-bottom: 15rpx;
+							border-radius: 6rpx;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+					
+							.icon {
+								width: 100%;
+								min-height: 100%;
+								background: #f2f2f2;
+							}
+						}
+					}
+
+					/* 复核状态 */
+					.review-result{
+						display: flex;
+						flex-wrap: wrap;
+						// border-top: 1rpx dashed #EDEEEF;
+						font-size: 24rpx;
+						padding: 20rpx;
+						color: #647484;
+						box-shadow: 0rpx -4rpx 10rpx -10rpx #000;
+						
+						.title{
+							flex: 2;
+							&.not{
+								span{
+									color: #ff0036;
+								}
+							}
+							&.by{
+								width: 100%;
+								flex: auto;
+							}
+						}
+						
+						.userinfo{
+							flex: 2;
+						}
+						
+						.date{
+							white-space: nowrap;
+							display: flex;
+							.status{
+								margin-left: 10rpx;
+								&.not{
+									color: #ff0036;
+								}
+							}
+						}
+						
+						.remark{
+							width: 100%;
+							padding: 5rpx 0;
+							padding-top: 0;
+						}
+					}
 				}
 			}
 		}
-
-		// 对此记录进行回复
+	
+		.popup {
+			padding: 30rpx;
+			padding-bottom: 0;
+			>.title{
+				display: flex;
+				.content{
+					flex: 2;
+				}
+				.close{
+					padding: 4rpx 15rpx;
+					border-radius: 5rpx;
+					&:active{
+						color: #1BA1F3;
+						background: #f2f2f2;
+					}
+				}
+			}
+			.textarea-view{
+				padding: 20rpx;
+				background: #F3F5F7;
+				box-sizing: border-box;
+				border-radius: 10rpx;
+				overflow: hidden;
+				.remark{
+					min-height: 200rpx;
+					font-size: 28rpx;
+					width: 100%;
+				}
+			}
+			&.reply{
+				.bottom-control {
+					padding-top: 20rpx;
+					background: #fff;
+					
+					// 已选择图片列表
+					.imgage-list{
+						display: flex;
+						flex-wrap: wrap;
+						flex: 2;
+						.image{
+							width: 100rpx;
+							height: 100rpx;
+							border-radius: 6rpx;
+							overflow: hidden;
+							display: flex;
+							justify-content: center;
+							align-items: center;
+							background: #F3F5F7;
+							margin-right: 15rpx;
+							margin-bottom: 15rpx;
+							position: relative;
+							&:before{
+								content: "×";
+								border-radius: 50%;
+								font-size: 16rpx;
+								width: 20rpx;
+								height: 20rpx;
+								background: #D56C68;
+								color: #fff;
+								text-align: center;
+								line-height: 20rpx;
+								position: absolute;
+								top: 5rpx;
+								right: 5rpx;
+							}
+							.icon{
+								width: 100%;
+								min-height: 100%;
+							}
+						}
+					
+						// 选择图片按钮
+						.choose-imgage{
+							width: 100rpx;
+							height: 100rpx;
+							border-radius: 6rpx;
+							background: #f2f2f2;
+							padding: 25rpx;
+							margin-bottom: 15rpx;
+							.icon{
+								width: 100%;
+								height: 100%;
+							}
+						}
+					}
+					.content{
+						flex: 0;
+						min-width: 200rpx;
+						.item {
+							line-height: 60rpx;
+							white-space: nowrap;
+							&.loading{
+								background: #b2b2b2;
+							}
+							.loading{
+								margin-right: 10rpx;
+							}
+						}
+					}
+				}
+			}
+			&.review{
+				.bottom-control {						
+					.item {
+						line-height: 60rpx;
+					}
+					.content{
+						padding: 20rpx 0;
+					}
+				}
+			}
+		}
+	
+		// 对此问题提出整改回复
 		.replay-btn {
 			width: calc(100% - 40rpx);
 			height: 80rpx;
 			line-height: 80rpx;
 			text-align: center;
-			margin: 10rpx 20rpx;
-			margin-bottom: 0;
+			margin: 0rpx 20rpx;
 			border-radius: 40rpx;
 			color: #fff;
 			background: #647484;
 			font-size: 28rpx;
 			position: fixed;
 			left: 0;
-			bottom: 10rpx;
-			z-index: 2;
+			bottom: 20rpx;
+			z-index: 1;
 			margin-bottom: env(safe-area-inset-bottom);
-			opacity: 0.9;
+			// letter-spacing: 10rpx;
 
 			&:active {
 				opacity: 0.8;
-			}
-		}
-	}
-</style>
-<style lang="scss">
-	.reply-view {
-		padding-top: 20rpx;
-		border-top-left-radius: 20rpx;
-		border-top-right-radius: 20rpx;
-
-		.reply-input {
-			width: 100%;
-			height: 126rpx;
-			background: #F3F5F7;
-			border-radius: 10rpx;
-			padding: 20rpx;
-			color: #647484;
-			box-sizing: border-box;
-		}
-
-		.reply-confirm-btn {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			margin: 20rpx 0rpx;
-
-			.left {
-				flex: 2;
-			}
-
-			.cancel {
-				color: #545658;
-				font-size: 22rpx;
-				width: 130rpx;
-				text-align: center;
-				margin-right: 10rpx;
-			}
-
-			.confirm {
-				width: 130rpx;
-				height: 48rpx;
-				line-height: 48rpx;
-				background: #A3D9FA;
-				color: #fff;
-				text-align: center;
-				border-radius: 48rpx;
-				font-size: 22rpx;
-
-				&:active {
-					opacity: 0.8;
-				}
-			}
-		}
-	}
-
-	.reply-view.mark-view {
-		width: 100%;
-		box-sizing: border-box;
-		padding: 20rpx;
-		padding-bottom: 0;
-	}
-	
-	
-	
-	// 弹出层
-	.popup-reply{
-		background:#fff;
-		width:100%;
-		box-sizing:border-box;
-		border-bottom-left-radius:10rpx;
-		border-bottom-right-radius:10rpx;
-		padding-top:30rpx;
-		
-		.textarea-view{
-			width:calc(100% - 60rpx);
-			margin:0rpx 30rpx;
-			padding:26rpx 20rpx;
-			border-radius:10rpx;
-			background:#F3F5F7;
-			box-sizing:border-box;
-		}
-		.title{
-			height:38rpx;
-			color:#647484;
-			font-size:26rpx;
-			font-weight:800;
-			padding:20rpx 0rpx 10rpx 20rpx;
-		}
-		
-		.input-view{
-			width:100%;
-			min-height:126rpx;
-			box-sizing:border-box;
-			font-size:26rpx;
-		}
-		.solve{
-			height:164rpx;
-		}
-		.control-view{
-			width:calc(100% - 60rpx);
-			height:80rpx;
-			// box-sizing:border-box;
-			display:flex;
-			align-items:center;
-			padding: 20rpx 30rpx;
-			
-			.img-list{
-				width: auto;
-				max-width:300rpx;
-				padding: 20rpx 0rpx;
-				display:flex;
-				align-items:center;
-				overflow-x:scroll;
-				
-				.img-view{
-					width:80rpx;
-					min-width:80rpx;
-					height:80rpx;
-					background:#F3F5F7;
-					margin-right:10rpx;
-					border-radius:10rpx;
-					overflow:hidden;
-					
-					.img{
-						width:80rpx;
-						height:80rpx;
-					}
-				}
-			}
-			.control{
-				display:flex;
-				align-items: center;
-				margin-left:30rpx;
-				flex:2;
-				
-				.left{
-					flex:2;
-				}
-				.select-img{
-					display:flex;
-					align-items: center;
-					flex:2;
-					
-					&:active{
-						opacity:0.9;
-					}
-					.img{
-						width: 42rpx;
-					}
-				}
-				.btn{
-					width:130rpx;
-					height:48rpx;
-					text-align:center;
-					line-height:48rpx;
-					color:#fff;
-					background:#647484;
-					margin-left:10rpx;
-					border-radius:48rpx;
-					font-size:22rpx;
-					
-					&:active{
-						opacity:0.9;
-					}
-				}
-				.btn.reply-close{
-					background:transparent;
-					color:#545658;
-				}
 			}
 		}
 	}

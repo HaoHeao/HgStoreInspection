@@ -128,14 +128,11 @@
 					})
 					return;
 				}
-				// 整改人员或部门必须选择一个
-				if (!this.deptList.filter(item => item.noticeLabel).length &&
-					!this.userList.leaderlist.filter(item => item.noticeLabel).length &&
-					!this.userList.deptuserlist.filter(item => item.userlist.filter(itm => itm.noticeLabel).length).length
-				) {
+				// 整改部门必须选择
+				if (!this.deptList.filter(item => item.noticeLabel).length) {
 					uni.showToast({
 						icon: 'none',
-						title: "请选择通知人员或部门",
+						title: "请选择通知部门",
 						duration: 3000
 					})
 					return;
@@ -296,7 +293,8 @@
 				// console.log(pages,beforePage)
 				// beforePage.$vm.getWaitData();
 				// beforePage.$vm.getSolvedData();
-				this.$store.state.storeshop.tabbarIndex == 0?this.$store.state.storeshop.tabbarIndex = 2:this.$store.state.storeshop.tabbarIndex = 0
+				this.$store.state.storeshop.tabbarIndex == 0 ? this.$store.state.storeshop.tabbarIndex = 2 : this.$store.state.storeshop
+					.tabbarIndex = 0
 				uni.navigateBack()
 			},
 			// 上传图片
@@ -565,8 +563,9 @@
 			font-size: 28rpx;
 			position: fixed;
 			left: 0;
-			bottom: 10rpx;
+			bottom: 20rpx;
 			z-index: 1;
+			margin-bottom: env(safe-area-inset-bottom);
 
 			&.loading {
 				background: #b2b2b2;

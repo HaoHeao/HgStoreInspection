@@ -800,8 +800,9 @@
 			font-size: 28rpx;
 			position: fixed;
 			left: 0;
-			bottom: 10rpx;
+			bottom: 20rpx;
 			z-index: 1;
+			margin-bottom: env(safe-area-inset-bottom);
 
 			&.loading {
 				background: #b2b2b2;

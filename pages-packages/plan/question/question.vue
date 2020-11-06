@@ -127,7 +127,7 @@
 					<view class="close" @click="$refs['reply'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
-					<textarea class="remark" fixed auto-height maxlength="200" placeholder-style="color:#B6C6D6;" placeholder="请输入处理方法或建议(200字以内)"
+					<textarea class="remark" fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;" placeholder="请输入处理方法或建议"
 					 v-model="remark" />
 					</view>
 				<view class="bottom-control">
@@ -1014,9 +1014,9 @@
 			font-size: 28rpx;
 			position: fixed;
 			left: 0;
-			bottom: 10rpx;
+			bottom: 20rpx;
 			z-index: 1;
-			// margin-bottom: env(safe-area-inset-bottom);
+			margin-bottom: env(safe-area-inset-bottom);
 			// letter-spacing: 10rpx;
 
 			&:active {

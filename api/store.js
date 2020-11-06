@@ -31,6 +31,9 @@ const store_getUderList = `${api}/hgInspection/storeapi/inspection/type`
 // 卖场巡检回复讨论
 const store_replyFeedback = `${api}/hgInspection/storeapi/inspection/question/reply`
 
+// 卖场巡检问题确认已解决
+const store_questionResolved = `${api}/hgInspection/storeapi/inspection/confirm`
+
 export {
 	// 获取卖场巡检列表
 	store_getQuestonList,
@@ -50,4 +53,6 @@ export {
 	store_getUderList,
 	// 卖场巡检回复讨论
 	store_replyFeedback,
+	// 卖场巡检问题确认已解决
+	store_questionResolved
 }

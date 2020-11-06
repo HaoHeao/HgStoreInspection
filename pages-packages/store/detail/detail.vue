@@ -29,22 +29,32 @@
 					<view class="detail-item">
 						<view class="item">通知部门</view>
 						<view class="content">
-							<block v-for="(item,index) of inspectionDetail.mapinspectiondept" :key="index" v-if="inspectionDetail.mapinspectiondept.length != 0">
+							<block v-for="(item,index) of inspectionDetail.mapinspectiondept" :key="index" v-if="inspectionDetail.mapinspectiondept.length">
 								{{index == 0?inspectionDetail.mapinspectiondept[0].deptname:'、' + item.deptname}}
 							</block>
-							<block v-else>未指定部门</block>
+							<block v-if="!inspectionDetail.mapinspectiondept.length">未指定部门</block>
 						</view>
 					</view>
 					<view class="detail-item">
 						<view class="item">通知人员</view>
 						<view class="content">
-							<block v-for="(item,index) of inspectionDetail.mapinspectionuser" :key="index" v-if="inspectionDetail.mapinspectionuser.length != 0">
+							<block v-for="(item,index) of inspectionDetail.mapinspectionuser" :key="index" v-if="inspectionDetail.mapinspectionuser.length">
 								{{index == 0?inspectionDetail.mapinspectionuser[0].username:'、' + item.username}}
 							</block>
-							<block v-else>未指定人员</block>
+							<block v-if="!inspectionDetail.mapinspectionuser.length">未指定人员</block>
 						</view>
 					</view>
-					<view class="solve" v-if="inspectionDetail.feedback" @click="openUnderPopup()">解决问题</view>
+					<block v-if="!inspectionDetail.feedback">
+						<view class="detail-item">
+							<view class="item">具体位置</view>
+							<view class="content">{{inspectionDetail.inspectionplace}}</view>
+						</view>
+						<view class="detail-item">
+							<view class="item">巡检归属</view>
+							<view class="content">{{inspectionDetail.typedesc}}</view>
+						</view>
+					</block>
+					<view class="solve" v-if="inspectionDetail.feedback" @click="openUnderPopup()">确认已解决</view>
 				</view>
 				<view class="module image" v-if="inspectionDetail.loginspectionimg.length">
 					<view class="head">
@@ -113,7 +123,7 @@
 						</view>
 					</view>
 					<view class="content">
-						<view :class="['item',getFeedBackLoading?'loading':'']" @click="getFeedBack()"><u-loading v-if="getFeedBackLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
+						<view :class="['item',sendFeedBackLoading?'loading':'']" @click="getFeedBack()"><u-loading v-if="sendFeedBackLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
 					</view>
 				</view>
 			</view>
@@ -145,65 +155,23 @@
 				<view class="view-title">巡检归属</view>	
 				<view class="under-view">
 					<view class="under-select-view">
-						<view class="item">设备设施</view>
-						<view class="item">电梯</view>
-						<view class="item active">L1客梯</view>
+						<block v-if="underActiveList.length">
+							<view class="item" v-for="(item,index) of underActiveList" :key="index" @click="underTabbarSelect(item,index)">{{item.select?item.item.name:'未选择'}}</view>
+						</block>
+						<block v-else>
+							<view class="item">未选择</view>
+						</block>
 					</view>
-					<scroll-view scroll-y enable-flex="true" class="under-list">
-						<view class="item active">
-							<view class="content">设备设施</view>
-							<view class="check">√</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
-						</view>
-						<view class="item">
-							<view class="content">设备设施</view>
+					<scroll-view scroll-y class="under-list">
+						<view :class="['item',item.select?'active':'']" v-for="(item,index) of underActiveList.length?underActiveList[underActiveList.length - 2].children:underList" :key="index" @click="underSelect(underActiveList.length?index:item)">
+							<view class="content">{{item.item.name}}</view>
+							<view class="check" v-if="item.select"><u-icon name="checkbox-mark"></u-icon></view>
 						</view>
 					</scroll-view>
 				</view>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="item" @click="setQuestionWidthdraw()">提交</view>
+						<view :class="['item',sendResolvedLoading?'loading':'']" @click="questionResolved()"><u-loading v-if="sendResolvedLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
 					</view>
 				</view>
 			</view>
@@ -228,10 +196,19 @@
 				tempFilePaths:[],
 				// 上传成功的有效已选择的图片
 				successUploadFileImages:[],
-				getFeedBackLoading:false,
+				// 讨论上传loading
+				sendFeedBackLoading:false,
+				// 搜索已查看巡检人员loading
 				searchLookListLoading:false,
+				// 发送已解决请求loading
+				sendResolvedLoading:false,
+				// 位置描述
+				place:'',
+				// 查看过此巡检的人
 				lookList:[],
+				// 巡检归属源列表
 				underList:[],
+				// 巡检归属已选择的列表
 				underActiveList:[]
 			}
 		},
@@ -244,6 +221,112 @@
 			}
 		},
 		methods: {
+			// 确认巡检问题已解决
+			async questionResolved(){
+				if(!this.place){
+					uni.showToast({
+						icon:'none',
+						title:"请填写位置描述",
+						duration:3000
+					})
+					return;
+				}
+				if(!this.underActiveList.length && !this.underActiveList[this.underActiveList.length - 1].select && this.underActiveList[this.underActiveList.length - 1].children.length){
+					uni.showToast({
+						icon:'none',
+						title:"请选择巡检归属",
+						duration:3000
+					})
+					return;
+				}
+				if(this.sendResolvedLoading) return
+				try{
+					let typedesc = [];
+					this.underActiveList.forEach(i=>{
+						typedesc.push(i.item.id)
+					})
+					this.sendResolvedLoading = true
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.store_questionResolved,
+						data:{
+							inspectionlogid:this.inspectionlogid,
+							inspectionid:this.underActiveList[this.underActiveList.length - 1].item.id,
+							usernumber:this.userinfo.usernumber,
+							typedesc,
+							place:this.place
+						}
+					})
+					this.sendResolvedLoading = false
+					let [err,success] = data;
+					console.log('确认巡检问题已解决------>>>',err,success)
+					if (!err && success.data.success) {
+						uni.showToast({
+							title: '此巡检已确认解决',
+							icon: 'none'
+						});
+						await this.getInspectionDetail();
+						this.$refs['confirmSolve'].close()
+					}else{
+						uni.showToast({
+							title: err?err:success.data.errmsg,
+							icon: 'none',
+							duration:3000
+						});
+					}
+				}catch(e){
+					this.sendResolvedLoading = false
+					console.log(e)
+				}
+			},
+			// 返回上一页并更新
+			UpdateNavigationBack() {
+				this.$store.state.storeshop.tabbarIndex == 0?this.$store.state.storeshop.tabbarIndex = 2:this.$store.state.storeshop.tabbarIndex = 0
+				uni.navigateBack()
+			},
+			// 选择巡检归属tabbar
+			underTabbarSelect(item,index){
+				if(item.select && item.children.length){
+					if(this.underActiveList.slice(0,index).length){
+						this.underActiveList = this.underActiveList.slice(0,index);
+						this.underActiveList.push({
+							select:false,
+							children:[]
+						})
+						this.resetUnderList(this.underActiveList[this.underActiveList.length - 2].children)
+					}else{
+						this.underActiveList = []
+					}
+				}
+			},
+			// 选择巡检归属
+			underSelect(item){
+				if(this.underActiveList.length){
+					this.resetUnderList(this.underActiveList[this.underActiveList.length - 2].children)
+					let data = this.underActiveList[this.underActiveList.length - 2].children[item]
+					data.select = true;
+					this.underActiveList.pop()
+					this.underActiveList.push(data)
+					if(data.children.length){
+						this.underActiveList.push({
+							select:false,
+							children:[]
+						})
+					}
+				}else{
+					this.underList.forEach(i=>{i.select = false})
+					item.select = true;
+					this.underActiveList.push(item)
+					if(item.children.length){
+						this.underActiveList.push({
+							select:false,
+							children:[]
+						})
+					}
+				}
+				this.$forceUpdate()
+				console.log('已选中巡检归属--->>>',this.underActiveList)
+			},
 			// 修改巡检归属已选中数组
 			changeUnderActiveList(list){
 				if(list.filter(item=> item.select).length){
@@ -253,8 +336,23 @@
 					}
 				}
 			},
+			// 选择列表归属
+			selectUnserItem(item){
+				item.select = true;
+				this.changeUnderActiveList([item])
+			},
+			// 格式化巡检归属列表
+			resetUnderList(list){
+				for(let item of list){
+					item.select = false
+					if(item.children.length) this.resetUnderList(item.children)
+				}
+			},
 			// 打开解决popup
 			openUnderPopup(){
+				this.place = ''
+				this.resetUnderList(this.underList)
+				this.underActiveList = []
 				this.$refs['confirmSolve'].open()
 			},
 			// 提出巡检问题打开popup
@@ -263,7 +361,7 @@
 				this.remark = ''
 				this.tempFilePaths = []
 				this.successUploadFileImages = []
-				this.getFeedBackLoading = false
+				this.sendFeedBackLoading = false
 			},
 			// 触发下拉刷新
 			async onRefresh() {
@@ -292,14 +390,7 @@
 					console.log('归属列表请求成功------>>>',err,success)
 					if (!err && success.data.success) {
 						this.underList = success.data.data.menu
-						let addSelect = (list)=>{
-							for(let item of list){
-								item.select = false
-								if(item.children.length) addSelect(item.children)
-							}
-						}
-						addSelect(this.underList)
-						console.log(this.underList)
+						this.resetUnderList(this.underList)
 					}else{
 						uni.showToast({
 							title: err?err:success.data.errmsg,
@@ -348,7 +439,6 @@
 				try{
 					this.searchLookListLoading = true
 					let data = await uni.request({
-						method: 'GET',
 						url: `${this.api.store_getLookList}${this.inspectionlogid}`
 					})
 					this.searchLookListLoading = false
@@ -444,7 +534,6 @@
 				try {
 					uni.showNavigationBarLoading()
 					let data = await uni.request({
-						method: 'GET',
 						url: this.api.store_getQuestionDetail,
 						data:{
 							id:this.inspectionlogid,
@@ -481,9 +570,9 @@
 					})
 					return;
 				}
-				if(this.getFeedBackLoading) return;
+				if(this.sendFeedBackLoading) return;
 				try{
-					this.getFeedBackLoading = true
+					this.sendFeedBackLoading = true
 					// 上传图片
 					await this.uploadFileImage()
 					// 生成上传图片列表
@@ -516,7 +605,7 @@
 						}
 					})
 					let [err, success] = data
-					this.getFeedBackLoading = false
+					this.sendFeedBackLoading = false
 					console.log('整改回复结果--->>>',err, success)
 					if (!err && success.data.success) {
 						this.getInspectionDetail()
@@ -530,13 +619,13 @@
 					}
 				}catch(e){
 					console.log(e)
-					this.getFeedBackLoading = false
+					this.sendFeedBackLoading = false
 				}
 			},
 			// 进入反馈
 			lookReplay(item) {
 				uni.navigateTo({
-					url: `../question/question?planid=${item.planid}&planquestionid=${item.planquestionid}`
+					url: `../discuss/discuss?inspectionlogid=${item.inspectionlogid}&questionid=${item.questionid}`
 				})
 			},
 		},
@@ -676,6 +765,11 @@
 						text-align: center;
 						border-radius: 10rpx;
 						margin-top: 20rpx;
+						transition: 300ms;
+						&:active{
+							opacity: 0.9;
+							box-shadow: 0 10rpx 10rpx 0 rgba(0,0,0,0.3);
+						}
 					}
 				}
 				// 图片
@@ -1177,6 +1271,7 @@
 					.under-select-view{
 						display: flex;
 						align-items: center;
+						// border-bottom: 2rpx solid #fff;
 						.item{
 							padding: 20rpx 30rpx;
 							text-align: center;
@@ -1188,7 +1283,8 @@
 							&:active{
 								background: rgba(0,0,0,0.1);
 							}
-							&.active{
+							&:last-child{
+								color: #D56C68;
 								border-bottom: 4rpx solid #1BA1F3;
 								font-weight: 800;
 							}
@@ -1202,7 +1298,7 @@
 							display: flex;
 							align-items: center;
 							font-size: 28rpx;
-							padding: 15rpx 20rpx;
+							padding: 20rpx;
 							&:active{
 								background: rgba(0,0,0,0.1);
 							}
@@ -1214,6 +1310,7 @@
 							}
 							&.active{
 								font-weight: 800;
+								background: rgba(0,0,0,0.1);
 							}
 						}
 					}
@@ -1227,6 +1324,12 @@
 						.item {
 							line-height: 60rpx;
 							white-space: nowrap;
+							&.loading{
+								background: #b2b2b2;
+							}
+							.loading{
+								margin-right: 10rpx;
+							}
 						}
 					}
 				}
@@ -1246,9 +1349,9 @@
 			font-size: 28rpx;
 			position: fixed;
 			left: 0;
-			bottom: 10rpx;
+			bottom: 20rpx;
 			z-index: 1;
-			// margin-bottom: env(safe-area-inset-bottom);
+			margin-bottom: env(safe-area-inset-bottom);
 			// letter-spacing: 10rpx;
 
 			&:active {

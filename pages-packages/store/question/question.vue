@@ -357,7 +357,8 @@
 							font-size: 24rpx;
 							color: #333;
 							font-weight: 700;
-							padding: 20rpx;
+							// padding: 20rpx;
+							height: 1rpx;
 							padding-bottom: 0;
 						}
 
