@@ -25,7 +25,7 @@ const setting = {
 		// 与前一个元素的距离，单位rpx
 		loadmoreMarginTop: '50',
 		// 与后一个元素的距离，单位rpx
-		loadmoreMarginBottom: '120',
+		loadmoreMarginBottom: '150',
 		// loadmore状态为nomore时内容是否显示为一个'·'
 		isDot: false,
 		// 返回顶部按钮

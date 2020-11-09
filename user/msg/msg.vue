@@ -78,12 +78,12 @@
 				if (item.itype == 1) {
 					if (item.questionid == 0) {
 						uni.navigateTo({
-							url: `/pages-packages/plan/plan/plan?planid=${item.inspectionid}&planquestionid=${item.questionid}`
+							url: `/pages-packages/store/detail/detail?inspectionlogid=${item.inspectionid}`
 						})
 						return;
 					}
 					uni.navigateTo({
-						url: `/pages-packages/plan/question/question?planid=${item.inspectionid}&planquestionid=${item.questionid}`
+						url: `/pages-packages/store/discuss/discuss?inspectionlogid=${item.inspectionid}&questionid=${item.questionid}&navigatePage=1`
 					})
 				} else if (item.itype == 2) {
 					if (item.questionid == 0) {

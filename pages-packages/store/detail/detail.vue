@@ -69,7 +69,7 @@
 				</view>
 				<view class="module reply" v-if="inspectionDetail.loginspectionquestion.length">
 					<view class="head">
-						<view class="title">巡检问题</view>
+						<view class="title">回复记录</view>
 						<view class="number">共{{inspectionDetail.loginspectionquestion.length}}条</view>
 					</view>
 					<view class="question-view">
@@ -82,7 +82,7 @@
 								</view>
 								<view class="li reason">
 									<view class="left">说明</view>
-									<view class="content"><text>{{item.reason}}</text></view>
+									<view class="content">{{item.reason}}</view>
 								</view>
 								<view class="li li-imgs" v-if="item.loginspectionquestionimg.length">
 									<view class="img-view" v-for="(itm,ind) of item.loginspectionquestionimg" :key="ind" @tap.stop="previewImage(item.loginspectionquestionimg,ind)">
@@ -123,7 +123,10 @@
 						</view>
 					</view>
 					<view class="content">
-						<view :class="['item',sendFeedBackLoading?'loading':'']" @click="getFeedBack()"><u-loading v-if="sendFeedBackLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
+						<view class="item" @click="getFeedBack()">
+							<u-loading :show="sendFeedBackLoading" mode="circle" size="30"></u-loading>
+							{{sendFeedBackLoading?'':'提交'}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -171,7 +174,10 @@
 				</view>
 				<view class="bottom-control">
 					<view class="content">
-						<view :class="['item',sendResolvedLoading?'loading':'']" @click="questionResolved()"><u-loading v-if="sendResolvedLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
+						<view class="item" @click="questionResolved()">
+							<u-loading :show="sendResolvedLoading" mode="circle" size="28"></u-loading>
+							{{sendResolvedLoading?'':'提交'}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -223,15 +229,7 @@
 		methods: {
 			// 确认巡检问题已解决
 			async questionResolved(){
-				if(!this.place){
-					uni.showToast({
-						icon:'none',
-						title:"请填写位置描述",
-						duration:3000
-					})
-					return;
-				}
-				if(!this.underActiveList.length && !this.underActiveList[this.underActiveList.length - 1].select && this.underActiveList[this.underActiveList.length - 1].children.length){
+				if(!this.underActiveList.length || !this.underActiveList[this.underActiveList.length - 1].select || this.underActiveList[this.underActiveList.length - 1].children.length){
 					uni.showToast({
 						icon:'none',
 						title:"请选择巡检归属",
@@ -474,7 +472,6 @@
 			chooseImgage(){
 				let _this = this;
 				uni.chooseImage({
-					sizeType:['original'],
 					success: function (res) {
 						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item=> item.path))
 					}
@@ -1208,12 +1205,6 @@
 						.item {
 							line-height: 60rpx;
 							white-space: nowrap;
-							&.loading{
-								background: #b2b2b2;
-							}
-							.loading{
-								margin-right: 10rpx;
-							}
 						}
 					}
 				}
@@ -1324,12 +1315,6 @@
 						.item {
 							line-height: 60rpx;
 							white-space: nowrap;
-							&.loading{
-								background: #b2b2b2;
-							}
-							.loading{
-								margin-right: 10rpx;
-							}
 						}
 					}
 				}

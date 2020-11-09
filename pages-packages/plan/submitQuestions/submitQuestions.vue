@@ -55,8 +55,9 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view :class="['replay-btn',submitLoading?'loading':'']" @click="submit()">
-			<u-loading v-if="submitLoading" class="loading" mode="circle" size="28"></u-loading>提交
+		<view class="replay-btn" @click="submit()">
+			<u-loading :show="submitLoading" mode="circle" size="28"></u-loading>
+			{{submitLoading?'':'提交'}}
 		</view>
 		<uni-popup ref="rectifyDept" type="bottom" :maskClick="false">
 			<view class="popup rectify-dept top">
@@ -423,7 +424,6 @@
 			chooseImgage() {
 				let _this = this;
 				uni.chooseImage({
-					sizeType: ['original'],
 					success: function(res) {
 						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item => item.path))
 					}
@@ -803,14 +803,6 @@
 			bottom: 20rpx;
 			z-index: 1;
 			margin-bottom: env(safe-area-inset-bottom);
-
-			&.loading {
-				background: #b2b2b2;
-			}
-
-			.loading {
-				margin-right: 10rpx;
-			}
 		}
 
 		.popup {

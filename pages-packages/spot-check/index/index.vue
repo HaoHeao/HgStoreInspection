@@ -1,95 +1,92 @@
 <template>
 	<view class="container">
-		<view class="head" @click.stop="$refs['screen'].open()">
-			<view class="item left">
-				<view class="content">{{difference?'有差异':'全部'}}</view>
-			</view>
-			<view class="item center">
-				<view class="content">{{date}}</view>
-			</view>
-			<view class="item right">
+		<view class="tabs" @click.stop="$refs['filter'].open()">
+			<view class="left">{{difference?'有差异':'全部'}}</view>
+			<view class="center">{{date}}</view>
+			<view class="right">
 				<view class="content">
-					筛选
-					<image src="@/static/icon/filter.svg" mode="widthFix" class="icon"></image>
-				</view>
-			</view>
-		</view>
-		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
-			<view class="data-view" v-if="tabelData.length">
-				<view class="info">{{conerno?`[${conerno}]${tabelData[0].conername}  `:''}}共 {{tabelInfo.total}} 条</view>
-				<view class="item fadeIn" @click="openDetail(item)" v-for="(item,index) of tabelData" :key="index">
-					<view class="title">
-						<view class="round" v-if="item.difqty != 0"></view>{{conerno?'':`[${item.conerno}]`}}{{item.prodname}}
-					</view>
-					<view class="content-list">
-						<view class="item">
-							<view class="title">编码：</view>
-							<view class="content">{{item.prodplu}}</view>
-						</view>
-						<view class="item">
-							<view class="title">库存：</view>
-							<view class="content">{{item.storeqty}}</view>
-						</view>
-						<view class="item">
-							<view class="title">实盘：</view>
-							<view class="content">{{item.chkqty}}</view>
-						</view>
-						<view class="item">
-							<view class="title">差异：</view>
-							<view class="content">{{item.difqty}}</view>
-						</view>
+					<view class="filter">
+						<image src="@/static/icon/filter.svg" mode="widthFix" class="icon"></image>
+						筛选
 					</view>
 				</view>
 			</view>
-			<view class="no-data-view fadeIn" v-if="!tabelData.length">
-				<view class="center">
-					<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
-					<view class="tip">暂无数据</view>
-				</view>
-			</view>
-			<view class="null-data" v-if="tabelData.length">
-				<view class="text">以上为全部消息</view>
-				<view class="line"></view>
-			</view>
-		</haoheao-scroll>
-		<view class="view-item control-list">
-			<navigator url="../add/index" class="item">
-				<image src="@/static/icon/add-white.svg" mode="widthFix" class="icon"></image>抽盘
-			</navigator>
 		</view>
-		<uni-popup ref="screen" type="top" :maskClick="false" @change="screenChange">
-			<view class="popup screen">
-				<view class="item-list">
-					<view class="item">
-						<view class="title">设置日期</view>
+		<view class="main">
+			<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+			 :refresher-triggered="waitRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
+			 @scrolltolower="onTolower">
+				<block v-if="tabelData.length">
+					<view class="length">{{conerno?`[${conerno}]${tabelData[0].conername}  `:''}}共 {{tabelInfo.total}} 条</view>
+					<view class="item" @click="openDetail(item)" v-for="(item,index) of tabelData" :key="index">
+						<view class="question">
+							<view class="round" v-if="item.difqty != 0"></view>
+							<view class="txt">{{conerno?'':`[${item.conerno}]`}}{{item.prodname}}</view>
+						</view>
+						<view class="info-list">
+							<view class="item">
+								<view class="title">编码：</view>
+								<view class="content">{{item.prodplu}}</view>
+							</view>
+							<view class="item">
+								<view class="title">库存：</view>
+								<view class="content">{{item.storeqty}}</view>
+							</view>
+							<view class="item">
+								<view class="title">实盘：</view>
+								<view class="content">{{item.chkqty}}</view>
+							</view>
+							<view class="item">
+								<view class="title">差异：</view>
+								<view class="content">{{item.difqty}}</view>
+							</view>
+						</view>
+					</view>
+					<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+					 :is-dot="setting.isDot" />
+				</block>
+				<view class="no-data-view" v-if="!tabelData.length">
+					<view class="center">
+						<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
+						<view class="tip">暂无数据</view>
+					</view>
+				</view>
+			</scroll-view>
+		</view>
+		<!-- <view class="view-item control-list">
+			<image src="@/static/icon/add-white.svg" mode="widthFix" class="icon"></image>抽盘
+		</view> -->
+		<uni-popup ref="filter" type="top">
+			<scroll-view scroll-y class="popup filter">
+				<view class="content">
+					<view class="title">设置日期</view>
+					<view class="item date">
 						<picker mode="date" :value="date" @change="bindDateChange">
-							<view class="content date">{{date}}</view>
+							<view class="time">{{date}}</view>
 						</picker>
 					</view>
-					<view class="item">
-						<view class="title">专柜号</view>
-						<input type="number" placeholder="专柜号" class="content input" v-model="conerno" v-if="popupConerno" />
-					</view>
-					<view class="item">
-						<view class="title">是否包含差异</view>
-						<radio-group @change="radioChange" class="content">
-							<label class="radio-item">
-								<radio class="radio" value="1" color="#647484" checked />
-								<view>全部</view>
-							</label>
-							<label class="radio-item">
-								<radio class="radio" value="2" color="#647484" />
-								<view>有差异</view>
-							</label>
-						</radio-group>
-					</view>
+					<view class="title">专柜号</view>
+					<input type="number" placeholder="专柜号" class="item input" v-model="conerno" />
+					<view class="title">是否包含差异</view>
+					<radio-group @change="radioChange" class="item radio-group">
+						<label class="radio-item">
+							<radio class="radio" value="1" color="#647484" checked />
+							<view>全部</view>
+						</label>
+						<label class="radio-item">
+							<radio class="radio" value="2" color="#647484" />
+							<view>有差异</view>
+						</label>
+					</radio-group>
 				</view>
-				<view class="control">
-					<view class="btn" @click="reset()">重置</view>
-					<view class="btn success" @click="pageindex=1,tabelData=[],search(1),$refs['screen'].close()">完成</view>
+				<view class="btn-list">
+					<view class="btn reset" @click="reset()">重置</view>
+					<view class="btn search" @click="pageindex=1,tabelData=[],search(1),$refs['screen'].close()">查询</view>
 				</view>
-			</view>
+			</scroll-view>
 		</uni-popup>
+
+
 		<uni-popup ref="detail" type="bottom">
 			<view class="popup detail">
 				<view class="title">
@@ -146,7 +143,6 @@
 	export default {
 		data() {
 			return {
-				uni,
 				// 时间
 				date: "",
 				// 专柜号
@@ -165,7 +161,12 @@
 			}
 		},
 		computed: {
-
+			userinfo() {
+				return this.utils.getUserInfo(uni)
+			},
+			setting() {
+				return this.$store.state.setting
+			}
 		},
 		methods: {
 			// 下拉刷新
@@ -271,177 +272,100 @@
 </script>
 
 <style lang="scss" scoped>
-	@import '@/styles/popup.scss';
-
 	page {
 		background: #E5EDF1;
 	}
 
 	.container {
-		height: calc(100vh - 70rpx);
 		background: #E5EDF1;
 		/* IOS XR */
 		padding-bottom: env(safe-area-inset-bottom);
 
-		.haoheao-scroll {
-			height: 100%;
+		.tabs {
+			.left {
+				line-height: 70rpx;
+				padding-left: 20rpx;
+			}
+
+			.center {
+				line-height: 70rpx;
+				font-weight: 800;
+			}
 		}
 
-		/* ------ */
-		.head {
-			width: 100%;
-			height: 70rpx;
-			display: flex;
-			justify-content: space-between;
-			background: #fff;
-			position: sticky;
-			top: 0;
-			z-index: 9999;
+		.main {
+			height: calc(100vh - 70rpx);
 
-			.item {
-				line-height: 80rpx;
-				font-size: 28rpx;
-				min-width: 150rpx;
+			.scroll-view {
+				height: 100%;
 
-				&.left {
-					.content {
-						width: auto;
+				.length {
+					font-size: 24rpx;
+					color: #333;
+					font-weight: 700;
+					padding: 20rpx;
+					padding-bottom: 0;
+				}
 
-						&:active {
-							// border-bottom: 4rpx solid transparent;
-							background: transparent;
+				>.item {
+					width: calc(100% - 40rpx);
+					margin: 20rpx;
+					margin-bottom: 0;
+					background: #fff;
+					border-radius: 10rpx;
+					padding: 0 20rpx;
+					box-sizing: border-box;
+
+					.question {
+						padding: 20rpx 0rpx;
+						font-size: 28rpx;
+						display: flex;
+						align-items: flex-start;
+
+						.txt {
+							flex: 2;
+							color: #647484;
+							font-size: 26rpx;
+						}
+
+						.date {
+							white-space: nowrap;
+							color: #B6C6D6;
+							margin-left: 20rpx;
+							font-size: 24rpx;
+							font-weight: 500;
 						}
 					}
-				}
 
-				&.center {
-					text-align: center;
-					font-weight: 700;
-				}
-
-				&.right {
-					display: flex;
-					align-items: center;
-					justify-content: flex-end;
-
-					.icon {
-						width: 26rpx;
-						height: 26rpx;
-						margin-left: 5rpx;
-					}
-				}
-
-				.content {
-					display: flex;
-					align-items: center;
-					padding: 0rpx 20rpx;
-					box-sizing: border-box;
-					height: 100%;
-
-					&:active {
-						background: #f9f9f9;
-						opacity: 0.9;
-					}
-				}
-			}
-		}
-
-		/* 操作列 */
-		.control-list {
-			position: fixed;
-			bottom: 20rpx;
-			right: 20rpx;
-			/* IOS XR */
-			margin-bottom: env(safe-area-inset-bottom);
-			/* ------ */
-			display: flex;
-			align-items: center;
-			line-height: 70rpx;
-			justify-content: flex-end;
-
-			.item {
-				display: flex;
-				align-items: center;
-				padding: 0 40rpx;
-				color: #fff;
-				background: #647484;
-				border-radius: 70rpx;
-				margin-left: 20rpx;
-				transition: .3s;
-
-				&:active {
-					opacity: .75;
-				}
-
-				.icon {
-					width: 40rpx;
-					height: 40rpx;
-					margin-right: 10rpx;
-				}
-
-				&.del {
-					background: #D56C68;
-				}
-			}
-		}
-
-		.data-view {
-			font-size: 28rpx;
-			// padding-bottom: 100rpx;
-
-			>.info {
-				margin: 20rpx;
-				color: #333;
-				font-weight: 800;
-				padding: 0 10rpx;
-			}
-
-			>.item {
-				margin: 20rpx;
-				margin-top: 0;
-				border-radius: 10rpx;
-				background: #fff;
-				transition: .3s;
-				font-size: 24rpx;
-
-				&:active {
-					background: #e2e2e2;
-				}
-
-				>.title {
-					display: flex;
-					align-items: center;
-					padding: 10rpx 20rpx;
-					font-weight: 800;
-
-					.round {
-						width: 16rpx;
-						height: 16rpx;
-						background: #D56C68;
-						margin: 20rpx;
-						margin-left: 0;
-						border-radius: 50%;
-					}
-				}
-
-				>.content-list {
-					display: flex;
-					flex-wrap: wrap;
-					padding: 0rpx 20rpx;
-					padding-bottom: 10rpx;
-
-					>.item {
+					.info-list {
 						display: flex;
-						margin-right: 20rpx;
-						// font-size: 24rpx;
+						flex-wrap: wrap;
+						padding: 0rpx 20rpx;
 						padding-bottom: 10rpx;
 
-						>.title {
-							color: #647484;
-						}
+						.item {
+							display: flex;
+							margin-right: 20rpx;
+							padding-bottom: 10rpx;
 
-						.content {
-							color: #333;
+							>.title {
+								color: #647484;
+							}
+
+							.content {
+								color: #333;
+							}
+						}
+					}
+
+					&:active {
+						background: #F6F6F6;
+
+						.btn-list {
+							.btn {
+								background: #1BA1F3;
+								color: #fff;
+							}
 						}
 					}
 				}
@@ -449,63 +373,103 @@
 		}
 
 		.popup {
-			width: 100vw;
-			max-height: 80%;
-			overflow-y: auto;
-			background: #fff;
-			margin-top: 70rpx;
-			font-size: 28rpx;
+			&.filter {
+				width: 100vw;
+				min-height: 40vh;
+				max-height: 80vh;
+				background: #fff;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
 
-			&.screen {
-				border-radius: 0;
+				.content {
+					font-size: 24rpx;
+					box-sizing: border-box;
+					padding: 20rpx;
+					padding-bottom: 80rpx;
+					flex: 2;
 
-				.item-list {
-					display: flex;
-					flex-wrap: wrap;
+					.title {
+						padding: 10rpx 0rpx 10rpx 5rpx;
+						color: #A4B1BE;
+						font-size: 28rpx;
+					}
 
 					.item {
-						width: 100%;
-						box-sizing: border-box;
-						padding: 0rpx 20rpx;
-						margin-top: 10rpx;
+						margin-bottom: 10rpx;
+						color: #647685;
+						font-size: 30rpx;
 
-						.title {
-							color: #A4B1BE;
-							padding: 10rpx 0rpx;
-						}
-
-						.content {
-							padding: 0rpx 20rpx;
-							border-radius: 10rpx;
-							background: #F6F7F9;
-							color: #333;
+						&.date {
+							line-height: 80rpx;
 							display: flex;
 							align-items: center;
-							height: 80rpx;
 
-							&.date {
-								width: 200rpx;
-								justify-content: center;
-							}
+							.time {
+								border-radius: 10rpx;
+								background: #F3F5F7;
+								width: 250rpx;
+								text-align: center;
 
-							&::placeholder {
-								color: #A4B1BE;
+								&:active {
+									opacity: 0.8;
+								}
 							}
+						}
+
+						&.input {
+							min-height: 80rpx;
+							width: 100%;
+							border-radius: 10rpx;
+							background: #F3F5F7;
+							padding: 0 20rpx;
+							box-sizing: border-box;
+						}
+
+						&.radio-group {
+							border-radius: 10rpx;
+							background: #F3F5F7;
+							display: flex;
+							padding: 20rpx;
 
 							.radio-item {
 								display: flex;
 								align-items: center;
-								margin-right: 40rpx;
+								margin-right: 20rpx;
 
 								.radio {
 									zoom: 0.8;
 									// background: #637684;
 								}
 							}
+						}
+					}
+				}
 
-							// &.input {
-							// 	background: red;
-							// }
+				.btn-list {
+					display: flex;
+					align-items: center;
+					position: sticky;
+					bottom: 0;
+					overflow: hidden;
+
+					.btn {
+						flex: 2;
+						text-align: center;
+						line-height: 100rpx;
+						background: #F6F7F9;
+
+						&:active {
+							opacity: 0.9;
+						}
+
+						&.reset {
+							color: #ff0036;
+						}
+
+						&.search {
+							color: #fff;
+							background: #647685;
 						}
 					}
 				}
@@ -582,8 +546,7 @@
 					width: 50%;
 					color: #D56C68;
 					text-align: center;
-					line-height: 80rpx;
-					letter-spacing: 2rpx;
+					line-height: 100rpx;
 					background: #F4F8FB;
 
 					&.success {
@@ -592,42 +555,6 @@
 					}
 				}
 			}
-		}
-
-		.no-data-view {
-			width: 100%;
-			min-height: 100%;
-			height: 50vh;
-			display: flex;
-			justify-content: center;
-			flex-wrap: wrap;
-			align-items: center;
-
-			.center {
-				.icon {
-					width: 380rpx;
-					height: 380rpx;
-				}
-
-				.tip {
-					min-width: 100%;
-					font-size: 28rpx;
-					color: #999;
-					text-align: center;
-				}
-			}
-		}
-
-		.null-data {
-			padding-bottom: 100rpx;
-
-			.text {
-				background: #E5EDF1;
-			}
-		}
-
-		/deep/ .you-scroll {
-			background: #E5EDF1;
 		}
 	}
 </style>

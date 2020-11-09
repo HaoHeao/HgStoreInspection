@@ -128,7 +128,7 @@
 				</view>
 				<view class="textarea-view">
 					<textarea class="remark" fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;" placeholder="请输入处理方法或建议"
-					 v-model="remark" />
+					 v-model="replyRemark" />
 					</view>
 				<view class="bottom-control">
 					<view class="imgage-list">
@@ -140,7 +140,10 @@
 						</view>
 					</view>
 					<view class="content">
-						<view :class="['item',getFeedBackLoading?'loading':'']" @click="getFeedBack()"><u-loading v-if="getFeedBackLoading" class="loading" mode="circle" size="28"></u-loading>提交</view>
+						<view class="item" @click="getFeedBack()">
+							<u-loading :show="getFeedBackLoading" mode="circle" size="28"></u-loading>
+							{{getFeedBackLoading?'':'提交'}}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -149,7 +152,7 @@
 			<view class="popup review top">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
 				<view class="textarea-view">
-					<textarea class="remark" fixed auto-height v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" />
+					<textarea class="remark" fixed auto-height v-model="reviewRemark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" />
 				</view>
 				<view class="bottom-control">
 					<view class="content">
@@ -178,7 +181,8 @@
 				inspectionQuestionDetail:null,
 				getDataLoading:false,
 				getDataRefresherLoading:false,
-				remark:'',
+				replyRemark:'',
+				reviewRemark:'',
 				// 待上传图片列表
 				tempFilePaths:[],
 				// 上传成功的有效已选择的图片
@@ -324,12 +328,12 @@
 			// 打开复核popup
 			openReviewPpup(){
 				this.$refs['review'].open()
-				this.remark = ''
+				this.reviewRemark = ''
 			},
 			// 打开整改popup
 			openReplyPopup(){
 				this.$refs['reply'].open()
-				this.remark = ''
+				this.replyRemark = ''
 				this.tempFilePaths = []
 				this.successUploadFileImages = []
 				this.getFeedBackLoading = false
@@ -406,7 +410,6 @@
 			chooseImgage(){
 				let _this = this;
 				uni.chooseImage({
-					sizeType:['original'],
 					success: function (res) {
 						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item=> item.path))
 					}
@@ -453,7 +456,7 @@
 			// 讨论回复
 			async getFeedBack(){
 				let _this = this;
-				if(!this.remark){
+				if(!this.replyRemark){
 					uni.showToast({
 						icon:'none',
 						title:"请输入处理方法或建议",
@@ -486,7 +489,7 @@
 								planfeedbackid:0,
 								planquestionid:this.planquestionid,
 								planid:this.planid,
-								content:this.remark,// 反馈内容
+								content:this.replyRemark,// 反馈内容
 								deptno:'',// 反馈部门编码
 								deptname:this.userinfo.deptname,// 反馈部门名称
 								usernumber:this.userinfo.usernumber,// 反馈人工号
@@ -525,7 +528,7 @@
 			},
 			// 巡检复核
 			async confirmQuestion(type) {
-				if(!type && !this.remark){
+				if(!type && !this.reviewRemark){
 					uni.showToast({
 						icon: "none",
 						title: '复核不通过请填写原因'
@@ -541,7 +544,7 @@
 							usernumber: this.userinfo.usernumber,
 							planquestionid: this.planquestionid,
 							confirmtype: type?1:0,
-							remark: type?'复核通过':this.remark
+							remark: type?'复核通过':this.reviewRemark
 						}
 					})
 					uni.hideNavigationBarLoading()
@@ -775,13 +778,11 @@
 					box-sizing: border-box;
 
 					.top {
-						border-bottom: 1rpx solid #EDEEEF;
-						padding: 26rpx 0rpx;
+						padding: 20rpx;
 						display: flex;
 						justify-content: flex-start;
 						align-items: center;
 						font-size: 24rpx;
-						margin: 0 20rpx;
 
 						.user {
 							color: #647484;
@@ -811,6 +812,7 @@
 						color: #647484;
 						font-size: 24rpx;
 						padding: 20rpx;
+						padding-top: 0;
 						word-wrap: break-word;
 						word-break: normal;
 					}
@@ -979,12 +981,6 @@
 						.item {
 							line-height: 60rpx;
 							white-space: nowrap;
-							&.loading{
-								background: #b2b2b2;
-							}
-							.loading{
-								margin-right: 10rpx;
-							}
 						}
 					}
 				}
