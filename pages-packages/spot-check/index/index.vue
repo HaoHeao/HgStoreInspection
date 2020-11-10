@@ -14,8 +14,7 @@
 		</view>
 		<view class="main">
 			<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
-			 :refresher-triggered="waitRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore"
-			 @scrolltolower="onTolower">
+			 :refresher-triggered="getDataLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
 				<block v-if="tabelData.length">
 					<view class="length">{{conerno?`[${conerno}]${tabelData[0].conername}  `:''}}共 {{tabelInfo.total}} 条</view>
 					<view class="item" @click="openDetail(item)" v-for="(item,index) of tabelData" :key="index">
@@ -24,19 +23,19 @@
 							<view class="txt">{{conerno?'':`[${item.conerno}]`}}{{item.prodname}}</view>
 						</view>
 						<view class="info-list">
-							<view class="item">
+							<view class="info">
 								<view class="title">编码：</view>
 								<view class="content">{{item.prodplu}}</view>
 							</view>
-							<view class="item">
+							<view class="info">
 								<view class="title">库存：</view>
 								<view class="content">{{item.storeqty}}</view>
 							</view>
-							<view class="item">
+							<view class="info">
 								<view class="title">实盘：</view>
 								<view class="content">{{item.chkqty}}</view>
 							</view>
-							<view class="item">
+							<view class="info">
 								<view class="title">差异：</view>
 								<view class="content">{{item.difqty}}</view>
 							</view>
@@ -44,6 +43,7 @@
 					</view>
 					<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
 					 :is-dot="setting.isDot" />
+					 <view class="bottom"></view>
 				</block>
 				<view class="no-data-view" v-if="!tabelData.length">
 					<view class="center">
@@ -53,9 +53,9 @@
 				</view>
 			</scroll-view>
 		</view>
-		<!-- <view class="view-item control-list">
+		<navigator url="../add/index" class="bottom-btn">
 			<image src="@/static/icon/add-white.svg" mode="widthFix" class="icon"></image>抽盘
-		</view> -->
+		</navigator>
 		<uni-popup ref="filter" type="top">
 			<scroll-view scroll-y class="popup filter">
 				<view class="content">
@@ -81,7 +81,7 @@
 				</view>
 				<view class="btn-list">
 					<view class="btn reset" @click="reset()">重置</view>
-					<view class="btn search" @click="pageindex=1,tabelData=[],search(1),$refs['screen'].close()">查询</view>
+					<view class="btn search" @click="search()">查询</view>
 				</view>
 			</scroll-view>
 		</uni-popup>
@@ -157,7 +157,7 @@
 				pagesize: 20,
 				pagenum: 1,
 				pageindex: 1,
-				popupConerno: false
+				getDataLoading: false
 			}
 		},
 		computed: {
@@ -169,61 +169,71 @@
 			}
 		},
 		methods: {
-			// 下拉刷新
-			async onPullDown(done) {
-				this.pageindex = 1;
-				this.tabelData = [];
-				console.log("下拉刷新")
-				await this.search(1)
-				done();
+			// 触发下拉刷新
+			async onRefresh() {
+				console.log('下拉刷新')
+				await this.getDataReset()
+				await this.getData()
+				this.getDataLoading = false
 			},
-			async onLoadMore(e) {
-				console.log(e);
-				if (this.pageindex <= this.pagenum && this.pagenum != 1) {
-					console.log("加载更多")
-					await this.search(this.pageindex);
-				}
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataLoading = false;
+				console.log("onRestore");
 			},
-			async openDetail(data) {
-				this.$refs['detail'].open()
-				this.detail = data;
-			},
-			async search(pageindex) {
-				console.log(this.pageindex, this.pagenum)
-				if (this.pageindex > this.pagenum) {
+			// 滚动触底
+			async onTolower() {
+				console.log('滚动触底')
+				if (!(this.pageindex <= this.pagenum && this.pagenum != 1)) {
 					return
 				}
-				uni.showLoading({
-					title: '加载中',
-					mask: true
-				});
-				this.pageindex = this.pageindex + 1;
-				let userinfo = this.utils.getUserInfo(uni);
+				console.log('加载更多------>>>')
+				await this.getData()
+			},
+			async openDetail(item) {
+				this.detail = item;
+				this.$refs['detail'].open()
+			},
+			search() {
+				this.pageindex = 1
+				this.tabelData = []
+				this.getData()
+				this.$refs['filter'].close()
+			},
+			getDataReset() {
+				this.tabelData = []
+				this.tabelInfo = {}
+				this.pagesize = 20
+				this.pagenum = 1
+				this.pageindex = 1
+			},
+			async getData() {
+				if (this.getDataLoading) return
+				uni.showNavigationBarLoading()
+				this.getDataLoading = true
 				try {
 					let data = await uni.request({
 						method: 'GET',
 						url: this.api.spotcheck_search,
 						data: {
 							rows: this.pagesize,
-							page: pageindex,
-							checkuserid: userinfo.usernumber,
+							page: this.pageindex,
+							checkuserid: this.userinfo.usernumber,
 							checkdate: this.date,
 							conerno: this.conerno,
-							// prodplu: this.goodsinfo.borrowqty,
 							difflag: this.difference ? 1 : ''
 						}
 					})
+					this.getDataLoading = false
+					uni.hideNavigationBarLoading()
 					let [err, success] = data
-					console.log('查询成功------>>>', data)
-					uni.hideLoading();
-					if (success.data.success && success.data.data.pBillStockSpotcheckDetail.length) {
-						this.tabelInfo = success.data
-						console.log(this.tabelInfo, success.data)
+					console.log('查询成功------>>>', err, data)
+					if (!err && success.data.success) {
 						this.tabelData = this.tabelData.concat(success.data.data.pBillStockSpotcheckDetail)
-						this.pagenum = parseInt(success.data.total / this.pagesize) + 1
+						this.tabelInfo = success.data
+						this.pagenum ? '' : this.pagenum = success.data.page
+						this.pageindex += 1
 					} else {
-						this.pageindex = this.pageindex - 1;
-						this.tabelData = []
 						uni.showToast({
 							title: err ? err : success.data.errmsg,
 							icon: 'none',
@@ -231,8 +241,8 @@
 						});
 					}
 				} catch (e) {
-					this.pageindex = this.pageindex - 1;
-					uni.hideLoading();
+					uni.hideNavigationBarLoading()
+					this.getDataLoading = false
 					console.log(e)
 				}
 			},
@@ -243,30 +253,20 @@
 			bindDateChange(e) {
 				this.date = e.target.value
 			},
-			async screenChange(e) {
-				await this.delay(100)
-				if (e.show) {
-					this.popupConerno = true
-				} else {
-					this.popupConerno = false
-				}
-			},
 			reset() {
 				this.date = this.moment().format("YYYY-MM-DD")
 				this.conerno = ""
 				this.difference = false
 				this.pagesize = 20
 				this.pageindex = 1
-				uni.hideLoading();
 			}
 		},
 		onLoad: async function() {
 			this.date = this.moment().format("YYYY-MM-DD")
+			this.getData()
 		},
 		onShow: async function() {
-			this.delay(100)
-			console.log("页面加载")
-			this.search(1)
+
 		}
 	}
 </script>
@@ -307,7 +307,7 @@
 					padding-bottom: 0;
 				}
 
-				>.item {
+				.item {
 					width: calc(100% - 40rpx);
 					margin: 20rpx;
 					margin-bottom: 0;
@@ -317,44 +317,36 @@
 					box-sizing: border-box;
 
 					.question {
-						padding: 20rpx 0rpx;
+						height: 70rpx;
 						font-size: 28rpx;
 						display: flex;
-						align-items: flex-start;
+						align-items: center;
+
+						.round {
+							width: 16rpx;
+							height: 16rpx;
+							background: #D56C68;
+							margin: 20rpx;
+							margin-left: 0;
+							border-radius: 50%;
+						}
 
 						.txt {
 							flex: 2;
 							color: #647484;
-							font-size: 26rpx;
-						}
-
-						.date {
-							white-space: nowrap;
-							color: #B6C6D6;
-							margin-left: 20rpx;
-							font-size: 24rpx;
-							font-weight: 500;
 						}
 					}
 
 					.info-list {
 						display: flex;
 						flex-wrap: wrap;
-						padding: 0rpx 20rpx;
 						padding-bottom: 10rpx;
 
-						.item {
+						.info {
 							display: flex;
 							margin-right: 20rpx;
 							padding-bottom: 10rpx;
-
-							>.title {
-								color: #647484;
-							}
-
-							.content {
-								color: #333;
-							}
+							color: #647484;
 						}
 					}
 
@@ -369,6 +361,36 @@
 						}
 					}
 				}
+				.bottom{
+					height: 150rpx;
+					width: 100%;
+				}
+			}
+		}
+
+		.bottom-btn {
+			position: fixed;
+			right: 40rpx;
+			bottom: 40rpx;
+			background: #647685;
+			color: #fff;
+			border-radius: 35rpx;
+			line-height: 70rpx;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0 40rpx;
+			box-shadow: 0 10rpx 10rpx 0 rgba(0, 0, 0, 0.3);
+			margin-bottom: env(safe-area-inset-bottom);
+
+			&:active {
+				opacity: 0.9;
+			}
+
+			.icon {
+				width: 30rpx;
+				height: 30rpx;
+				margin-right: 10rpx;
 			}
 		}
 
@@ -435,11 +457,10 @@
 							.radio-item {
 								display: flex;
 								align-items: center;
-								margin-right: 20rpx;
+								margin-right: 50rpx;
 
 								.radio {
 									zoom: 0.8;
-									// background: #637684;
 								}
 							}
 						}

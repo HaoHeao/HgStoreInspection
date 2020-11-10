@@ -159,7 +159,6 @@
 				if (this.processingLoading) return
 				uni.showNavigationBarLoading()
 				this.processingLoading = true
-				// await this.delay(2000)
 				try {
 					let data = await uni.request({
 						method: 'GET',

@@ -1,5 +1,6 @@
 <template>
-	<view class="container">
+	<scroll-view scroll-y class="container">
+		<view class="top"></view>
 		<view class="view-item info">
 			<view class="date-view">
 				<view class="date-day">{{option_data.text}}</view>
@@ -66,7 +67,7 @@
 			</view>
 			<view class="input-item textarea">
 				<view class="title">会议主题</view>
-				<textarea v-if="!openMobilepopup" class="textarea-view fadeIn" placeholder="会议主题" v-model="meetingTitle"
+				<textarea v-if="!openMobilepopup" disable-default-padding class="textarea-view fadeIn" placeholder="会议主题" v-model="meetingTitle"
 				 auto-height />
 				<!-- <input type="text" value="" class="content" placeholder="会议主题" v-model="meetingTitle" /> -->
 				<view class="clear" @click="meetingTitle = ''" v-if="meetingTitle">
@@ -123,8 +124,11 @@
 				</view>
 			</view>
 		</uni-popup>
-		<view class="mh-btn" @click="reserveLoading?false:reserva()">预约</view>
-	</view>
+		<view class="mh-btn" @click="reserva()">
+			<u-loading :show="reserveLoading" mode="circle" size="28"></u-loading>
+			{{reserveLoading?'':'预约'}}
+		</view>
+	</scroll-view>
 </template>
 
 <script>
@@ -173,6 +177,12 @@
 					return this.moment(new Date()).format("hh:mm")
 				}
 				return this.startTime
+			},
+			setting() {
+				return this.$store.state.setting
+			},
+			userinfo() {
+				return this.utils.getUserInfo(uni)
 			}
 		},
 		methods: {
@@ -252,43 +262,18 @@
 				}
 				if(this.reserveLoading) return;
 				this.reserveLoading = true
-				let userinfo = this.utils.getUserInfo(uni);
-				let selectMobileEquipmentList = [];
-				for (let item of this.mobileEquipmentList) {
-					if (item.goodscount) {
-						selectMobileEquipmentList.push({
-							Goodsid: item.goodsid,
-							Usecount: item.goodscount,
-							Status: 0,
-							Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
-						})
-					}
-				}
-				this.selectMobileEquipmentList = selectMobileEquipmentList
-				console.log('预约信息----->>>', {
-					Id: 0,
-					Roomid: this.option_roominfo.roomid,
-					Deptid: userinfo.deptno,
-					Deptname: userinfo.deptname,
-					Optuser: `${userinfo.usernumber}/${userinfo.username}`,
-					Meetingdate: this.moment(new Date(this.option_data.day)).format('YYYY/MM/DD 00:00:00'),
-					Timeslotdesc: '',
-					Timeslotstart: this.moment(new Date(this.moment(new Date(this.option_data.day)).format('YYYY/MM/DD') + ' ' +
-						this.startTimeList[this.multiIndex[0]])).format('hhmm'),
-					Timeslotend: this.moment(new Date(this.moment(new Date(this.option_data.day)).format('YYYY/MM/DD') + ' ' +
-						this.endTimeList[this.multiIndex[1]])).format('hhmm'),
-					Title: this.meetingTitle,
-					Peoplecount: this.meetingNumber,
-					Mainpeople: '',
-					Mainleader: '',
-					Summary: '',
-					Remark: '',
-					Status: 0,
-					Lstuserid: userinfo.usernumber,
-					FixedEquipmentChoose: [],
-					MeetingAppendix: [],
-					MobileEquipmentChoose: this.selectMobileEquipmentList
-				})
+				// let selectMobileEquipmentList = [];
+				// for (let item of this.mobileEquipmentList) {
+				// 	if (item.goodscount) {
+				// 		selectMobileEquipmentList.push({
+				// 			Goodsid: item.goodsid,
+				// 			Usecount: item.goodscount,
+				// 			Status: 0,
+				// 			Lstuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`
+				// 		})
+				// 	}
+				// }
+				// this.selectMobileEquipmentList = selectMobileEquipmentList
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -296,9 +281,9 @@
 						data: {
 							Id: 0,
 							Roomid: this.option_roominfo.roomid,
-							Deptid: userinfo.deptno,
-							Deptname: userinfo.deptname,
-							Optuser: `${userinfo.usernumber}/${userinfo.username}`,
+							Deptid: this.userinfo.deptno,
+							Deptname: this.userinfo.deptname,
+							Optuser: `${this.userinfo.usernumber}/${this.userinfo.username}`,
 							Meetingdate: this.moment(new Date(this.option_data.day.replace(/-/g, '/'))).format('YYYY/MM/DD 00:00:00').replace(/-/g, '/'),
 							Timeslotdesc: '',
 							Timeslotstart: this.moment(new Date(this.moment(new Date(this.option_data.day.replace(/-/g, '/'))).format('YYYY/MM/DD').replace(/-/g, '/') + ' ' +
@@ -312,12 +297,13 @@
 							Summary: '',
 							Remark: '',
 							Status: 0,
-							Lstuserid: userinfo.usernumber,
+							Lstuserid: this.userinfo.usernumber,
 							FixedEquipmentChoose: [],
 							MeetingAppendix: [],
 							MobileEquipmentChoose: this.selectMobileEquipmentList
 						}
 					})
+					this.reserveLoading = false
 					let [err, success] = data
 					console.log('预约成功------>>>', success)
 					if (!err && success.data.success) {
@@ -326,8 +312,7 @@
 							icon: 'none'
 						});
 						await this.delay(1000)
-						this.reserveLoading = false
-						uni.navigateBack();
+						this.UpdateNavigationBack()
 					}else{
 						console.log(err?err:success.data.errmsg)
 						uni.showToast({
@@ -335,7 +320,6 @@
 							icon: 'none',
 							duration:3000
 						});
-						this.reserveLoading = false
 					}
 				} catch (e) {
 					this.reserveLoading = false
@@ -459,11 +443,19 @@
 				this.multiIndex[e.detail.column] = e.detail.value
 				this.$forceUpdate()
 			},
+			// 返回上一页并更新
+			UpdateNavigationBack() {
+				let pages = getCurrentPages();
+				let beforePage = pages[pages.length - 2];
+				console.log(pages,beforePage)
+				beforePage.$vm.getDayReservationList(beforePage.$vm.activeBookedDate);
+				wx.navigateBack({
+					delta: 1
+				})
+			},
 		},
 		onLoad: async function(option) {
-			uni.showLoading({
-				title: '加载中'
-			});
+			uni.showNavigationBarLoading()
 			this.option_roominfo = JSON.parse(option.options)[0]
 			this.option_data = JSON.parse(option.options)[1]
 			console.log('预约会议室信息------>>>', this.option_roominfo)
@@ -484,22 +476,29 @@
 					.format("YYYY/MM/DD 00:00:00").replace(/-/g, '/')).getTime()) {
 				this.multiIndex = [17, 18]
 			}
-			uni.hideLoading();
+			uni.hideNavigationBarLoading()
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
 	@import '@/styles/popup.scss';
+	page{
+		background: #F6F7F9;
+	}
 
 	.container {
 		box-sizing: border-box;
-		min-height: 100vh;
+		height: 100vh;
 		background: #F6F7F9;
 		padding-top: 1rpx;
 		/* IOS XR */
-		padding-bottom: calc(env(safe-area-inset-bottom) + 120rpx);
+		padding-bottom:env(safe-area-inset-bottom);
 		/* ------ */
+		
+		.top{
+			height: 20rpx;
+		}
 		.view-item {
 			margin: 20rpx;
 			background: #fff;
@@ -667,6 +666,7 @@
 				display: flex;
 				padding: 10rpx;
 				padding-right: 20rpx;
+				margin-top: 0;
 			}
 
 			// 时间选择
@@ -718,6 +718,7 @@
 						font-size: 28rpx;
 						margin-right: 20rpx;
 						text-align: right;
+						align-self: flex-start;
 					}
 
 					.content {
@@ -855,6 +856,7 @@
 			&.text{
 				padding: 20rpx;
 				color: #647484;
+				margin-bottom: 120rpx;
 				.title{
 					font-size: 26rpx;
 				}
@@ -862,20 +864,22 @@
 		}
 
 		.mh-btn {
-			border-radius: 70rpx;
-			line-height: 70rpx;
+			border-radius: 80rpx;
+			line-height: 80rpx;
 			width: calc(100% - 40rpx);
 			margin: 20rpx;
 			margin-top: 40rpx;
+			/* IOS XR */
+			margin-bottom:calc(env(safe-area-inset-bottom) + 20rpx);
+			/* ------ */
 			background: #647484;
 			color: #fff;
 			letter-spacing: 5rpx;
 			font-weight: 800;
 			text-align: center;
 			position: fixed;
-			/* IOS XR */
-			bottom: env(safe-area-inset-bottom);
-			/* ------ */
+			z-index: 999;
+			bottom:0;
 			transition: .3s;
 
 			&:active {

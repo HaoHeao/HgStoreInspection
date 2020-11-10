@@ -223,7 +223,7 @@
 			}
 		},
 		computed: {
-			userinfo(){
+			userinfo() {
 				return this.utils.getUserInfo(uni)
 			},
 			setting() {
@@ -294,10 +294,10 @@
 				this.current = e.target.current
 			},
 			// 查看图片
-			previewImage(list,index){
+			previewImage(list, index) {
 				uni.previewImage({
 					current: index,
-					urls: list.filter(item=> item.imgurl).map(item=> item.imgurl)
+					urls: list.filter(item => item.imgurl).map(item => item.imgurl)
 				});
 			},
 			async bindDateChange(e) {
@@ -516,9 +516,12 @@
 </script>
 
 <style scoped lang="scss">
+	page {
+		background: #F6F7F9;
+	}
+
 	.container {
 		height: 100vh;
-		background: #F6F7F9;
 		display: flex;
 		flex-direction: column;
 
@@ -613,9 +616,9 @@
 									align-items: center;
 									justify-content: center;
 									overflow: hidden;
+									border-radius: 10rpx;
 
 									.icon {
-										border-radius: 10rpx;
 										width: 100%;
 										min-height: 100%;
 										height: 100%;

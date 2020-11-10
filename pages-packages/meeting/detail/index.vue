@@ -74,7 +74,7 @@
 			</view>
 		</haoheao-scroll>
 		<uni-popup ref="loading_time" type="bottom">
-			<view class="popup">
+			<view class="popup top">
 				<view class="item-view select">
 					<image src="@/static/images/date.svg" class="icon" mode="widthFix"></image>
 					<view class="title">{{moment(new Date(detailInfo.meetingdate)).format("MM-DD ") + detailInfo.timeslotendTime}} 散会</view>
@@ -94,7 +94,7 @@
 			</view>
 		</uni-popup>
 		<uni-popup ref="replacement" type="bottom">
-			<view class="popup" v-if="!replacementList.length">
+			<view class="popup top" v-if="!replacementList.length">
 				<view class="title">请选择要置换的会议室</view>
 				<view class="item-view select">
 					<picker :class="['content',replaceIndex.reserveRoomList.length?'':'active']" range-key="roomname" @change="bindPickerChange"
@@ -121,7 +121,7 @@
 					</view>
 				</view>
 			</view>
-			<view class="popup" v-if="replacementList.length">
+			<view class="popup top" v-if="replacementList.length">
 				<view class="title">请求置换会议</view>
 				<radio-group @change="radioReplacementListChange" class="meeting-list">
 					<view :class="['item',item.status == 2000?'refuse':'']" v-for="(item,index) of replacementList" :key="index">

@@ -8,7 +8,8 @@
 				<view class="date-info">{{item.info}}</view>
 			</view>
 		</scroll-view>
-		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
+		<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+		 :refresher-triggered="getDataRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore">
 			<view class="data-view">
 				<view class="item fadeIn" v-for="(item,index) of roomReserveList" :key="index">
 					<view :class="['meeting',item.status != 1000?'deactivate':'']" @click="reserve(item)">
@@ -25,17 +26,17 @@
 						<image src="@/static/images/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
 					</view>
 					<view class="meeting-list" v-if="item.status == 1000">
-						<view class="item fadeIn" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
+						<view class="item" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
 							<view class="info">
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
 								<view class="depart" v-if="itm.deptname && itm.optusername">{{itm.deptname + ' - ' + itm.optusername}}</view>
-								<view class="title" v-if="utils.getUserInfo(uni).deptno == itm.deptid">{{itm.title}}</view>
+								<view class="title" v-if="userinfo.deptno == itm.deptid">{{itm.title}}</view>
 							</view>
 							<view class="control">
-								<view class="item fadeIn state" v-if="itm.isover">已结束</view>
-								<view class="item fadeIn replacement" v-if="utils.getUserInfo(uni).deptno == itm.deptid && itm.replacementList.length && itm.meeting_state != 3">换</view>
-								<view :class="['item fadeIn password',utils.getUserInfo(uni).deptno == itm.deptid?'no-active':'']" @click.stop="showPassword(itm)"
-								 v-if="utils.getUserInfo(uni).deptno == itm.deptid">
+								<view class="item state" v-if="itm.isover">已结束</view>
+								<view class="item replacement" v-if="userinfo.deptno == itm.deptid && itm.replacementList.length && itm.meeting_state != 3">换</view>
+								<view :class="['item password',userinfo.deptno == itm.deptid?'no-active':'']" @click.stop="showPassword(itm)"
+								 v-if="userinfo.deptno == itm.deptid">
 									<view class="hand">
 										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
 									</view>
@@ -46,12 +47,12 @@
 					</view>
 				</view>
 			</view>
-		</haoheao-scroll>
+		</scroll-view>
 		<uni-popup ref="tips" type="center">
 			<view class="popup">
 				<view class="close" @click="$refs['tips'].close()">×</view>
 				<view class="head">会议室管理规定</view>
-				<view class="info-list">
+				<scroll-view scroll-y class="info-list">
 					<view class="title">一、线上预约</view>
 					<view class="content">1.会议室实行预约制度，可预约一周以内的会议室。</view>
 					<view class="content">2.会议申请人作为会议责任人，对会议室物品保管、用电安全、室内卫生负责。</view>
@@ -70,12 +71,12 @@
 					<view class="title">二、会议室使用</view>
 					<view class="content">1.会议结束应及时清理桌面、地面垃圾，将垃圾带至十层北货梯间并分类处理。</view>
 					<view class="content">2.会议室结束使用应及时断电（灯、空调、投影、电子白板），复位桌椅并锁好门窗。</view>
-					<view class="bottom-control">
+					<view class="<bottom-control></bottom-control>">
 						<view class="content">
-							<view class="item confirm fadeIn" @click="$refs['tips'].close()">确定</view>
+							<view class="item confirm" @click="$refs['tips'].close()">确定</view>
 						</view>
 					</view>
-				</view>
+				</scroll-view>
 			</view>
 		</uni-popup>
 	</view>
@@ -85,7 +86,6 @@
 	export default {
 		data() {
 			return {
-				uni,
 				// 日期列表
 				bookedDateList: '',
 				// 选中的日期
@@ -93,23 +93,40 @@
 				// 房间列表+房间预约列表
 				roomReserveList: '',
 				// 置换列表
-				replacementList: ''
+				replacementList: '',
+				getDataRefresherLoading: false,
 			}
 		},
 		computed: {
 			mettingSetting() {
 				return this.$store.state.metting
+			},
+			setting() {
+				return this.$store.state.setting
+			},
+			userinfo() {
+				return this.utils.getUserInfo(uni)
 			}
 		},
 		methods: {
+			// 触发下拉刷新
+			async onRefresh() {
+				this.getDataRefresherLoading = true
+				await this.getBookedDateList();
+				await this.getDayReservationList(this.activeBookedDate);
+				this.getDataRefresherLoading = false
+			},
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataRefresherLoading = false
+			},
 			// 显示密码
 			showPassword(option) {
 				option.showPassword = !option.showPassword
 			},
 			// 查看详情
 			goDetail(options) {
-				let userinfo = this.utils.getUserInfo(uni);
-				if (userinfo.deptno != options.reserveInfo.deptid) {
+				if (this.userinfo.deptno != options.reserveInfo.deptid) {
 					uni.showToast({
 						icon: "none",
 						duration: 2000,
@@ -132,12 +149,6 @@
 				uni.navigateTo({
 					url: `../reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
 				});
-			},
-			// 下拉刷新
-			async onPullDown(done) {
-				await this.getBookedDateList();
-				await this.getDayReservationList(this.activeBookedDate);
-				done();
 			},
 			// 切换日期
 			async selectDay(item) {
@@ -320,23 +331,22 @@
 			}
 		},
 		onLoad: async function() {
-			uni.showLoading({
-				title: '加载中'
-			});
+			uni.showNavigationBarLoading()
 			await this.getBookedDateList();
 			this.activeBookedDate = this.bookedDateList[0];
 			await this.getDayReservationList(this.activeBookedDate);
-			uni.hideLoading();
+			uni.hideNavigationBarLoading()
 		},
 		onShow: async function() {
-			await this.getDayReservationList(this.activeBookedDate);
+
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
-	@import '@/styles/popup.scss';
-
+	page{
+		background: #F6F7F9;
+	}
 	.container {
 		min-height: 100vh;
 		background: #F6F7F9;
@@ -346,9 +356,6 @@
 
 		.date-view {
 			width: 100%;
-			position: sticky;
-			top: 0;
-			z-index: 998;
 			background: #fff;
 			padding: 16rpx 10rpx;
 			height: 160rpx;
@@ -394,6 +401,7 @@
 		}
 
 		.data-view {
+			height: calc(100vh - 160rpx);
 			padding: 10rpx;
 			transition: .3s;
 
@@ -583,9 +591,9 @@
 			display: flex;
 			flex-direction: column;
 			position: relative;
+			overflow: hidden;
 
 			.close {
-				padding: 5px 10rpx;
 				background: #ff0036;
 				color: #fff;
 				width: 40rpx;
@@ -596,6 +604,10 @@
 				position: absolute;
 				right: 20rpx;
 				top: 20rpx;
+				font-size: 22rpx;
+				display: flex;
+				align-items: center;
+				justify-content: center;
 			}
 
 			>.head {
@@ -608,6 +620,7 @@
 
 			.info-list {
 				flex: 2;
+				max-height: 80vh;
 				overflow-y: auto;
 				padding-bottom: 20rpx;
 
@@ -621,7 +634,7 @@
 					margin: 0;
 				}
 
-				>.content {
+				.content {
 					font-size: 26rpx;
 					color: #647484;
 					text-indent: 46rpx;
@@ -636,8 +649,8 @@
 				margin-top: 30rpx;
 				padding: 0 20rpx;
 
-				.item.confirm {
-					justify-content: center;
+				.item {
+					text-indent: 0;
 				}
 			}
 		}

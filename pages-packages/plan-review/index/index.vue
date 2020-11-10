@@ -582,9 +582,9 @@
 									align-items: center;
 									justify-content: center;
 									overflow: hidden;
+									border-radius: 10rpx;
 
 									.icon {
-										border-radius: 10rpx;
 										width: 100%;
 										min-height: 100%;
 										height: 100%;
