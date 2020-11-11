@@ -1,7 +1,8 @@
 <!-- 界面展示信息 -->
 <template>
 	<view class="container detail">
-		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown">
+		<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
+		 :refresher-triggered="getDataRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore">
 			<view class="view-item fadeIn" v-if="detailInfo">
 				<view class="detail-control">
 					<view :class="['state',detailInfo.meeting_state == 2?'active':'']">{{detailInfo.meeting_state == 1?'会议未开始':detailInfo.meeting_state == 2?'会议正在进行':detailInfo.meeting_state == 3?'会议已结束':''}}</view>
@@ -67,12 +68,13 @@
 					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
 				</view>
 				<view class="item" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
-					<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>
+					<image src="@/static/images/replacement.svg" mode="widthFix" class="icon" v-if="!getReplacementLoading"></image>
+					<u-loading :show="getReplacementLoading" class="loading" mode="circle" size="28"></u-loading>
 					<view class="replacement" v-if="replacementList.length">{{replacementList.length}}</view>
 					置换
 				</view>
 			</view>
-		</haoheao-scroll>
+		</scroll-view>
 		<uni-popup ref="loading_time" type="bottom">
 			<view class="popup top">
 				<view class="item-view select">
@@ -95,7 +97,11 @@
 		</uni-popup>
 		<uni-popup ref="replacement" type="bottom">
 			<view class="popup top" v-if="!replacementList.length">
-				<view class="title">请选择要置换的会议室</view>
+				<view class="title"></view>
+				<view class="title">
+					<text class="content">请选择要置换的会议室</text>
+					<view class="close" @click="$refs['replacement'].close()">关闭</view>
+				</view>
 				<view class="item-view select">
 					<picker :class="['content',replaceIndex.reserveRoomList.length?'':'active']" range-key="roomname" @change="bindPickerChange"
 					 :value="replaceIndex" :range="roomReserveList">
@@ -114,7 +120,6 @@
 				</radio-group>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="close" @click="$refs['replacement'].close()">取消</view>
 						<view class="item" @click="replacement()">
 							<image src="@/static/images/replacement.svg" class="icon" mode="widthFix"></image>置换
 						</view>
@@ -176,15 +181,34 @@
 				detailInfo: "",
 				// 置换会议室选中
 				radioChangeCurrent: "",
-				radioReplacementListChangeCurrent: ""
+				radioReplacementListChangeCurrent: "",
+				getDataRefresherLoading: false,
+				getReplacementLoading: false
 			}
 		},
 		computed: {
 			mettingSetting() {
 				return this.$store.state.metting
 			},
+			setting() {
+				return this.$store.state.setting
+			},
+			userinfo() {
+				return this.utils.getUserInfo(uni)
+			}
 		},
 		methods: {
+			// 触发下拉刷新
+			async onRefresh() {
+				this.getDataRefresherLoading = true
+				await this.getReserveDetail()
+				this.getReplacement()
+				this.getDataRefresherLoading = false
+			},
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataRefresherLoading = false
+			},
 			// 拒绝置换会议室
 			async refuseReplacement() {
 				if (!this.radioReplacementListChangeCurrent) {
@@ -271,12 +295,6 @@
 			bindMultiPickerChange(e) {
 				this.multiIndex = e.detail.value[0];
 				this.$forceUpdate()
-			},
-			// 下拉
-			async onPullDown(done) {
-				await this.getReserveDetail()
-				this.getReplacement()
-				done();
 			},
 			// 请求置换
 			async replacement() {
@@ -415,12 +433,8 @@
 					this.replaceIndex = null;
 					this.radioChangeCurrent = ""
 					this.radioReplacementListChangeCurrent = ''
-					this.getReplacement()
-					uni.showLoading({
-						title: '加载中'
-					});
+					await this.getReplacement()
 					await this.getTodayReserveList()
-					uni.hideLoading();
 					// 置换
 					if (!this.roomReserveList.length) {
 						uni.showToast({
@@ -565,9 +579,9 @@
 						method: 'POST',
 						url: this.api.meeting_getDayReservationList,
 						data: {
-							MeetingdateStart: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY/MM/DD 00:00:00').replace(
+							MeetingdateStart: this.moment(this.detailInfo.meetingdate).format('YYYY/MM/DD 00:00:00').replace(
 								/-/g, '/'),
-							MeetingdateEnd: this.moment(new Date(this.detailInfo.meetingdate)).format('YYYY/MM/DD 00:00:00').replace(/-/g,
+							MeetingdateEnd: this.moment(this.detailInfo.meetingdate).format('YYYY/MM/DD 00:00:00').replace(/-/g,
 								'/')
 						}
 					})
@@ -612,6 +626,7 @@
 			},
 			// 请求置换列表
 			async getReplacement() {
+				this.getReplacementLoading = true
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -623,6 +638,7 @@
 						}
 					})
 					let [err, success] = data
+					this.getReplacementLoading = false
 					console.log('请求置换列表------>>>', success.data.data.list)
 					if (success && success.data.success) {
 						for (let item of success.data.data.list) {
@@ -641,6 +657,7 @@
 						this.replacementList = arr
 					}
 				} catch (e) {
+					this.getReplacementLoading = false
 					console.log(e)
 				}
 			},
@@ -689,6 +706,10 @@
 	}
 
 	.container.detail {
+		.scroll-view {
+			height: 100vh;
+		}
+
 		.control-list {
 			position: static;
 			background: transparent;
@@ -696,6 +717,11 @@
 
 			.item {
 				margin-bottom: 0;
+
+				.loading {
+					margin-right: 20rpx;
+				}
+
 				.replacement {
 					color: #fff;
 					background: #D56C68;

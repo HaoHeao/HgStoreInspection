@@ -17,7 +17,7 @@
 					</view>
 				</view>
 				<!-- 会议室详细信息 -->
-				<view class="room-info" v-if="openDetail">
+				<view class="room-info fadeIn" v-if="openDetail">
 					<!-- 会议室信息 -->
 					<view class="info-view">
 						<view class="item">位置：{{option_roominfo.location}}</view>
@@ -98,7 +98,7 @@
 			<view class="title">饮用水、纸巾、会议花等用品请自行准备。</view>
 			<view class="title">笔记本电脑等技术支持，请自行联系信息开发-IT运维。</view>
 		</view>
-		<uni-popup ref="mobile_popup" type="bottom" :maskClick="false">
+		<!-- <uni-popup ref="mobile_popup" type="bottom" :maskClick="false">
 			<view class="popup mobile-equipment">
 				<view class="title">软件设备</view>
 				<view class="item-view-list">
@@ -118,12 +118,12 @@
 				</view>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="close" @click="this.getMobileEquipment();selectMobileEquipmentList = []">清空</view>
+						<view class="close" @click="getMobileEquipment();selectMobileEquipmentList = []">清空</view>
 						<view class="item" @click="openMobilepopup = false;$refs['mobile_popup'].close()">完成</view>
 					</view>
 				</view>
 			</view>
-		</uni-popup>
+		</uni-popup> -->
 		<view class="mh-btn" @click="reserva()">
 			<u-loading :show="reserveLoading" mode="circle" size="28"></u-loading>
 			{{reserveLoading?'':'预约'}}
@@ -468,7 +468,7 @@
 					new_date
 			});
 			await this.getFixedEquipment()
-			await this.getMobileEquipment()
+			// await this.getMobileEquipment()
 			await this.getReservaStratList()
 			await this.getReservaEndList()
 			if (new Date(this.moment(this.option_data.day.replace(/-/g, '/')).format("YYYY/MM/DD 00:00:00").replace(/-/g, '/'))
@@ -482,7 +482,6 @@
 </script>
 
 <style lang="scss" scoped>
-	@import '@/styles/popup.scss';
 	page{
 		background: #F6F7F9;
 	}
