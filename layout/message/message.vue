@@ -4,9 +4,9 @@
 			<view class="msg_list" v-if="msgList.length">
 				<view class="item fadeIn" @click="navigator(item)" v-for="(item,index) of msgList" :key="index">
 					<view class="source">
-						<image src="../../static/module1.png" mode="widthFix" class="img" v-if="item.itype == 1"></image>
-						<image src="../../static/module2.png" mode="widthFix" class="img" v-if="item.itype == 2"></image>
-						<image src="../../static/module3.png" mode="widthFix" class="img" v-if="item.itype == 3"></image>
+						<image src="@/static/module1.png" mode="widthFix" class="img" v-if="item.itype == 1"></image>
+						<image src="@/static/module2.png" mode="widthFix" class="img" v-if="item.itype == 2"></image>
+						<image src="@/static/module3.png" mode="widthFix" class="img" v-if="item.itype == 3"></image>
 						<view class="status" v-if="!item.logmsgview.length"></view>
 					</view>
 					<view class="right">

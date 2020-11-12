@@ -5,7 +5,11 @@ const setting = {
 		lastmodify: "2020/11/03",
 		systemName: "北京汉光巡检系统",
 		appId: "wx252743e71090a061",
-		
+		openId: '',
+		// 是否登录
+		hasLogin: false,
+		userinfo: {},
+
 		// OSS下载规则
 		OSSDownload: "?x-oss-process=image/resize,m_mfit,h_120,w_120",
 		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头

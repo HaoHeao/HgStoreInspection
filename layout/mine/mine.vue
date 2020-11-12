@@ -14,14 +14,14 @@
         <view class="user-info">{{userInfo.deptname}} - {{userInfo.username}}</view>
         <view class="control">
             <view class="item" @click="navigator(1)">
-                <image src="../../static/phone1.png" mode="widthFix" class="icon"></image>
+                <image src="@/static/phone1.png" mode="widthFix" class="icon"></image>
                 <view class="title">修改手机号</view>
-                <image src="../../static/right.png" mode="widthFix" class="right"></image>
+                <image src="@/static/right.png" mode="widthFix" class="right"></image>
             </view>
             <view class="item" @click="navigator(2)">
-                <image src="../../static/pwd.png" mode="widthFix" class="icon"></image>
+                <image src="@/static/pwd.png" mode="widthFix" class="icon"></image>
                 <view class="title">修改密码</view>
-                <image src="../../static/right.png" mode="widthFix" class="right"></image>
+                <image src="@/static/right.png" mode="widthFix" class="right"></image>
             </view>
         </view>
         <view class="logout" @click="logout()">退出登录</view>

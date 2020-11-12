@@ -3,25 +3,11 @@
 		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 	},
 	"pages": [{
-			"path": "user/login/login",
-			"style": {
-				"navigationBarTitleText": "登录"
-			}
-		},
-		{
-			"path": "user/selectInfo/selectInfo",
-			"style": {
-				"navigationBarTitleText": "用户信息修改",
-				"disableScroll": true
-			}
-		},
-		{
-			"path": "user/index/index",
-			"style": {
-				"disableScroll": true
-			}
+		"path": "layout/index/index",
+		"style": {
+			"disableScroll": true
 		}
-	],
+	}],
 	"subPackages": [{
 		"root": "pages-packages/store",
 		"pages": [{

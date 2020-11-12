@@ -67,11 +67,13 @@
 				<view class="item" @click="controlTap(2)" v-if="detailInfo.meeting_state != 3">
 					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
 				</view>
-				<view class="item" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
-					<image src="@/static/images/replacement.svg" mode="widthFix" class="icon" v-if="!getReplacementLoading"></image>
-					<u-loading :show="getReplacementLoading" class="loading" mode="circle" size="28"></u-loading>
-					<view class="replacement" v-if="replacementList.length">{{replacementList.length}}</view>
-					置换
+				<view class="item fadeIn" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
+					<block v-if="!getReplacementLoading">
+						<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>
+						<view class="replacement" v-if="replacementList.length">{{replacementList.length}}</view>
+						置换
+					</block>
+					<u-loading :show="getReplacementLoading" :class="getReplacementLoading?'':'loading'" mode="circle" size="28"></u-loading>
 				</view>
 			</view>
 		</scroll-view>
@@ -127,7 +129,10 @@
 				</view>
 			</view>
 			<view class="popup top" v-if="replacementList.length">
-				<view class="title">请求置换会议</view>
+				<view class="title">
+					<text class="content">请求置换会议</text>
+					<view class="close" @click="$refs['replacement'].close()">关闭</view>
+				</view>
 				<radio-group @change="radioReplacementListChange" class="meeting-list">
 					<view :class="['item',item.status == 2000?'refuse':'']" v-for="(item,index) of replacementList" :key="index">
 						<!-- <view class="item"> -->
@@ -142,7 +147,6 @@
 				</radio-group>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="close" @click="$refs['replacement'].close()">取消</view>
 						<view class="item refuse fadeIn" @click="refuseReplacement()">
 							<!-- <image src="@/static/images/replacement.svg" class="icon" mode="widthFix"></image> -->
 							拒绝
