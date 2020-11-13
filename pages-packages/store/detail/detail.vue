@@ -227,6 +227,16 @@
 			}
 		},
 		methods: {
+			// 触发下拉刷新
+			async onRefresh() {
+				this.getDataRefresherLoading = true
+				await this.getInspectionDetail();
+				this.getDataRefresherLoading = false
+			},
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataRefresherLoading = false
+			},
 			// 确认巡检问题已解决
 			async questionResolved(){
 				if(!this.underActiveList.length || !this.underActiveList[this.underActiveList.length - 1].select || this.underActiveList[this.underActiveList.length - 1].children.length){
@@ -360,16 +370,6 @@
 				this.tempFilePaths = []
 				this.successUploadFileImages = []
 				this.sendFeedBackLoading = false
-			},
-			// 触发下拉刷新
-			async onRefresh() {
-				this.getDataRefresherLoading = true
-				await this.getInspectionDetail();
-				this.getDataRefresherLoading = false
-			},
-			// 刷新完成/重置
-			onRestore() {
-				this.getDataRefresherLoading = false
 			},
 			// 查看图片
 			previewImage(list,index){

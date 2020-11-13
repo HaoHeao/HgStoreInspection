@@ -55,7 +55,7 @@
 		<view class="popup reply-view" v-if="inspectionDetail && inspectionDetail.feedback">
 			<view class="popup-content">
 				<view class="textarea-view">
-					<textarea v-model="reason" auto-height fixed maxlength="500" class="textarea" placeholder="处理方法或建议"></textarea>
+					<textarea v-model="reason" disable-default-padding auto-height fixed maxlength="500" class="textarea" placeholder="处理方法或建议"></textarea>
 				</view>
 				<view class="send-btn" @click="sendReply()">
 					<u-loading :show="sendFeedBackLoading" mode="circle" size="28"></u-loading>

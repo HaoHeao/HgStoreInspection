@@ -28,51 +28,11 @@
 			}
 		},
 		computed: {
-			userinfo() {
-				return this.utils.getUserInfo(uni)
-			},
 			setting() {
 				return this.$store.state.setting
 			}
 		},
 		methods: {
-			requestLogin() {
-				let _this = this;
-				request.login({
-						loginid: _this.username,
-						pwd: _this.password,
-						openid: globalData.openId
-					})
-					.then(data => {
-						let [err, res] = data;
-						console.log("登录信息:", err, res);
-						uni.hideLoading();
-						if (err) {
-							uni.showToast({
-								icon: "none",
-								duration: 3000,
-								title: "登录失败:" + res.data.errmsg
-							})
-						}
-						if (res.data.success) {
-							console.log("登录成功", res.data)
-							globalData.userinfo = res.data.data.userinfo;
-							// 存入storage
-							uni.setStorageSync("userinfo", res.data.data.userinfo);
-							// utils.getModelList(globalData.userinfo.usernumber, this);
-							uni.redirectTo({
-								url: '../index/index'
-							});
-						} else {
-							uni.showToast({
-								icon: "none",
-								duration: 3000,
-								title: "登录失败:" + res.data.errmsg
-							})
-						}
-					})
-			},
-			async login() {},
 			// 微信登录
 			async wxLogin() {
 				let data = await new Promise(resolve => {
@@ -94,11 +54,13 @@
 			async getOpenId() {
 				if (!this.wxloginCode) return
 				try {
+					this.loading = true
 					let data = await uni.request({
 						url: `${this.api.getOpenid}?code=${this.wxloginCode}&appId=${this.setting.appId}`,
 						method: "POST"
 					})
 					let [err, success] = data
+					this.loading = false
 					console.log('获取openid------>>>', err, success)
 					if (!err && success.data.data.openId) {
 						this.$store.state.setting.openId = success.data.data.openId
@@ -110,6 +72,7 @@
 						});
 					}
 				} catch (e) {
+					this.loading = false
 					console.log(e)
 				}
 			},
@@ -117,7 +80,6 @@
 			async openidLogin() {
 				try {
 					this.loading = true
-					await this.delay(3000)
 					let data = await uni.request({
 						url: `${this.api.layout_openidLogin}${this.setting.openId}`,
 					})
@@ -126,6 +88,7 @@
 					console.log('openId登录------>>>', err, success)
 					if (!err && success.data.success) {
 						this.$store.state.setting.hasLogin = true
+						this.$store.state.setting.userinfo = success.data.data.userinfo
 					}
 				} catch (e) {
 					this.loading = false
@@ -133,14 +96,58 @@
 				}
 			},
 			// 手动登录
-			async login() {}
+			async login() {
+				if (this.loading) return
+				if (!this.username || !this.password) {
+					uni.showToast({
+						icon: 'none',
+						title: "用户名和密码均不能为空",
+						duration: 3000
+					})
+					return;
+				}
+				// 无openId先请求openId
+				if (!this.setting.openId) {
+					await this.wxLogin()
+					await this.getOpenId()
+				}
+				this.loading = true
+				try {
+					this.loading = true
+					let data = await uni.request({
+						url: this.api.layout_login,
+						data: {
+							loginid: this.username,
+							pwd: this.password,
+							openid: this.setting.openId
+						}
+					})
+					this.loading = false
+					let [err, success] = data
+					console.log('用户名密码登录------>>>', err, success)
+					if (!err && success.data.success) {
+						this.$store.state.setting.hasLogin = true
+						this.$store.state.setting.userinfo = success.data.data.userinfo
+						console.log(this.setting)
+					} else {
+						uni.showToast({
+							icon: 'none',
+							showCancel: false,
+							title: err ? err : success.data.errmsg
+						});
+					}
+				} catch (e) {
+					this.loading = false
+					console.log(e)
+				}
+			},
 		},
 		created: async function() {
 			// 静默登录
 			await this.wxLogin()
 			await this.getOpenId()
 			await this.openidLogin()
-			console.log(this.setting)
+			console.log('全局setting------>>>', this.setting)
 		},
 		// 分享
 		onShareAppMessage() {}
@@ -172,11 +179,12 @@
 			background: #F3F5F7;
 
 			.icon {
-				width: 28rpx;
-				padding: 26rpx;
+				width: 32rpx;
+				padding: 36rpx 24rpx;
 			}
 
 			.input {
+				width: 100%;
 				height: 100rpx;
 				color: #323436;
 				font-size: 26rpx;
@@ -196,6 +204,7 @@
 			margin-top: 100rpx;
 			margin-bottom: 200rpx;
 			transition: 300ms;
+			align-self: center;
 
 			&:active {
 				opacity: 0.9;
@@ -203,6 +212,7 @@
 			}
 
 			&.loading {
+				width: 100rpx;
 				opacity: 0.9;
 				box-shadow: 0 10rpx 10rpx 0 rgba(0, 0, 0, 0.3);
 			}

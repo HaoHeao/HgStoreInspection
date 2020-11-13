@@ -1,8 +1,10 @@
 <template>
 	<view class="container">
-		<haoheao-scroll class="haoheao-scroll" ref="scroll" @onPullDown="onPullDown" @onLoadMore="onLoadMore">
-			<view class="msg_list" v-if="msgList.length">
-				<view class="item fadeIn" @click="navigator(item)" v-for="(item,index) of msgList" :key="index">
+		<scroll-view class="scroll-view" scroll-with-animation enable-back-to-top scroll-y refresher-enabled
+		 scroll-with-animation :enable-back-to-top="setting.enableBackToTop" :refresher-triggered="getDataRefresherLoading"
+		 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
+			<view class="message-list" v-if="messageData.length">
+				<view class="item fadeIn" @click="messageGoGoGo(item)" v-for="(item,index) of messageData" :key="index">
 					<view class="source">
 						<image src="@/static/module1.png" mode="widthFix" class="img" v-if="item.itype == 1"></image>
 						<image src="@/static/module2.png" mode="widthFix" class="img" v-if="item.itype == 2"></image>
@@ -20,27 +22,30 @@
 						</view>
 					</view>
 				</view>
-				<u-loadmore status="nomore" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
-				 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+				<u-loadmore :status="getMessageLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+				 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
+				 :margin-bottom="setting.loadmoreMarginBottom" />
 			</view>
-			<view class="no-data-view fadeIn" v-if="!msgList.length">
+			<view class="no-data-view fadeIn" v-if="!messageData.length">
 				<view class="center">
 					<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
 					<view class="tip">暂无新消息</view>
 				</view>
 			</view>
-		</haoheao-scroll>
+		</scroll-view>
 	</view>
 </template>
 
 <script>
-	let request = require('@/util/utils.js').api;
 	export default {
 		data() {
 			return {
-				msgList: [],
+				messageData: [],
 				pagenum: "",
-				pageindex: 1
+				pageindex: 1,
+				pagesize: 10,
+				getDataRefresherLoading: false,
+				getMessageLoading: false,
 			}
 		},
 		computed: {
@@ -48,33 +53,103 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
-			onPullDown(done) { // 下拉刷新
-				this.pageindex = 1;
-				this.msgList = [];
-				this.getMsg(this.pageindex, done);
+			// 触发下拉刷新
+			async onRefresh() {
+				console.log('下拉刷新')
+				this.getDataRefresherLoading = true
+				await this.getMessageReset()
+				await this.getMessage()
+				await this.delay(300)
+				this.getDataRefresherLoading = false
 			},
-			onLoadMore(e) {
-				if (this.pageindex <= this.pagenum && this.pagenum != 1) {
-					this.getMsg(this.pageindex);
+			// 刷新完成/重置
+			onRestore() {
+				this.getDataRefresherLoading = false;
+				console.log("onRestore");
+			},
+			// 滚动触底
+			async onTolower() {
+				console.log('滚动触底')
+				if (!(this.pageindex <= this.pagenum && this.pagenum != 1)) {
+					return
+				}
+				console.log('加载更多------>>>')
+				await this.getMessage()
+			},
+			getMessageReset() {
+				this.messageData = []
+				this.pagenum = ""
+				this.pageindex = 1
+				this.pagesize = 10
+				// this.getDataRefresherLoading = false
+				// this.getMessageLoading = false
+			},
+			// 获取消息列表
+			async getMessage() {
+				if (this.getMessageLoading) return
+				uni.showNavigationBarLoading()
+				this.getMessageLoading = true
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.layout_getMessageList,
+						data: {
+							usernumber: this.userinfo.usernumber,
+							deptid: this.userinfo.deptid,
+							pagesize: this.pagesize,
+							pageindex: this.pageindex,
+						}
+					})
+					uni.hideNavigationBarLoading()
+					this.getMessageLoading = false
+					this.getDataRefresherLoading = false
+					let [err, success] = data
+					console.log('消息列表请求成功------>>>', success)
+					if (!err && success.data.success) {
+						this.messageData = this.messageData.concat(success.data.data)
+						this.pagenum ? '' : this.pagenum = success.data.pagenum
+						this.pageindex += 1
+					} else {
+						uni.showToast({
+							title: err ? err : success.data.errmsg,
+							icon: 'none',
+							duration: 3000
+						});
+					}
+				} catch (e) {
+					uni.hideNavigationBarLoading()
+					this.waitLoading = false
+					console.log(e)
 				}
 			},
-			navigator(item) {
+			async lookedMessage(item) {
+				try {
+					let data = await uni.request({
+						method: 'POST',
+						url: this.api.layout_sendMessageLooked,
+						data: {
+							msgviewid: 0,
+							imlogid: item.imlogid,
+							usernumber: this.userinfo.usernumber,
+							username: '',
+							deptid: 0,
+							deptname: '',
+							insertdate: this.moment().format('yyyy-MM-dd hh:mm:ss')
+						}
+					})
+					let [err, success] = data
+					console.log('发送消息已阅读成功------>>>', success)
+				} catch (e) {
+					console.log(e)
+				}
+			},
+			messageGoGoGo(item) {
 				console.log("查看信息参数", item);
-				let insertdate = this.moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
-				let setMsg = {
-					msgviewid: 0,
-					imlogid: item.imlogid,
-					usernumber: this.userinfo.usernumber,
-					username: '',
-					deptid: 0,
-					deptname: '',
-					insertdate
-				}
-				request.setMsgSee(setMsg);
+				this.lookedMessage(item)
 				if (item.itype == 1) {
 					if (item.questionid == 0) {
 						uni.navigateTo({
@@ -97,66 +172,27 @@
 					})
 				}
 			},
-			getMsg(pageindex, done) {
-				// console.log(pageindex)
-				// done下拉刷新结束
-				uni.hideLoading();
-				uni.showLoading({
-					title: '加载中'
-				});
-				let option = {
-					usernumber: this.userinfo.usernumber,
-					deptid: this.userinfo.deptid,
-					pagesize: 20,
-					pageindex
-				};
-				let _this = this;
-				console.log("请求页面信息参数", option);
-				request.getMsg(option).then(res => {
-					let [err, data] = res;
-					console.log("消息请求成功：", err, data.data);
-					if (done) done();
-					uni.hideLoading();
-					if (err == null) {
-						_this.msgList = _this.msgList.concat(data.data.data);
-						if (!this.pagenum) {
-							this.pagenum = data.data.pagenum
-						}
-						this.pageindex = this.pageindex + 1;
-					} else {
-						uni.showToast({
-							icon: 'none',
-							title: '请求失败:' + err.errMsg,
-							duration: 3000
-						});
-					};
-				}).then(() => {
-					uni.hideLoading();
-				})
-			}
 		},
-		onHide() {
-			uni.hideLoading();
-		},
-		created:function(){
-			this.getMsg(this.pageindex);
+		created: function() {
+			uni.setNavigationBarTitle({
+				title: "我的消息"
+			});
+			this.getMessageReset()
+			this.getMessage();
 		},
 	}
 </script>
 
 <style scoped lang="scss">
 	.container {
-		height: calc(100vh - 100rpx);
-		margin-bottom: 100rpx;
 		background: #F6F7F9;
 
-		.haoheao-scroll {
-			height: 100%;
+		.scroll-view {
+			height: calc(100vh - 100rpx);
 		}
 
-		.msg_list {
+		.message-list {
 			margin-top: 20rpx;
-			padding-bottom: 20rpx;
 
 			.item {
 				margin: 20rpx;

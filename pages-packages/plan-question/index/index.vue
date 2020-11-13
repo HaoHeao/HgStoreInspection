@@ -516,14 +516,11 @@
 </script>
 
 <style scoped lang="scss">
-	page {
-		background: #F6F7F9;
-	}
-
 	.container {
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
+		background: #F6F7F9;
 
 		.tabs {}
 

@@ -7,6 +7,16 @@
 		"style": {
 			"disableScroll": true
 		}
+	}, {
+		"path": "layout/changePassword/changePassword",
+		"style": {
+			"disableScroll": true
+		}
+	}, {
+		"path": "layout/changeIPhone/changeIPhone",
+		"style": {
+			"disableScroll": true
+		}
 	}],
 	"subPackages": [{
 		"root": "pages-packages/store",

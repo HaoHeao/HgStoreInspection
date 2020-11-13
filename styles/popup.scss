@@ -1,12 +1,14 @@
 
+.uni-popup__wrapper-box{
+	background: #fff;
+}
 /* popup */
 .popup {
 	background: #fff;
-	/* IOS XR */
-	padding-bottom: env(safe-area-inset-bottom);
-	/* ------ */
+	// /* IOS XR */
+	// padding-bottom: env(safe-area-inset-bottom);
+	// /* ------ */
 	max-height: 80vh;
-	// overflow-y: scroll;
 	
 	// 从上往下
 	&.top{

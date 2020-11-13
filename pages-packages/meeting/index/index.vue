@@ -344,15 +344,9 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
-		background: #F6F7F9;
-	}
 	.container {
-		min-height: 100vh;
+		height: 100vh;
 		background: #F6F7F9;
-		/* IOS XR */
-		padding-bottom: env(safe-area-inset-bottom);
-		/* ------ */
 
 		.date-view {
 			width: 100%;
@@ -400,8 +394,11 @@
 			}
 		}
 
+		.scroll-view {
+			height: calc(100vh - 160rpx - env(safe-area-inset-bottom));
+		}
+
 		.data-view {
-			height: calc(100vh - 160rpx);
 			padding: 10rpx;
 			transition: .3s;
 

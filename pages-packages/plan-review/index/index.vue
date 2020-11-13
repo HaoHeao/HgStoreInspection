@@ -489,9 +489,9 @@
 	@import '@/styles/popup.scss';
 	.container {
 		height: 100vh;
-		background: #F6F7F9;
 		display: flex;
 		flex-direction: column;
+		background: #F6F7F9;
 
 		.main {
 			flex: 2;

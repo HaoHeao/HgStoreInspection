@@ -1,8 +1,5 @@
 <template>
 	<view class="container">
-		<view class="head">
-			<view class="line"></view>
-		</view>
 		<view class="main">
 			<block v-for="(item,index) of home.tabbar" :key="index">
 				<view :class="index == home.tabbarIndex?'item active':'item'" @click="selectTabbar(index)">
@@ -15,10 +12,10 @@
 		</view>
 		<view class="work_view" v-if="work_view">
 			<view class="content">
-				<view class="mark fadeIn500" @click="work_view = !work_view"></view>
-				<view class="module_list fadeIn" v-if="userinfo.menulist.length">
+				<view class="mark fadeIn" @click="work_view = !work_view"></view>
+				<view class="module_list" v-if="userinfo.menulist.length">
 					<block v-if="userinfo.menulist.length">
-						<view class="item fadeIn" v-for="(item,index) of userinfo.menulist" :key="index" @click="toModule(item.mcode)">
+						<view class="item" v-for="(item,index) of userinfo.menulist" :key="index" @click="toModule(item.mcode)">
 							<view class="icon-view">
 								<image :src="require(`@/static/tabbar/work/${item.mcode?item.mcode:'item'}.svg`)" mode="widthFix" class="icon"></image>
 							</view>
@@ -49,7 +46,7 @@
 			}
 		},
 		computed: {
-			home(){
+			home() {
 				return this.$store.state.home;
 			},
 			userinfo() {
@@ -115,20 +112,10 @@
 		position: fixed;
 		left: 0;
 		bottom: 0;
-		z-index: 997;
 		width: 100%;
+		box-shadow: 10rpx 0 10rpx 0 rgba(0, 0, 0, 0.1);
 		padding-bottom: env(safe-area-inset-bottom);
-
-		.head {
-			width: 100%;
-
-			.line {
-				width: 100%;
-				height: 1rpx;
-				background: #f6f7f9;
-			}
-		}
-
+		
 		>.main {
 			width: 100%;
 			height: 100rpx;
@@ -137,14 +124,7 @@
 			justify-content: space-between;
 			padding: 0rpx 60rpx;
 			padding-top: 15rpx;
-			// padding: 17rpx 0rpx;
 			background: #fff;
-			opacity: 0.95;
-			// margin-bottom: env(safe-area-inset-bottom);
-			z-index: 999;
-			// backdrop-filter: saturate(180%) blur(3px);
-			// background-color: rgba(255,255,255,0.7);
-			// transition: background-color 0.5s cubic-bezier(0.28, 0.11, 0.32, 1);
 
 			.item {
 				width: 200rpx;
