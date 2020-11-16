@@ -1,15 +1,6 @@
 
 /* 详细信息展示 */
 .container.detail {
-	box-sizing: border-box;
-	min-height: 100vh;
-	background: #F6F7F9;
-	padding-top: 1rpx;
-	/* IOS XR */
-	margin-bottom: env(safe-area-inset-bottom);
-	/* ------ */
-	padding-bottom: 110rpx;
-
 	.view-item {
 		margin: 20rpx;
 		background: #fff;

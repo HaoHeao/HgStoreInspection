@@ -1,5 +1,6 @@
 <template>
 	<view class="container detail">
+		<view class="top-placeholder"></view>
 		<!-- 专柜、商品条码 -->
 		<view class="view-item input">
 			<!-- <view class="item">
@@ -67,7 +68,7 @@
 			<view class="item textarea">
 				<view class="title">说明</view>
 				<textarea class="textarea-view fadeIn" :placeholder="goodsinfo.storeqty - difference != 0?'实盘存在差异，请填写说明':'说明'"
-				 v-model="remark" auto-height />
+				 v-model="remark" disable-default-padding auto-height />
 				</view>
 		</view>
 		<view class="view-item control-list fadeIn" v-if="shopCode && goodsinfo">
@@ -96,7 +97,12 @@
 			}
 		},
 		computed: {
-
+			userinfo() {
+				return this.utils.getUserInfo()
+			},
+			setting() {
+				return this.$store.state.setting
+			}
 		},
 		methods: {
 			async search(){
@@ -150,7 +156,6 @@
 				uni.showLoading({
 					title: '加载中'
 				});
-				let userinfo = this.utils.getUserInfo(uni);
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -165,7 +170,7 @@
 							storeqty: this.goodsinfo.storeqty,
 							chkqty: this.difference,
 							disremark: this.remark,
-							checkuserid: userinfo.usernumber,
+							checkuserid: this.userinfo.usernumber,
 							checkdate: this.moment().format("YYYY-MM-DD hh:mm:ss")
 						}
 					})
@@ -237,13 +242,12 @@
 			},
 			// 获取商品信息
 			async getGoodsinfo() {
-				let userinfo = this.utils.getUserInfo(uni);
 				try {
 					let data = await uni.request({
 						method: 'GET',
 						url: this.api.spotcheck_getGoodsinfo,
 						data:{
-							checkuserid:userinfo.usernumber,
+							checkuserid:this.userinfo.usernumber,
 							prodplu:this.shopCode
 						}
 					})
@@ -274,8 +278,16 @@
 
 <style lang="scss" scoped>
 	@import '@/styles/detail.scss';
-
+	
+	.container{
+		background: #F6F7F9;
+		min-height: 100vh;
+	}
 	.container.detail {
+		// 顶部20rpx间隔
+		.top-placeholder{
+			height: 1rpx;
+		}
 		.view-item {
 			.item{
 				font-size: 28rpx;

@@ -2,12 +2,12 @@
 	<view class="container">
 		<view class="title">请登录</view>
 		<view class="label-input">
-			<image class="icon" src="@/static/login_phone.png" mode="widthFix"></image>
+			<image class="icon" src="@/static/icon/login_phone.svg" mode="widthFix"></image>
 			<input type="number" :disabled="loading" placeholder-style="color:#B6C6D6;" class="input" placeholder="手机号/工号"
 			 v-model="username">
 		</view>
 		<view class="label-input">
-			<image class="icon" src="@/static/login_pwd.png" mode="widthFix"></image>
+			<image class="icon" src="@/static/icon/login_password.svg" mode="widthFix"></image>
 			<input type="password" :disabled="loading" placeholder-style="color:#B6C6D6;" class="input" placeholder="密码" v-model="password">
 		</view>
 		<view :class="['login-btn',loading?'loading':'']" @click="login()">

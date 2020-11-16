@@ -110,7 +110,7 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni);
+				return this.utils.getUserInfo();
 			}
 		},
 		methods: {
@@ -235,15 +235,13 @@
 		display: flex;
 		flex-direction: column;
 
-		.tabs {}
-
 		.main {
 			flex: 2;
 			display: flex;
 			flex-direction: column;
 
 			.swiper {
-				height: calc(100vh - 70rpx);
+				height: calc(100vh - 70rpx - env(safe-area-inset-bottom));
 
 				.swiper-item {
 					display: flex;
@@ -359,7 +357,7 @@
 
 									.btn {
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										width: 130rpx;
 										text-align: center;
 										line-height: 48rpx;

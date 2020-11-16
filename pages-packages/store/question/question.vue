@@ -76,8 +76,8 @@
 			</swiper>
 		</view>
 		<uni-popup ref="popup" type="top">
-			<scroll-view scroll-y class="popup">
-				<view class="content">
+			<view class="popup">
+				<scroll-view scroll-y class="popup-content">
 					<view class="title">日期段</view>
 					<view class="item date">
 						<picker id="start" class="time" mode="date" :value="date[0]" :end="moment(new Date()).format('YYYY-MM-DD')"
@@ -89,12 +89,12 @@
 					<view class="item dept">
 						<view :class="['view',item.filterActive?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptSelect(item)">{{item.deptname}}</view>
 					</view>
-				</view>
+				</scroll-view >
 				<view class="btn-list">
 					<view class="btn reset" @click="popupReset()">重置</view>
 					<view class="btn search" @click="getQuestionReset(),getQuestion()">查询</view>
 				</view>
-			</scroll-view>
+			</view>
 		</uni-popup>
 	</view>
 </template>
@@ -129,7 +129,7 @@
 		},
 		computed: {
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -336,15 +336,13 @@
 		display: flex;
 		flex-direction: column;
 
-		.tabs {}
-
 		.main {
 			flex: 2;
 			display: flex;
 			flex-direction: column;
 
 			.swiper {
-				height: calc(100vh - 70rpx - 100rpx);
+				height: calc(100vh - 70rpx - 100rpx - env(safe-area-inset-bottom));
 
 				.swiper-item {
 					display: flex;
@@ -461,7 +459,7 @@
 
 									.btn {
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										width: 130rpx;
 										text-align: center;
 										line-height: 48rpx;
@@ -487,15 +485,11 @@
 		}
 
 		.popup {
-			width: 100vw;
 			min-height: 50vh;
-			max-height: 80vh;
-			background: #fff;
-			overflow: hidden;
 			display: flex;
 			flex-direction: column;
 
-			.content {
+			.popup-content {
 				font-size: 24rpx;
 				box-sizing: border-box;
 				padding: 20rpx;

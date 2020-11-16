@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<scroll-view class="date-view" scroll-x="true">
+		<scroll-view class="date-view" scroll-x>
 			<view v-for="(item,index) of bookedDateList" :key="index" :class="['item',item.index == activeBookedDate.index?'active':'']"
 			 @click="selectDay(item)">
 				<view class="date-day">{{item.text}}</view>
@@ -23,10 +23,10 @@
 								<block v-if="ind != 0">{{'、' + itm.goodsname}}{{itm.count == 1?'':'×' + itm.count}}</block>
 							</block>
 						</view>
-						<image src="@/static/images/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
+						<image src="@/static/icon/reservation.png" mode="widthFix" class="icon" v-if="item.status == 1000"></image>
 					</view>
 					<view class="meeting-list" v-if="item.status == 1000">
-						<view class="item" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="goDetail({roomInfo:item,reserveInfo:itm})">
+						<view class="item" v-for="(itm,ind) of item.reserveRoomList" :key="ind" @click="looked({roomInfo:item,reserveInfo:itm})">
 							<view class="info">
 								<view class="time">{{itm.timeslotstart}} ~ {{itm.timeslotend}}</view>
 								<view class="depart" v-if="itm.deptname && itm.optusername">{{itm.deptname + ' - ' + itm.optusername}}</view>
@@ -38,7 +38,7 @@
 								<view :class="['item password',userinfo.deptno == itm.deptid?'no-active':'']" @click.stop="showPassword(itm)"
 								 v-if="userinfo.deptno == itm.deptid">
 									<view class="hand">
-										<image class="icon" src="@/static/images/show_password.svg" mode="widthFix"></image>
+										<image class="icon" src="@/static/icon/show_password.svg" mode="widthFix"></image>
 									</view>
 									<view :class="['info',itm.showPassword?'active':'']">{{itm.t_MeetingRoom.password?itm.t_MeetingRoom.password:'无密码'}}</view>
 								</view>
@@ -71,7 +71,7 @@
 					<view class="title">二、会议室使用</view>
 					<view class="content">1.会议结束应及时清理桌面、地面垃圾，将垃圾带至十层北货梯间并分类处理。</view>
 					<view class="content">2.会议室结束使用应及时断电（灯、空调、投影、电子白板），复位桌椅并锁好门窗。</view>
-					<view class="<bottom-control></bottom-control>">
+					<view class="bottom-control">
 						<view class="content">
 							<view class="item confirm" @click="$refs['tips'].close()">确定</view>
 						</view>
@@ -105,7 +105,7 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -125,7 +125,8 @@
 				option.showPassword = !option.showPassword
 			},
 			// 查看详情
-			goDetail(options) {
+			looked(options) {
+				console.log(options)
 				if (this.userinfo.deptno != options.reserveInfo.deptid) {
 					uni.showToast({
 						icon: "none",
@@ -135,7 +136,7 @@
 					return
 				}
 				uni.navigateTo({
-					url: `../detail/index?options=[${JSON.stringify(options.roomInfo)},${JSON.stringify(options.reserveInfo)}]`
+					url: `../detail/index?options=[${encodeURIComponent(JSON.stringify(options.roomInfo))},${encodeURIComponent(JSON.stringify(options.reserveInfo))}]`
 				});
 			},
 			reserve(item) {
@@ -147,7 +148,7 @@
 					return
 				}
 				uni.navigateTo({
-					url: `../reserva/index?options=[${JSON.stringify(item)},${JSON.stringify(this.activeBookedDate)}]`
+					url: `../reserva/index?options=[${encodeURIComponent(JSON.stringify(item))},${encodeURIComponent(JSON.stringify(this.activeBookedDate))}]`
 				});
 			},
 			// 切换日期
@@ -331,14 +332,11 @@
 			}
 		},
 		onLoad: async function() {
-			uni.showNavigationBarLoading()
+			uni.showNavigationBarLoading();
 			await this.getBookedDateList();
 			this.activeBookedDate = this.bookedDateList[0];
 			await this.getDayReservationList(this.activeBookedDate);
 			uni.hideNavigationBarLoading()
-		},
-		onShow: async function() {
-
 		}
 	}
 </script>
@@ -426,7 +424,7 @@
 
 					&.deactivate {
 						background: #f2f2f2;
-						border: 1rpx dashed #647484;
+						border: 2rpx dashed #647484;
 						box-sizing: border-box;
 					}
 

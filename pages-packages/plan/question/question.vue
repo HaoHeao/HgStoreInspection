@@ -115,10 +115,11 @@
 					</view>
 				</block>
 			</block>
-			<u-loadmore :status="getDataLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
-			 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+			<u-loadmore :class="inspectionQuestionDetail && inspectionQuestionDetail.feedback?'loadmore-view':''" :status="getDataLoading?'loading':'nomore'"
+			 :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize"
+			 :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
 		</scroll-view>
-		<view class="replay-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
+		<view class="sublimt-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
 		<!-- uni-popup的底部蒙层 -->
 		<uni-popup ref="reply" type="bottom">
 			<view class="popup reply top">
@@ -127,8 +128,8 @@
 					<view class="close" @click="$refs['reply'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
-					<textarea class="remark" fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;" placeholder="请输入处理方法或建议"
-					 v-model="replyRemark" />
+					<textarea class="remark" disable-default-padding fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;"
+					 placeholder="请输入处理方法或建议" v-model="replyRemark" />
 					</view>
 				<view class="bottom-control">
 					<view class="imgage-list">
@@ -152,14 +153,14 @@
 			<view class="popup review top">
 				<view class="title"><text class="content">复核问题</text><view class="close" @click="$refs['review'].close()">关闭</view></view>
 				<view class="textarea-view">
-					<textarea class="remark" fixed auto-height v-model="reviewRemark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" />
+					<textarea class="remark" disable-default-padding fixed auto-height v-model="reviewRemark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因" />
 				</view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="item error" @click="confirmQuestion(false)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
 						<view class="item" @click="confirmQuestion(true)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
 					</view>
 				</view>
 			</view>
@@ -195,7 +196,7 @@
 				return this.$store.state.setting
 			},
 			userinfo(){
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -356,7 +357,7 @@
 								let [err, success] = data
 								console.log('撤回整改回复------>>>', success)
 								if (!err && success.data.success) {
-									this.getDetail(this.option.id,this.option.reply_id);
+									this.getInspectionDetail()
 								} else {
 									uni.showToast({
 										title: err ? err : success.data.errmsg,
@@ -578,9 +579,6 @@
 </script>
 
 <style scoped lang="scss">
-	page{
-		background: #E5EDF1;
-	}
 	.container {
 		height: 100vh;
 		background: #E5EDF1;
@@ -588,6 +586,11 @@
 		
 		.scroll-view{
 			height: 100vh;
+			/deep/ .loadmore-view{
+				.u-load-more-wrap{
+					padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+				}
+			}
 			// 顶部20rpx间隔
 			.top-placeholder{
 				height: 20rpx;
@@ -994,29 +997,6 @@
 						padding: 20rpx 0;
 					}
 				}
-			}
-		}
-	
-		// 对此问题提出整改回复
-		.replay-btn {
-			width: calc(100% - 40rpx);
-			height: 80rpx;
-			line-height: 80rpx;
-			text-align: center;
-			margin: 0rpx 20rpx;
-			border-radius: 40rpx;
-			color: #fff;
-			background: #647484;
-			font-size: 28rpx;
-			position: fixed;
-			left: 0;
-			bottom: 20rpx;
-			z-index: 1;
-			margin-bottom: env(safe-area-inset-bottom);
-			// letter-spacing: 10rpx;
-
-			&:active {
-				opacity: 0.8;
 			}
 		}
 	}

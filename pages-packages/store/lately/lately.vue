@@ -103,7 +103,7 @@
 		},
 		computed: {
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -276,7 +276,7 @@
 			flex-direction: column;
 
 			.swiper {
-				height: calc(100vh - 70rpx - 100rpx);
+				height: calc(100vh - 70rpx - 100rpx - env(safe-area-inset-bottom));
 
 				.swiper-item {
 					display: flex;
@@ -393,7 +393,7 @@
 
 									.btn {
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										width: 130rpx;
 										text-align: center;
 										line-height: 48rpx;
@@ -421,7 +421,6 @@
 		.popup {
 			width: 100vw;
 			min-height: 50vh;
-			max-height: 80vh;
 			background: #fff;
 			overflow: hidden;
 			display: flex;

@@ -98,11 +98,12 @@
 						</view>
 					</view>
 				</view>
-				<u-loadmore status="nomore" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
-				 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+				<u-loadmore :class="inspectionDetail && inspectionDetail.feedback?'loadmore-view':''" status="nomore" :icon-type="setting.iconType"
+				 :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
+				 :margin-bottom="setting.loadmoreMarginBottom" />
 			</block>
 		</scroll-view>
-		<view class="replay-btn" @click="openFeedbackPopup()" v-if="inspectionDetail && inspectionDetail.feedback">回复</view>
+		<view class="sublimt-btn" @click="openFeedbackPopup()" v-if="inspectionDetail && inspectionDetail.feedback">回复</view>
 		<uni-popup ref="feedback" type="bottom" :maskClick="false">
 			<view class="popup feedback top">
 				<view class="title">
@@ -110,8 +111,8 @@
 					<view class="close" @click="$refs['feedback'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
-					<textarea class="remark" fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;" placeholder="请输入说明"
-					 v-model="remark" />
+					<textarea class="remark" disable-default-padding fixed auto-height maxlength="500" placeholder-style="color:#B6C6D6;"
+					 placeholder="请输入说明" v-model="remark" />
 					</view>
 				<view class="bottom-control">
 					<view class="imgage-list">
@@ -223,7 +224,7 @@
 				return this.$store.state.setting
 			},
 			userinfo(){
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -637,13 +638,9 @@
 </script>
 
 <style scoped lang="scss">
-	page{
-		background: #E5EDF1;
-	}
 	.container {
 		background: #E5EDF1;
 		height: 100vh;
-		padding-bottom: env(safe-area-inset-bottom);
 
 		.scroll-view {
 			height: 100vh;
@@ -801,7 +798,7 @@
 							margin-bottom: 15rpx;
 							margin-right: 15rpx;
 							display: flex;
-							border: 1rpx solid transparent;
+							border: 2rpx solid transparent;
 							justify-content: center;
 							align-items: center;
 							padding: 0;
@@ -1006,7 +1003,7 @@
 										margin-bottom: 15rpx;
 										margin-right: 15rpx;
 										display: flex;
-										border: 1rpx solid transparent;
+										border: 2rpx solid transparent;
 										justify-content: center;
 										align-items: center;
 										padding: 0;
@@ -1043,7 +1040,7 @@
 										line-height: 48rpx;
 										text-align: center;
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										font-size: 22rpx;
 										border-radius: 24rpx;
 										margin: 20rpx 0rpx;
@@ -1076,7 +1073,7 @@
 									.reply-button {
 										background: #1BA1F3;
 										color: #fff;
-										border: 1rpx solid #fff;
+										border: 2rpx solid #fff;
 									}
 
 									.reply-text.del-raply {
@@ -1112,25 +1109,16 @@
 					}
 				}
 			}
+			/deep/ .loadmore-view{
+				.u-load-more-wrap{
+					padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+				}
+			}
 		}
 	
 		.popup {
 			padding: 30rpx;
-			padding-bottom: env(safe-area-inset-bottom);
-			>.title{
-				display: flex;
-				.content{
-					flex: 2;
-				}
-				.close{
-					padding: 4rpx 15rpx;
-					border-radius: 5rpx;
-					&:active{
-						color: #1BA1F3;
-						background: #f2f2f2;
-					}
-				}
-			}
+			
 			.textarea-view{
 				padding: 20rpx;
 				background: #F3F5F7;
@@ -1156,7 +1144,7 @@
 						.image{
 							width: 100rpx;
 							height: 100rpx;
-							border-radius: 6rpx;
+							border-radius: 10rpx;
 							overflow: hidden;
 							display: flex;
 							justify-content: center;
@@ -1168,13 +1156,14 @@
 							&:before{
 								content: "×";
 								border-radius: 50%;
-								font-size: 16rpx;
-								width: 20rpx;
-								height: 20rpx;
+								font-size: 22rpx;
+								font-weight: 800;
+								width: 30rpx;
+								height: 30rpx;
+								line-height: 30rpx;
 								background: #D56C68;
 								color: #fff;
 								text-align: center;
-								line-height: 20rpx;
 								position: absolute;
 								top: 5rpx;
 								right: 5rpx;
@@ -1189,8 +1178,8 @@
 						.choose-imgage{
 							width: 100rpx;
 							height: 100rpx;
-							border-radius: 6rpx;
-							background: #f2f2f2;
+							border-radius: 10rpx;
+							background: #F3F5F7;
 							padding: 25rpx;
 							margin-bottom: 15rpx;
 							.icon{
@@ -1222,7 +1211,7 @@
 						color: #647685;
 						text-align: center;
 						font-size: 24rpx;
-						border-radius: 6rpx;
+						border-radius: 10rpx;
 						display: flex;
 						align-items: center;
 						justify-content: center;
@@ -1318,29 +1307,6 @@
 						}
 					}
 				}
-			}
-		}
-	
-		// 对此计划提出问题
-		.replay-btn {
-			width: calc(100% - 40rpx);
-			height: 80rpx;
-			line-height: 80rpx;
-			text-align: center;
-			margin: 0rpx 20rpx;
-			border-radius: 40rpx;
-			color: #fff;
-			background: #647484;
-			font-size: 28rpx;
-			position: fixed;
-			left: 0;
-			bottom: 20rpx;
-			z-index: 1;
-			margin-bottom: env(safe-area-inset-bottom);
-			// letter-spacing: 10rpx;
-
-			&:active {
-				opacity: 0.8;
 			}
 		}
 	}

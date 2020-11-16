@@ -13,7 +13,7 @@
 					<view class="name">{{option_roominfo.roomname}}</view>
 					<view class="open-detail" @click="openDetail = !openDetail">
 						详细信息
-						<image :class="['icon',openDetail?'active':'']" src="@/static/images/right.svg" mode="widthFix"></image>
+						<image :class="['icon',openDetail?'active':'']" src="@/static/icon/right.svg" mode="widthFix"></image>
 					</view>
 				</view>
 				<!-- 会议室详细信息 -->
@@ -48,7 +48,7 @@
 		<view class="view-item input time">
 			<view class="input-item">
 				<view class="title">
-					<image src="@/static/images/date.svg" mode="widthFix" class="icon"></image>
+					<image src="@/static/icon/date.svg" mode="widthFix" class="icon"></image>
 				</view>
 				<picker class="content" mode="multiSelector" @columnchange="bindMultiPickerColumnChange" :value="multiIndex" :range="[startTimeList,endTimeList]"
 				 v-if="startTimeList.length && endTimeList.length">
@@ -107,11 +107,11 @@
 						<view class="name">{{item.goodsname}}</view>
 						<view class="num-view">
 							<view class="btn" @click="selectMobileEquipment({type:'del',item})">
-								<image class="icon" src="@/static/images/minus-circle.svg" mode="widthFix"></image>
+								<image class="icon" src="@/static/icon/minus-circle.svg" mode="widthFix"></image>
 							</view>
 							<input type="number" :value="item.goodscount" class="num" @input="selectMobileEquipment({type:'input',item},$event)" />
 							<view class="btn" @click="selectMobileEquipment({type:'add',item})">
-								<image class="icon" src="@/static/images/add-circle.svg" mode="widthFix"></image>
+								<image class="icon" src="@/static/icon/add-circle.svg" mode="widthFix"></image>
 							</view>
 						</view>
 					</view>
@@ -124,7 +124,7 @@
 				</view>
 			</view>
 		</uni-popup> -->
-		<view class="mh-btn" @click="reserva()">
+		<view :class="['sublimt-btn',reserveLoading?'sublimt-btn':'']" @click="reserva()">
 			<u-loading :show="reserveLoading" mode="circle" size="28"></u-loading>
 			{{reserveLoading?'':'预约'}}
 		</view>
@@ -182,7 +182,7 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -456,8 +456,8 @@
 		},
 		onLoad: async function(option) {
 			uni.showNavigationBarLoading()
-			this.option_roominfo = JSON.parse(option.options)[0]
-			this.option_data = JSON.parse(option.options)[1]
+			this.option_roominfo = JSON.parse(decodeURIComponent(option.options))[0]
+			this.option_data = JSON.parse(decodeURIComponent(option.options))[1]
 			console.log('预约会议室信息------>>>', this.option_roominfo)
 			console.log('预约天信息------>>>', this.option_data)
 			// 去除已过期会议预约
@@ -482,10 +482,6 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
-		background: #F6F7F9;
-	}
-
 	.container {
 		box-sizing: border-box;
 		height: 100vh;

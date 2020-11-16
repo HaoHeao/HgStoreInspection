@@ -5,18 +5,21 @@
 /* popup */
 .popup {
 	background: #fff;
-	// /* IOS XR */
+	/* IOS XR */
 	// padding-bottom: env(safe-area-inset-bottom);
-	// /* ------ */
+	/* ------ */
 	max-height: 80vh;
+	overflow: hidden;
 	
-	// 从上往下
+	// 从下
 	&.top{
 		border-top-left-radius: 20rpx;
 		border-top-right-radius: 20rpx;
+		/* IOS XR */
+		padding-bottom: env(safe-area-inset-bottom) !important;
+		/* ------ */
 	}
-	
-	// 从下网上
+	// 从上
 	&.bottom{
 		border-bottom-left-radius: 20rpx;
 		border-bottom-right-radius: 20rpx;
@@ -26,9 +29,6 @@
 		color: #647484;
 		padding: 0 10rpx;
 		margin-bottom: 20rpx;
-	}
-	
-	>.title{
 		display: flex;
 		font-size: 30rpx;
 		.content{
@@ -42,6 +42,12 @@
 				background: #f2f2f2;
 			}
 		}
+	}
+	
+	// popup内容中间件
+	.popup-content {
+		min-height: 300rpx;
+		max-height: 60vh;
 	}
 	
 	// 底部控制

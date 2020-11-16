@@ -4,7 +4,7 @@
 			<view class="main">
 				<view class="item-title">问题描述</view>
 				<view class="item-view textarea-view">
-					<textarea v-model="question" auto-height fixed maxlength="500" class="textarea" placeholder="在此填写问题描述"></textarea>
+					<textarea v-model="question" disable-default-padding auto-height fixed maxlength="500" class="textarea" placeholder="在此填写问题描述"></textarea>
 				</view>
 				<block v-if="floorList.length">
 					<view class="item-title">楼层</view>
@@ -55,7 +55,7 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view class="replay-btn" @click="submit()">
+		<view :class="['sublimt-btn',submitLoading?'sublimt-btn':'']" @click="submit()">
 			<u-loading :show="submitLoading" mode="circle" size="28"></u-loading>
 			{{submitLoading?'':'提交'}}
 		</view>
@@ -65,7 +65,7 @@
 					<text class="content">整改部门</text>
 					<view class="close" @click="$refs['rectifyDept'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y enable-flex="true" class="popup-content">
+				<scroll-view scroll-y class="popup-content">
 					<view class="data-list">
 						<view :class="['item',item.rectifyLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].rectifyLabel">
 							<view class="title">{{item.deptname}}</view>
@@ -85,7 +85,7 @@
 					<text class="content">整改人员</text>
 					<view class="close" @click="$refs['rectifyUser'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y enable-flex="true" class="popup-content">
+				<scroll-view scroll-y class="popup-content">
 					<block v-if="userList.leaderlist.length">
 						<view class="label-title">主要领导</view>
 						<view class="data-list">
@@ -119,7 +119,7 @@
 					<text class="content">复核部门或人员</text>
 					<view class="close" @click="$refs['review'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y enable-flex="true" class="popup-content">
+				<scroll-view scroll-y class="popup-content">
 					<view class="label-title">复核部门</view>
 					<view class="data-list">
 						<view :class="['item',item.reviewLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].reviewLabel">
@@ -185,7 +185,7 @@
 		},
 		computed: {
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -597,8 +597,8 @@
 			background: #fff;
 			border-radius: 10rpx;
 			padding: 0rpx 30rpx;
-			margin: 20rpx;
-			margin-bottom: 110rpx;
+			margin: 20rpx;					
+			margin-bottom: calc(140rpx + env(safe-area-inset-bottom));
 
 			// 标题
 			.item-title {
@@ -672,7 +672,7 @@
 
 						&.item-add {
 							width: 116rpx;
-							border: 1rpx dashed #B6C6D6;
+							border: 2rpx dashed #B6C6D6;
 							background: #fff;
 							color: #647484;
 						}
@@ -767,7 +767,7 @@
 						width: 116rpx;
 						height: 116rpx;
 						margin-bottom: 15rpx;
-						border: 1rpx dashed #B6C6D6;
+						border: 2rpx dashed #B6C6D6;
 						background: #fff;
 						color: #647484;
 						display: flex;
@@ -787,24 +787,6 @@
 			}
 		}
 
-		// 提出问题
-		.replay-btn {
-			width: calc(100% - 40rpx);
-			height: 80rpx;
-			line-height: 80rpx;
-			text-align: center;
-			margin: 0rpx 20rpx;
-			border-radius: 40rpx;
-			color: #fff;
-			background: #647484;
-			font-size: 28rpx;
-			position: fixed;
-			left: 0;
-			bottom: 20rpx;
-			z-index: 1;
-			margin-bottom: env(safe-area-inset-bottom);
-		}
-
 		.popup {
 			padding: 30rpx;
 			padding-bottom: 0;
@@ -817,11 +799,6 @@
 				color: #647484;
 				padding-left: 10rpx;
 				padding-bottom: 10rpx;
-			}
-
-			.popup-content {
-				min-height: 300rpx;
-				max-height: 60vh;
 			}
 
 			.data-list {

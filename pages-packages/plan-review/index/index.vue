@@ -141,23 +141,23 @@
 			</view>
 		</uni-popup>
 		<uni-popup ref="review" type="bottom">
-			<view class="popup review">
+			<view class="popup review top">
 				<view class="title">
 					<text class="content">复核问题</text>
 					<view class="close" @click="$refs['review'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
-					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因"
-					 fixed auto-height />
+					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" placeholder="不通过请填写原因"
+					 fixed auto-height disable-default-padding />
 					</view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="item del" @click="confirmQuestion(false)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>
 							不通过
 						</view>
 						<view class="item" @click="confirmQuestion(true)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>
 							通过
 						</view>
 					</view>
@@ -205,7 +205,7 @@
 		},
 		computed:{
 			userinfo(){
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -587,7 +587,7 @@
 									.icon {
 										width: 100%;
 										min-height: 100%;
-										height: 100%;
+										background: #f2f2f2;
 									}
 								}
 							}
@@ -615,7 +615,7 @@
 
 									.btn {
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										width: 130rpx;
 										text-align: center;
 										line-height: 48rpx;

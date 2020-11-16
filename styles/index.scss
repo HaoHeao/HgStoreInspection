@@ -9,6 +9,36 @@ image {
 	animation: fadeIn 300ms linear;
 }
 
+// 提出问题
+.sublimt-btn {
+	width: calc(100% - 40rpx);
+	height: 100rpx;
+	line-height: 100rpx;
+	text-align: center;
+	margin: 0rpx 20rpx;
+	border-radius: 50rpx;
+	color: #fff;
+	background: #647484;
+	font-size: 28rpx;
+	position: fixed;
+	left: 0;
+	bottom: 0rpx;
+	z-index: 1;
+	transition: 300ms;
+	margin-bottom: calc(20rpx + env(safe-area-inset-bottom));
+
+	&:active {
+		opacity: 0.9;
+		box-shadow: 0 10rpx 10rpx 0 rgba(0, 0, 0, 0.3);
+	}
+
+	&.loading {
+		width: 100rpx;
+		opacity: 0.9;
+		box-shadow: 0 10rpx 10rpx 0 rgba(0, 0, 0, 0.3);
+	}
+}
+
 .no-data-view {
 	width: 100%;
 	// min-height: 100%;

@@ -3,7 +3,8 @@
 	<view class="container detail">
 		<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
 		 :refresher-triggered="getDataRefresherLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore">
-			<view class="view-item fadeIn" v-if="detailInfo">
+			<view class="top-placeholder"></view>
+			<view class="view-item" v-if="detailInfo">
 				<view class="detail-control">
 					<view :class="['state',detailInfo.meeting_state == 2?'active':'']">{{detailInfo.meeting_state == 1?'会议未开始':detailInfo.meeting_state == 2?'会议正在进行':detailInfo.meeting_state == 3?'会议已结束':''}}</view>
 				</view>
@@ -62,14 +63,14 @@
 			</view> -->
 			<view class="view-item control-list">
 				<view class="item del" @click="controlTap(1)" v-if="detailInfo.meeting_state == 1">
-					<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>取消
+					<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>取消
 				</view>
 				<view class="item" @click="controlTap(2)" v-if="detailInfo.meeting_state != 3">
-					<image src="@/static/images/loading_time.svg" mode="widthFix" class="icon"></image>延时
+					<image src="@/static/icon/loading_time.svg" mode="widthFix" class="icon"></image>延时
 				</view>
-				<view class="item fadeIn" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
+				<view class="item" @click="controlTap(3)" v-if="detailInfo.meeting_state == 1">
 					<block v-if="!getReplacementLoading">
-						<image src="@/static/images/replacement.svg" mode="widthFix" class="icon"></image>
+						<image src="@/static/icon/replacement.svg" mode="widthFix" class="icon"></image>
 						<view class="replacement" v-if="replacementList.length">{{replacementList.length}}</view>
 						置换
 					</block>
@@ -80,7 +81,7 @@
 		<uni-popup ref="loading_time" type="bottom">
 			<view class="popup top">
 				<view class="item-view select">
-					<image src="@/static/images/date.svg" class="icon" mode="widthFix"></image>
+					<image src="@/static/icon/date.svg" class="icon" mode="widthFix"></image>
 					<view class="title">{{moment(new Date(detailInfo.meetingdate)).format("MM-DD ") + detailInfo.timeslotendTime}} 散会</view>
 					<picker class="content" mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="[maxDelayTimeList]">
 						延时至:{{maxDelayTimeList[multiIndex]}}
@@ -91,7 +92,7 @@
 					<view class="content">
 						<view class="close" @click="multiIndex = 0;$refs['loading_time'].close()">取消</view>
 						<view class="item" @click="changeReserveTime()">
-							<image src="@/static/images/loading_time.svg" class="icon" mode="widthFix"></image>延时
+							<image src="@/static/icon/loading_time.svg" class="icon" mode="widthFix"></image>延时
 						</view>
 					</view>
 				</view>
@@ -109,7 +110,7 @@
 					 :value="replaceIndex" :range="roomReserveList">
 						{{replaceIndex == null?'请选择会议室':roomReserveList[replaceIndex].roomname}}
 					</picker>
-					<image src="@/static/images/right.svg" :class="['icon select-icon',replaceIndex === null?'':'active']" mode="widthFix"></image>
+					<image src="@/static/icon/right.svg" :class="['icon select-icon',replaceIndex === null?'':'active']" mode="widthFix"></image>
 				</view>
 				<radio-group @change="radioChange" class="meeting-list">
 					<view class="item" v-for="(item,index) of roomReserveList[replaceIndex].reserveRoomList" :key="item.value">
@@ -123,7 +124,7 @@
 				<view class="bottom-control">
 					<view class="content">
 						<view class="item" @click="replacement()">
-							<image src="@/static/images/replacement.svg" class="icon" mode="widthFix"></image>置换
+							<image src="@/static/icon/replacement.svg" class="icon" mode="widthFix"></image>置换
 						</view>
 					</view>
 				</view>
@@ -147,12 +148,12 @@
 				</radio-group>
 				<view class="bottom-control">
 					<view class="content">
-						<view class="item refuse fadeIn" @click="refuseReplacement()">
-							<!-- <image src="@/static/images/replacement.svg" class="icon" mode="widthFix"></image> -->
+						<view class="item refuse" @click="refuseReplacement()">
+							<!-- <image src="@/static/icon/replacement.svg" class="icon" mode="widthFix"></image> -->
 							拒绝
 						</view>
 						<view class="item" @click="agreeReplacement()">
-							<image src="@/static/images/replacement.svg" class="icon" mode="widthFix"></image>同意置换
+							<image src="@/static/icon/replacement.svg" class="icon" mode="widthFix"></image>同意置换
 						</view>
 					</view>
 				</view>
@@ -198,7 +199,7 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -222,7 +223,6 @@
 					});
 					return
 				}
-				let userinfo = this.utils.getUserInfo(uni);
 				let _this = this
 				uni.showModal({
 					title: '您确定拒绝会议置换吗？',
@@ -233,7 +233,7 @@
 								url: _this.api.meeting_refusereplacement,
 								data: {
 									Id: _this.radioReplacementListChangeCurrent,
-									Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+									Lstuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`
 								}
 							})
 							let [err, success] = data
@@ -259,7 +259,6 @@
 					});
 					return
 				}
-				let userinfo = this.utils.getUserInfo(uni);
 				let _this = this
 				uni.showModal({
 					title: '您确定与此会议置换吗？',
@@ -270,7 +269,7 @@
 								url: _this.api.meeting_agreereplacement,
 								data: {
 									Swapid: _this.radioReplacementListChangeCurrent,
-									Checkuserid: `${userinfo.usernumber}/${userinfo.username}`
+									Checkuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`
 								}
 							})
 							let [err, success] = data
@@ -309,7 +308,6 @@
 					});
 					return
 				}
-				let userinfo = this.utils.getUserInfo(uni);
 				let changeCurrent = ''
 				for (let item of this.roomReserveList) {
 					if (item.roomid == this.radioChangeCurrent[1]) {
@@ -325,7 +323,7 @@
 						method: 'POST',
 						url: this.api.meeting_newReplacement,
 						data: {
-							Lstuserid: `${userinfo.usernumber}/${userinfo.username}`,
+							Lstuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`,
 							Targetappointmentid: this.detailInfo.id,
 							Sourceappointmentid: changeCurrent.id,
 						}
@@ -351,7 +349,6 @@
 			},
 			// 延时
 			async changeReserveTime() {
-				let userinfo = this.utils.getUserInfo(uni);
 				try {
 					let data = await uni.request({
 						method: 'POST',
@@ -364,7 +361,7 @@
 							Timeslotstart: this.detailInfo.timeslotstart,
 							Timeslotend: this.maxDelayTimeList[this.multiIndex].replace(/:/g, ''),
 							Remark: '',
-							Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+							Lstuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`
 						}
 					})
 					let [err, success] = data
@@ -386,7 +383,6 @@
 			// 底部按钮操作
 			async controlTap(type) {
 				let _this = this;
-				let userinfo = this.utils.getUserInfo(uni);
 				if (type == 1) {
 					// 取消
 					uni.showModal({
@@ -396,14 +392,14 @@
 								console.log('取消会议')
 								console.log(JSON.stringify({
 									Id: _this.reserveInfo.id,
-									Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+									Lstuserid: `${_this.userinfo.usernumber}/${_this.userinfo.username}`
 								}))
 								let data = await uni.request({
 									method: 'POST',
 									url: _this.api.meeting_delreserve,
 									data: {
 										Id: _this.reserveInfo.id,
-										Lstuserid: `${userinfo.usernumber}/${userinfo.username}`
+										Lstuserid: `${_this.userinfo.usernumber}/${_this.userinfo.username}`
 									}
 								})
 								let [err, success] = data
@@ -680,10 +676,11 @@
 			uni.showLoading({
 				title: '加载中'
 			});
-			this.roomInfo = JSON.parse(option.options)[0]
-			this.reserveInfo = JSON.parse(option.options)[1]
+			this.roomInfo = JSON.parse(decodeURIComponent(option.options))[0]
+			this.reserveInfo = JSON.parse(decodeURIComponent(option.options))[1]
 			console.log('会议室信息------>>>', this.roomInfo)
 			console.log('预约信息------>>>', this.reserveInfo)
+			console.log(this.roomInfo, this.reserveInfo)
 			await this.getFixedEquipmentList()
 			await this.getReserveDetail()
 			this.getReplacement()
@@ -697,7 +694,10 @@
 
 <style lang="scss" scoped>
 	@import '@/styles/detail.scss';
-	@import '@/styles/popup.scss';
+
+	.container {
+		background: #F6F7F9;
+	}
 
 	.container.detail .view-item .detail-control {
 		.state {
@@ -712,6 +712,11 @@
 	.container.detail {
 		.scroll-view {
 			height: 100vh;
+		}
+
+		// 顶部间隔
+		.top-placeholder {
+			height: 1rpx;
 		}
 
 		.control-list {
@@ -863,6 +868,7 @@
 
 		.bottom-control {
 			position: static;
+			padding-bottom: 20rpx;
 
 			.left {
 				color: #CCCCCC;

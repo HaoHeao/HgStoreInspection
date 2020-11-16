@@ -50,7 +50,7 @@
 				return this.$store.state.home;
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni);
+				return this.utils.getUserInfo();
 			}
 		},
 		methods: {

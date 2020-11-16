@@ -43,7 +43,7 @@
 					</view>
 					<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
 					 :is-dot="setting.isDot" />
-					 <view class="bottom"></view>
+					<view class="bottom"></view>
 				</block>
 				<view class="no-data-view" v-if="!tabelData.length">
 					<view class="center">
@@ -56,7 +56,7 @@
 		<navigator url="../add/index" class="bottom-btn">
 			<image src="@/static/icon/add-white.svg" mode="widthFix" class="icon"></image>抽盘
 		</navigator>
-		<uni-popup ref="filter" type="top">
+		<uni-popup ref="filter" type="top" @change="filterPopup">
 			<scroll-view scroll-y class="popup filter">
 				<view class="content">
 					<view class="title">设置日期</view>
@@ -66,7 +66,7 @@
 						</picker>
 					</view>
 					<view class="title">专柜号</view>
-					<input type="number" placeholder="专柜号" class="item input" v-model="conerno" />
+					<input type="number" placeholder="专柜号" class="item input" v-model="conerno" v-if="showFilterPopup" />
 					<view class="title">是否包含差异</view>
 					<radio-group @change="radioChange" class="item radio-group">
 						<label class="radio-item">
@@ -85,8 +85,6 @@
 				</view>
 			</scroll-view>
 		</uni-popup>
-
-
 		<uni-popup ref="detail" type="bottom">
 			<view class="popup detail">
 				<view class="title">
@@ -157,12 +155,14 @@
 				pagesize: 20,
 				pagenum: 1,
 				pageindex: 1,
-				getDataLoading: false
+				getDataLoading: false,
+				// 解决popup里input不显示
+				showFilterPopup: false
 			}
 		},
 		computed: {
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -206,6 +206,11 @@
 				this.pagesize = 20
 				this.pagenum = 1
 				this.pageindex = 1
+			},
+			// 解决input不显示问题
+			async filterPopup(e) {
+				await this.delay(100)
+				this.showFilterPopup = e.show
 			},
 			async getData() {
 				if (this.getDataLoading) return
@@ -272,14 +277,8 @@
 </script>
 
 <style lang="scss" scoped>
-	page {
-		background: #E5EDF1;
-	}
-
 	.container {
 		background: #E5EDF1;
-		/* IOS XR */
-		padding-bottom: env(safe-area-inset-bottom);
 
 		.tabs {
 			.left {
@@ -294,7 +293,7 @@
 		}
 
 		.main {
-			height: calc(100vh - 70rpx);
+			height: calc(100vh - 70rpx - env(safe-area-inset-bottom));
 
 			.scroll-view {
 				height: 100%;
@@ -361,7 +360,8 @@
 						}
 					}
 				}
-				.bottom{
+
+				.bottom {
 					height: 150rpx;
 					width: 100%;
 				}
@@ -498,6 +498,7 @@
 
 			&.detail {
 				font-size: 28rpx;
+				padding-bottom: env(safe-area-inset-bottom);
 
 				>.title {
 					font-size: 32rpx;

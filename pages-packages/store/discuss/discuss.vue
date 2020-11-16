@@ -53,7 +53,7 @@
 			 :margin-bottom="setting.loadmoreMarginBottom" />
 		</scroll-view>
 		<view class="popup reply-view" v-if="inspectionDetail && inspectionDetail.feedback">
-			<view class="popup-content">
+			<view class="remark-view">
 				<view class="textarea-view">
 					<textarea v-model="reason" disable-default-padding auto-height fixed maxlength="500" class="textarea" placeholder="处理方法或建议"></textarea>
 				</view>
@@ -89,7 +89,7 @@
 				return this.$store.state.setting
 			},
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -238,17 +238,12 @@
 </script>
 
 <style scoped lang="scss">
-	page {
-		background: #E5EDF1;
-	}
-
 	.container {
 		height: 100vh;
 		background: #E5EDF1;
-		padding-bottom: env(safe-area-inset-bottom);
 
 		.scroll-view {
-			height: 100vh;
+			height: calc(100vh - 120rpx);
 
 			// 顶部20rpx间隔
 			.top-placeholder {
@@ -422,12 +417,13 @@
 			width: 100%;
 			box-shadow: 10rpx 0 10rpx 0 rgba(0, 0, 0, 0.1);
 
-			.popup-content {
+			.remark-view {
 				padding: 20rpx;
 				display: flex;
 				align-items: flex-end;
 
 				.textarea-view {
+					min-height: 80rpx;
 					padding: 20rpx;
 					background: #F3F5F7;
 					box-sizing: border-box;
@@ -442,6 +438,7 @@
 				}
 
 				.send-btn {
+					min-height: 80rpx;
 					text-align: center;
 					width: 100rpx;
 					margin-left: 20rpx;

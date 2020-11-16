@@ -129,11 +129,12 @@
 						</view>
 					</view>
 				</view>
-				<u-loadmore status="nomore" :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot"
-				 :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+				<u-loadmore :class="inspectionDetail && inspectionDetail.submitQuestion?'loadmore-view':''" status="nomore"
+				 :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize"
+				 :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
 			</block>
 		</scroll-view>
-		<view class="replay-btn" @click="submitQuestions()" v-if="inspectionDetail && inspectionDetail.submitQuestion">提出巡检问题</view>
+		<view class="sublimt-btn" @click="submitQuestions()" v-if="inspectionDetail && inspectionDetail.submitQuestion">提出巡检问题</view>
 		<uni-popup ref="review" type="bottom">
 			<view class="popup top">
 				<view class="title">
@@ -141,15 +142,15 @@
 					<view class="close" @click="$refs['review'].close()">关闭</view>
 				</view>
 				<view class="textarea-view">
-					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" cursor-spacing="180" placeholder="不通过请填写原因"
-					 fixed="true" auto-height />
+					<textarea class="remark" v-model="remark" placeholder-style="color:#B6C6D6" placeholder="不通过请填写原因" fixed
+					 auto-height disable-default-padding />
 					</view>
 				<view class="bottom-control">
 					<view class="content">
 						<view class="item del" @click="confirmQuestion(false)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>不通过</view>
 						<view class="item" @click="confirmQuestion(true)">
-							<image src="@/static/images/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
+							<image src="@/static/icon/del_white.svg" mode="widthFix" class="icon"></image>通过</view>
 					</view>
 				</view>
 			</view>
@@ -182,7 +183,7 @@
 				return this.$store.state.setting
 			},
 			userinfo(){
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			}
 		},
 		methods: {
@@ -376,13 +377,9 @@
 </script>
 
 <style scoped lang="scss">
-	page{
-		background: #E5EDF1;
-	}
 	.container {
 		background: #E5EDF1;
 		height: 100vh;
-		padding-bottom: env(safe-area-inset-bottom);
 
 		.scroll-view {
 			height: 100vh;
@@ -607,7 +604,7 @@
 							padding: 0rpx 20rpx;
 							display: flex;
 							align-items: center;
-							border-bottom: 1rpx dashed #EDEEEF;
+							border-bottom: 2rpx dashed #EDEEEF;
 							.item{
 								padding: 20rpx 0;
 								margin-right: 20rpx;
@@ -700,18 +697,18 @@
 										margin-bottom: 15rpx;
 										margin-right: 15rpx;
 										display: flex;
-										border: 1rpx solid transparent;
+										border: 2rpx solid transparent;
 										justify-content: center;
 										align-items: center;
 										padding: 0;
 										flex-wrap: wrap;
 										text-align: center;
 										overflow: hidden;
+										border-radius: 6rpx;
 
 										.icon {
 											width: 100%;
 											min-height: 100%;
-											border-radius: 6rpx;
 											background: #f2f2f2;
 										}
 									}
@@ -737,7 +734,7 @@
 										line-height: 48rpx;
 										text-align: center;
 										color: #1BA1F3;
-										border: 1rpx solid #1BA1F3;
+										border: 2rpx solid #1BA1F3;
 										font-size: 22rpx;
 										border-radius: 24rpx;
 										margin: 20rpx 0rpx;
@@ -770,7 +767,7 @@
 									.reply-button {
 										background: #1BA1F3;
 										color: #fff;
-										border: 1rpx solid #fff;
+										border: 2rpx solid #fff;
 									}
 
 									.reply-text.del-raply {
@@ -806,6 +803,11 @@
 					}
 				}
 			}
+			/deep/ .loadmore-view{
+				.u-load-more-wrap{
+					padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+				}
+			}
 		}
 	
 		.popup {
@@ -831,29 +833,6 @@
 				.item {
 					line-height: 60rpx;
 				}
-			}
-		}
-	
-		// 对此计划提出问题
-		.replay-btn {
-			width: calc(100% - 40rpx);
-			height: 80rpx;
-			line-height: 80rpx;
-			text-align: center;
-			margin: 0rpx 20rpx;
-			border-radius: 40rpx;
-			color: #fff;
-			background: #647484;
-			font-size: 28rpx;
-			position: fixed;
-			left: 0;
-			bottom: 20rpx;
-			z-index: 1;
-			margin-bottom: env(safe-area-inset-bottom);
-			// letter-spacing: 10rpx;
-
-			&:active {
-				opacity: 0.8;
 			}
 		}
 	}

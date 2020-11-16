@@ -1,8 +1,5 @@
 <template>
 	<view class="container">
-		<view class="head">
-			<view class="line"></view>
-		</view>
 		<view class="main">
 			<block v-for="(item,index) of storeshop.tabbar" :key="index">
 				<view :class="['item',index == storeshop.tabbarIndex?'active':'']" v-if="index != 1" @click="selectTabbar(index)">
@@ -49,16 +46,7 @@
 	.container {
 		width: 100%;
 		padding-bottom: env(safe-area-inset-bottom);
-
-		.head {
-			width: 100%;
-
-			.line {
-				width: 100%;
-				height: 1rpx;
-				background: #f6f7f9;
-			}
-		}
+		box-shadow: 10rpx 0 10rpx 0 rgba(0, 0, 0, 0.1);
 
 		.main {
 			width: 100%;

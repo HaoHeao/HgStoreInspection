@@ -14,14 +14,14 @@
 		<view class="user-info">{{userinfo.deptname}} - {{userinfo.username}}</view>
 		<view class="control">
 			<navigator class="item" url="/layout/changeIPhone/changeIPhone">
-				<image src="@/static/phone1.png" mode="widthFix" class="icon"></image>
+				<image src="@/static/icon/phone.svg" mode="widthFix" class="icon"></image>
 				<view class="title">修改手机号</view>
-				<image src="@/static/right.png" mode="widthFix" class="right"></image>
+				<image src="@/static/icon/right.svg" mode="widthFix" class="right"></image>
 			</navigator>
 			<navigator class="item" url="/layout/changePassword/changePassword">
-				<image src="@/static/pwd.png" mode="widthFix" class="icon"></image>
+				<image src="@/static/icon/password.svg" mode="widthFix" class="icon"></image>
 				<view class="title">修改密码</view>
-				<image src="@/static/right.png" mode="widthFix" class="right"></image>
+				<image src="@/static/icon/right.svg" mode="widthFix" class="right"></image>
 			</navigator>
 		</view>
 		<view :class="['logout',logoutLoading?'loading':'']" @click="logout()">

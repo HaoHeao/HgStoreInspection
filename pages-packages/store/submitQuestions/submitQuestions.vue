@@ -4,7 +4,8 @@
 			<view class="main">
 				<view class="item-title">巡检描述</view>
 				<view class="item-view textarea-view">
-					<textarea v-model="question" auto-height fixed maxlength="500" class="textarea" placeholder="在此填写巡检描述"></textarea>
+					<textarea v-model="question" disable-default-padding auto-height fixed maxlength="500" class="textarea"
+					 placeholder="在此填写巡检描述"></textarea>
 				</view>
 				<view class="item-title">通知部门</view>
 				<view class="item-view label-add">
@@ -30,17 +31,17 @@
 				</view>
 			</view>
 		</scroll-view>
-		<view class="replay-btn" @click="submit()">
+		<view :class="['sublimt-btn',submitLoading?'sublimt-btn':'']" @click="submit()">
 			<u-loading v-if="submitLoading" mode="circle" size="28"></u-loading>
 			{{submitLoading?'':'提交'}}
 		</view>
-		<uni-popup ref="noticeDept" type="bottom" :maskClick="false">
+		<uni-popup ref="noticeDept" type="bottom">
 			<view class="popup notice-dept top">
 				<view class="title">
 					<text class="content">通知部门</text>
 					<view class="close" @click="$refs['noticeDept'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y enable-flex="true" class="popup-content">
+				<scroll-view scroll-y class="popup-content">
 					<view class="data-list">
 						<view :class="['item',item.noticeLabel?'active':'']" v-for="(item,index) of deptList" :key="index" @click="deptList.filter(itm => itm.deptid == item.deptid)[0].noticeLabel = ! deptList.filter(itm => itm.deptid == item.deptid)[0].noticeLabel">
 							<view class="title">{{item.deptname}}</view>
@@ -54,13 +55,13 @@
 				</view>
 			</view>
 		</uni-popup>
-		<uni-popup ref="noticeUser" type="bottom" :maskClick="false">
+		<uni-popup ref="noticeUser" type="bottom">
 			<view class="popup notice-user top">
 				<view class="title">
 					<text class="content">通知人员</text>
 					<view class="close" @click="$refs['noticeUser'].close()">关闭</view>
 				</view>
-				<scroll-view scroll-y enable-flex="true" class="popup-content">
+				<scroll-view scroll-y class="popup-content">
 					<block v-if="userList.leaderlist.length">
 						<view class="label-title">主要领导</view>
 						<view class="data-list">
@@ -112,7 +113,7 @@
 		},
 		computed: {
 			userinfo() {
-				return this.utils.getUserInfo(uni)
+				return this.utils.getUserInfo()
 			},
 			setting() {
 				return this.$store.state.setting
@@ -476,7 +477,7 @@
 
 						&.item-add {
 							width: 116rpx;
-							border: 1rpx dashed #B6C6D6;
+							border: 2rpx dashed #B6C6D6;
 							background: #fff;
 							color: #647484;
 						}
@@ -530,7 +531,7 @@
 						width: 116rpx;
 						height: 116rpx;
 						margin-bottom: 15rpx;
-						border: 1rpx dashed #B6C6D6;
+						border: 2rpx dashed #B6C6D6;
 						background: #fff;
 						color: #647484;
 						display: flex;
@@ -550,24 +551,6 @@
 			}
 		}
 
-		// 提出问题
-		.replay-btn {
-			width: calc(100% - 40rpx);
-			height: 80rpx;
-			line-height: 80rpx;
-			text-align: center;
-			margin: 0rpx 20rpx;
-			border-radius: 40rpx;
-			color: #fff;
-			background: #647484;
-			font-size: 28rpx;
-			position: fixed;
-			left: 0;
-			bottom: 20rpx;
-			z-index: 1;
-			margin-bottom: env(safe-area-inset-bottom);
-		}
-
 		.popup {
 			padding: 30rpx;
 			padding-bottom: 0;
@@ -580,11 +563,6 @@
 				color: #647484;
 				padding-left: 10rpx;
 				padding-bottom: 10rpx;
-			}
-
-			.popup-content {
-				min-height: 300rpx;
-				max-height: 60vh;
 			}
 
 			.data-list {
