@@ -233,7 +233,7 @@
 								url: _this.api.meeting_refusereplacement,
 								data: {
 									Id: _this.radioReplacementListChangeCurrent,
-									Lstuserid: `${this.userinfo.usernumber}/${this.userinfo.username}`
+									Lstuserid: `${_this.userinfo.usernumber}/${_this.userinfo.username}`
 								}
 							})
 							let [err, success] = data

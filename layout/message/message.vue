@@ -43,7 +43,7 @@
 				messageData: [],
 				pagenum: "",
 				pageindex: 1,
-				pagesize: 10,
+				pagesize: 20,
 				getDataRefresherLoading: false,
 				getMessageLoading: false,
 			}
@@ -84,7 +84,7 @@
 				this.messageData = []
 				this.pagenum = ""
 				this.pageindex = 1
-				this.pagesize = 10
+				this.pagesize = 20
 				// this.getDataRefresherLoading = false
 				// this.getMessageLoading = false
 			},

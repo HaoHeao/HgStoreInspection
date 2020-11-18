@@ -686,6 +686,8 @@
 				// 楼层
 				&.floor {
 					.item {
+						margin-right: 14rpx;
+						margin-bottom: 14rpx;
 						width: calc(100%/5 - 12rpx);
 
 						&:nth-child(3n) {

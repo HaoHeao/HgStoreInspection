@@ -9,7 +9,7 @@
 					<view class="top-view">
 						<view class="state">{{inspectionDetail.feedback?'未解决':'已解决'}}</view>
 						<view class="center"></view>
-						<view class="right" @click="searchLookList()" v-if="!inspectionDetail.loginspectionquestion.length && inspectionDetail.feedback">
+						<view class="right" @click="searchLookList()" v-if="!inspectionDetail.loginspectionquestion.length && inspectionDetail.detailControl">
 							<u-loading mode="circle" :show="searchLookListLoading"></u-loading>
 							<block v-if="!searchLookListLoading">撤回</block>
 						</view>
@@ -45,7 +45,7 @@
 						</view>
 					</view>
 					<block v-if="!inspectionDetail.feedback">
-						<view class="detail-item">
+						<view class="detail-item" v-if="inspectionDetail.inspectionplace">
 							<view class="item">具体位置</view>
 							<view class="content">{{inspectionDetail.inspectionplace}}</view>
 						</view>
@@ -54,7 +54,7 @@
 							<view class="content">{{inspectionDetail.typedesc}}</view>
 						</view>
 					</block>
-					<view class="solve" v-if="inspectionDetail.feedback" @click="openUnderPopup()">确认已解决</view>
+					<view class="solve" v-if="inspectionDetail.detailControl" @click="openUnderPopup()">确认已解决</view>
 				</view>
 				<view class="module image" v-if="inspectionDetail.loginspectionimg.length">
 					<view class="head">
@@ -509,6 +509,16 @@
 					}
 				}
 			},
+			// 是否可以撤回、确认解决
+			detailControlFilter() {
+				let _this = this;
+				let detailControl = (function(){
+					// 上传人
+					if(_this.inspectionDetail.usernumber == _this.userinfo.usernumber) return true
+				}())
+				// 巡检问题状态
+				this.inspectionDetail.detailControl = (detailControl && this.inspectionDetail.status == 0)?true:false
+			},
 			// 是否可以回复和讨论
 			feedbackFilter() {
 				let _this = this;
@@ -544,6 +554,7 @@
 					if (!err && success.data.success) {
 						this.inspectionDetail = success.data.data.loginspection
 						this.feedbackFilter()
+						this.detailControlFilter()
 						this.$forceUpdate()
 					}else{
 						uni.showToast({
