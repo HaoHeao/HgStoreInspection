@@ -389,11 +389,6 @@
 						title: '确定取消此次会议吗？',
 						success: async function(res) {
 							if (res.confirm) {
-								console.log('取消会议')
-								console.log(JSON.stringify({
-									Id: _this.reserveInfo.id,
-									Lstuserid: `${_this.userinfo.usernumber}/${_this.userinfo.username}`
-								}))
 								let data = await uni.request({
 									method: 'POST',
 									url: _this.api.meeting_delreserve,
@@ -410,7 +405,7 @@
 										icon: 'none'
 									});
 									await _this.delay(1000)
-									uni.navigateBack();
+									_this.UpdateNavigationBack()
 								}
 							}
 						}
@@ -447,6 +442,13 @@
 					this.$refs['replacement'].open()
 					this.$forceUpdate()
 				}
+			},
+			// 返回上一页并更新
+			UpdateNavigationBack() {
+				let pages = getCurrentPages();
+				let beforePage = pages[pages.length - 2];
+				beforePage.$vm.getDayReservationList(beforePage.$vm.activeBookedDate);
+				wx.navigateBack()
 			},
 			// 置换会议室修改
 			bindPickerChange: function(e) {

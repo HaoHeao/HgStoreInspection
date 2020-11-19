@@ -1,8 +1,8 @@
 const setting = {
 	namespaced: true,
 	state: {
-		version: "0.9.4T",
-		lastmodify: "2020/11/03",
+		version: "0.9.4",
+		lastmodify: "2020/11/19",
 		systemName: "北京汉光巡检系统",
 		appId: "wx252743e71090a061",
 		openId: '',

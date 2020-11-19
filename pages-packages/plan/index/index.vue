@@ -165,7 +165,7 @@
 						url: this.api.plan_getPlanList,
 						data: {
 							usernumber: this.userinfo.usernumber,
-							datatype: 1
+							datatype: 0
 						}
 					})
 					uni.hideNavigationBarLoading()
@@ -198,7 +198,7 @@
 						url: this.api.plan_getPlanList,
 						data: {
 							usernumber: this.userinfo.usernumber,
-							datatype: 2
+							datatype: 1
 						}
 					})
 					uni.hideNavigationBarLoading()
