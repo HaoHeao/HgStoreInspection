@@ -186,8 +186,8 @@
 						insertdate:"",
 						userid:uni.getStorageSync("userinfo").userid,//登录人id,
 						usernumber:uni.getStorageSync("userinfo").usernumber,//登录人工号,
-						username:uni.getStorageSync("userinfo").username,//名称, 
-						deptid:uni.getStorageSync("userinfo").deptid, //登录人部门id 
+						username:uni.getStorageSync("userinfo").username,//名称,
+						deptid:uni.getStorageSync("userinfo").deptid, //登录人部门id
 						deptname: uni.getStorageSync("userinfo").deptname //部门名称
 					}
 				}
@@ -254,13 +254,13 @@
 			// box-shadow:0rpx 0rpx 8rpx -2rpx #40A9FF;
 			border: 4rpx solid #40A9FF;
 			font-size:26rpx;
-			
+
 			.msg-title{
 				font-weight:700;
 				font-size:28rpx;
 				padding-bottom:10rpx;
 			}
-			
+
 			.msg-list{
 				display: flex;
 				padding-bottom:5rpx;
@@ -294,7 +294,7 @@
 					}
 				}
 			}
-			
+
 			&:active{
 				background:#f2f2f2;
 				animation: fadeIn 300ms;
@@ -468,7 +468,7 @@
 			.that-item{
 				border:1rpx solid #647484;
 				background:#e2e2e2;
-				
+
 				&:active{
 					border:0rpx solid #647484;
 					background:#fff;
@@ -596,9 +596,9 @@
 		padding: 20rpx;
 		padding-bottom: 0;
 	}
-	
-	
-	
+
+
+
 	// 弹出层
 	.popup-reply{
 		background:#fff;
@@ -607,7 +607,7 @@
 		border-bottom-left-radius:10rpx;
 		border-bottom-right-radius:10rpx;
 		padding-top:30rpx;
-		
+
 		.textarea-view{
 			width:calc(100% - 60rpx);
 			margin:0rpx 30rpx;
@@ -623,7 +623,7 @@
 			font-weight:800;
 			padding:20rpx 0rpx 10rpx 20rpx;
 		}
-		
+
 		.input-view{
 			width:100%;
 			min-height:126rpx;
@@ -640,7 +640,7 @@
 			display:flex;
 			align-items:center;
 			padding: 20rpx 30rpx;
-			
+
 			.img-list{
 				width: auto;
 				max-width:300rpx;
@@ -648,7 +648,7 @@
 				display:flex;
 				align-items:center;
 				overflow-x:scroll;
-				
+
 				.img-view{
 					width:80rpx;
 					min-width:80rpx;
@@ -657,7 +657,7 @@
 					margin-right:10rpx;
 					border-radius:10rpx;
 					overflow:hidden;
-					
+
 					.img{
 						width:80rpx;
 						height:80rpx;
@@ -669,7 +669,7 @@
 				align-items: center;
 				margin-left:30rpx;
 				flex:2;
-				
+
 				.left{
 					flex:2;
 				}
@@ -677,7 +677,7 @@
 					display:flex;
 					align-items: center;
 					flex:2;
-					
+
 					&:active{
 						opacity:0.9;
 					}
@@ -695,7 +695,7 @@
 					margin-left:10rpx;
 					border-radius:48rpx;
 					font-size:22rpx;
-					
+
 					&:active{
 						opacity:0.9;
 					}

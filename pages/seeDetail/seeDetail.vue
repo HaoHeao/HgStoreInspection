@@ -1,7 +1,6 @@
 <!-- 权限判断：
 	1.当前巡检状态
 	2.当前登录人信息判断
-	3.
  -->
 <template>
 	<view :class="['container fadeIn', infoDetail.deptname?'':'data-null']">
@@ -168,9 +167,9 @@
 					</view>
 					<view class="title">选择巡检归属</view>
 					<view class="select-picker">
-						
+
 						<view class="uni-input" v-for="(item,index) of trueUnder" :key="index" @click="clickUnder(item,index)">{{item.item.name}}</view>
-						
+
 					</view>
 					<view class="picker-list">
 						<view :class="['item',item.select?'active':'']" v-for="(item,index) of nowUnder" :key="index" @click="selectUnder(item,index)">{{item.item.name}} <view v-if="item.select" class="text">√</view> </view>
@@ -234,14 +233,14 @@
 				selectIdList:[],
 				// 描述
 				selectInputtxt:'',
-				
+
 				// 重复提交
 				btnClickReply:true,
 				// 当前巡检记录哪些人看过
 				detailLookList:[],
 				// 当前更多操作显示的窗口
 				showMoreType:1,
-				
+
 				// 操作权限判断
 				postThereTrue:false,
 				// 巡检单状态
@@ -351,7 +350,7 @@
 				let _this = this,
 					trueUnder = this.trueUnder,
 					nowUnder = this.nowUnder;
-					
+
 				if(trueUnder[trueUnder.length - 1].item.name == '未选择'){
 					uni.showToast({
 						icon:"none",
@@ -442,11 +441,11 @@
 						trueUnder.pop();
 						trueUnder.push(item);
 						underLastIndex = item.item;
-						
+
 						// nowUnder = item.children
 					}
 				}else{
-					
+
 				}
 				this.trueUnder = trueUnder
 				this.nowUnder = nowUnder
@@ -503,7 +502,7 @@
 							title: "查找失败:" + err.errMsg
 						})
 					}
-					
+
 				})
 			},
 			// 每一条回复内容时间判断
@@ -688,7 +687,7 @@
 		background: #E5EDF1;
 		min-height: 100vh;
 		padding-bottom: 20rpx;
-		
+
 		padding-bottom: env(safe-area-inset-bottom);
 
 		.haoheao-scroll {
@@ -932,7 +931,7 @@
 							padding:8rpx 20rpx;
 							border-radius:6rpx;
 							margin-right:20rpx;
-							
+
 							&:active{
 								background:#f2f2f2;
 								color:#333;
@@ -1022,7 +1021,7 @@
 		box-sizing:border-box;
 		border-bottom-left-radius:10rpx;
 		border-bottom-right-radius:10rpx;
-		
+
 		.title{
 			height:38rpx;
 			color:#647484;
@@ -1036,7 +1035,7 @@
 			background:#F3F5F7;
 			border-radius:10rpx;
 			padding:26rpx 20rpx;
-			
+
 			.input-view{
 				border-radius:10rpx;
 				width:100%;
@@ -1060,7 +1059,7 @@
 			display:flex;
 			align-items:center;
 			padding: 20rpx 0rpx;
-			
+
 			.img-list{
 				width: auto;
 				max-width:300rpx;
@@ -1068,7 +1067,7 @@
 				display:flex;
 				align-items:center;
 				overflow-x:scroll;
-				
+
 				.img-view{
 					width:80rpx;
 					min-width:80rpx;
@@ -1077,7 +1076,7 @@
 					margin-right:10rpx;
 					border-radius:10rpx;
 					position:relative;
-					
+
 					.del{
 						position:absolute;
 						right:-8rpx;
@@ -1098,7 +1097,7 @@
 						display:block;
 						background:red;
 					}
-					
+
 					.img{
 						width:80rpx;
 						height:80rpx;
@@ -1114,7 +1113,7 @@
 					display:flex;
 					align-items: center;
 					flex:2;
-					
+
 					&:active{
 						opacity:0.9;
 					}
@@ -1132,7 +1131,7 @@
 					margin-left:10rpx;
 					border-radius:48rpx;
 					font-size:22rpx;
-					
+
 					&:active{
 						opacity:0.9;
 					}
@@ -1144,7 +1143,7 @@
 			}
 		}
 	}
-	
+
 	// 归属
 	.status-select.popup-reply{
 		width:100vw;
@@ -1182,14 +1181,14 @@
 				display:flex;
 				align-items:center;
 				flex-wrap: wrap;
-				
+
 				.uni-input{
 					height:75rpx;
 					line-height:80rpx;
 					border-bottom:5rpx solid #A3D9FA;
 					margin-right:30rpx;
 					padding:0rpx 20rpx;
-				
+
 					&:active{
 						background:#f9f9f9;
 					}
@@ -1213,7 +1212,7 @@
 					align-items:center;
 					padding-left:20rpx;
 					border-bottom:1rpx solid #fff;
-				
+
 					&:active{
 						opacity:0.9;
 					}
@@ -1259,9 +1258,9 @@
 		// 		color:#fff;
 		// 	}
 		// }
-		
-		
-		
+
+
+
 		.control-view{
 			width:100%;
 			display:flex;
@@ -1269,11 +1268,11 @@
 			padding:0;
 			height:auto;
 			padding-top:20rpx;
-			
+
 			.img-list{
 				max-width:100rpx;
 			}
-			
+
 			.control{
 				display:flex;
 				align-items: center;
@@ -1310,7 +1309,7 @@
 			display:flex;
 			align-items:center;
 			color:#1BA1F3;
-		
+
 			&:active{
 				background:#f2f2f2;
 				border-radius:10rpx;
@@ -1352,7 +1351,7 @@
 		background:#fff;
 		font-size:28rpx;
 		font-weight:600;
-		
+
 		.item{
 			width:500rpx;
 			height:100rpx;
@@ -1361,7 +1360,7 @@
 			padding-left:40rpx;
 			color:#333;
 			border-bottom:1rpx solid #f9f9f9;
-			
+
 			&:active{
 				backgorund:#f2f2f2;
 				opacity:0.9;
@@ -1379,7 +1378,7 @@
 		font-weight:600;
 		width:540rpx;
 		box-sizing:border-box;
-		
+
 		.tip{
 			// width:calc(100% - 40rpx);
 			padding:40rpx 40rpx;
@@ -1387,26 +1386,26 @@
 			border-bottom:2rpx solid #f9f9f9;
 			// box-sizing:border-box;
 		}
-		
+
 		.look-list{
 			width:100%;
 			// max-height:500rpx;
 			max-height:700rpx;
 			overflow-y:scroll;
-			
+
 			.item{
 				padding:10rpx 40rpx;
 				font-size:26rpx;
 				color:#666;
 			}
 		}
-		
+
 		.choice{
 			width:100%;
 			height:100rpx;
 			border-top:2rpx solid #f9f9f9;
 			display:flex;
-			
+
 			.btn{
 				width:50%;
 				line-height:100rpx;
@@ -1416,7 +1415,7 @@
 			}
 			.btn.confirm{
 				font-weight:700;
-				
+
 				&:active{
 					background:#f2f2f2;
 					opacity:0.9;

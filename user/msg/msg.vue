@@ -84,7 +84,7 @@
 				utils.getMarketDeptList(this);
 				utils.getMarketUserList(this);
 				console.log("查看信息参数", item);
-				let insertdate = moment(new Date()).format('yyyy-MM-dd hh:mm:ss');
+				let insertdate = moment().format('yyyy-MM-dd hh:mm:ss');
 				let setMsg = {
 					msgviewid: 0,
 					imlogid: item.imlogid,

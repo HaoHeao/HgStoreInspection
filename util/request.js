@@ -1,5 +1,5 @@
-/* 
- * request存储一些ajax请求 
+/*
+ * request存储一些ajax请求
  */
 
 // const api = require('@/api/index.js').default
