@@ -4,7 +4,8 @@
 			<view class="main">
 				<view class="item-title">问题描述</view>
 				<view class="item-view textarea-view">
-					<textarea v-model="question" disable-default-padding auto-height fixed maxlength="500" class="textarea" placeholder="在此填写问题描述"></textarea>
+					<textarea v-model="question" disable-default-padding auto-height fixed maxlength="500" class="textarea"
+					 placeholder="在此填写问题描述"></textarea>
 				</view>
 				<block v-if="floorList.length">
 					<view class="item-title">楼层</view>
@@ -425,6 +426,7 @@
 				let _this = this;
 				uni.chooseImage({
 					success: function(res) {
+						_this.utils.imagesFilter(res.tempFiles)
 						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item => item.path))
 					}
 				});
@@ -597,7 +599,7 @@
 			background: #fff;
 			border-radius: 10rpx;
 			padding: 0rpx 30rpx;
-			margin: 20rpx;					
+			margin: 20rpx;
 			margin-bottom: calc(140rpx + env(safe-area-inset-bottom));
 
 			// 标题

@@ -1,50 +1,49 @@
+import baseURL from './http_config.js'
+
 /* 计划巡检 */
-const api = 'https://vipapi.hanguangbaihuo.com';
-// const api = 'https://vipapi-cs.hanguangbaihuo.com';
-// const api = 'http://192.168.128.66:8081'
 
 // 待整改
-// const plan_questionWait = `${api}/hgInspection/storeapi/plan/load/question/wait` //正式、测试
-const plan_questionWait = `${api}/hgInspection/storeapi/plan/load/question/wait`
+// const plan_questionWait = `${baseURL}/hgInspection/storeapi/plan/load/question/wait` //正式、测试
+const plan_questionWait = `${baseURL}/hgInspection/storeapi/plan/load/question/wait`
 
 // 已整改
-const plan_questionCompleted = `${api}/hgInspection/storeapi/plan/load/question/adjusted`
+const plan_questionCompleted = `${baseURL}/hgInspection/storeapi/plan/load/question/adjusted`
 
 // 已完成
-const plan_questionFinish = `${api}/hgInspection/storeapi/plan/load/question/finish`
+const plan_questionFinish = `${baseURL}/hgInspection/storeapi/plan/load/question/finish`
 
 // 请求筛选条件
-const plan_getFilterData = `${api}/hgInspection/storeapi/plan/load/question/selectitem`
+const plan_getFilterData = `${baseURL}/hgInspection/storeapi/plan/load/question/selectitem`
 
 // 复核请求列表
-const plan_getReviewlist = `${api}/hgInspection/storeapi/plan/load/question/confirm`
+const plan_getReviewlist = `${baseURL}/hgInspection/storeapi/plan/load/question/confirm`
 
 // 复核筛选列表
-const plan_getReviewFilterlist = `${api}/hgInspection/storeapi/plan/load/question/confirm/selectit`
+const plan_getReviewFilterlist = `${baseURL}/hgInspection/storeapi/plan/load/question/confirm/selectit`
 
 // 撤回整改回复
-const plan_delReplydeep = `${api}/hgInspection/storeapi/plan/reply/del`
+const plan_delReplydeep = `${baseURL}/hgInspection/storeapi/plan/reply/del`
 
 // 计划巡检获取某一条巡检记录明细
-const plan_getPlaninspectionDetail = `${api}/hgInspection/storeapi/plan/load/questionstatus`
+const plan_getPlaninspectionDetail = `${baseURL}/hgInspection/storeapi/plan/load/questionstatus`
 
 // 计划巡检巡检问题复核
-const plan_submitInspectionReview = `${api}/hgInspection/storeapi/plan/confirm`
+const plan_submitInspectionReview = `${baseURL}/hgInspection/storeapi/plan/confirm`
 
 // 计划巡检列表
-const plan_getPlanList = `${api}/hgInspection/storeapi/plan/load`
+const plan_getPlanList = `${baseURL}/hgInspection/storeapi/plan/load`
 
 // 计划巡检上传图片
-const plan_uploadImage = `${api}/hgInspection/file/upload-picture`
+const plan_uploadImage = `${baseURL}/hgInspection/file/upload-picture`
 
 // 计划巡检问题整改回复
-const plan_getQuestionReply = `${api}/hgInspection/storeapi/plan/reply/save`
+const plan_getQuestionReply = `${baseURL}/hgInspection/storeapi/plan/reply/save`
 
 // 计划巡检撤回问题整改回复
-const plan_withdrawQuestionFeedBack = `${api}/hgInspection/storeapi/plan/question/del`
+const plan_withdrawQuestionFeedBack = `${baseURL}/hgInspection/storeapi/plan/question/del`
 
 // 计划巡检提出问题
-const plan_submitQuestion = `${api}/hgInspection/storeapi/plan/question/save`
+const plan_submitQuestion = `${baseURL}/hgInspection/storeapi/plan/question/save`
 
 export {
 	// 待整改

@@ -1,44 +1,43 @@
+import baseURL from './http_config.js'
+
 /* 会议室预约 */
-const api = 'https://vipapi.hanguangbaihuo.com';
-// const api = 'https://vipapi-cs.hanguangbaihuo.com';
-// const api = 'http://192.168.128.66:8081'
 
 // 获取全部房间列表
-const meeting_getRoomList = `${api}/hgInspection/meetingroomapi/meetingroom/queryAll`
-// const meeting_getRoomList = `${api}/MeetingRoom/api/meetingroom/queryAll`
+const meeting_getRoomList = `${baseURL}/hgInspection/meetingroomapi/meetingroom/queryAll`
+// const meeting_getRoomList = `${baseURL}/MeetingRoom/api/meetingroom/queryAll`
 
 // 获取天预约列表
-const meeting_getDayReservationList = `${api}/hgInspection/meetingroomapi/appointment/query`
+const meeting_getDayReservationList = `${baseURL}/hgInspection/meetingroomapi/appointment/query`
 
 // 获取设备类型
-const meeting_getGoodsTypeList = `${api}/hgInspection/meetingroomapi/goodstype/queryAll`
+const meeting_getGoodsTypeList = `${baseURL}/hgInspection/meetingroomapi/goodstype/queryAll`
 
 // 获取移动设备列表
-const meeting_getMobileEquipmentList = `${api}/hgInspection/meetingroomapi/mobilegoods/query`
+const meeting_getMobileEquipmentList = `${baseURL}/hgInspection/meetingroomapi/mobilegoods/query`
 
 // 预约会议室
-const meeting_reserve = `${api}/hgInspection/meetingroomapi/appointment/save`
+const meeting_reserve = `${baseURL}/hgInspection/meetingroomapi/appointment/save`
 
 // 获取预约详细信息
-const meeting_reserveDetail = `${api}/hgInspection/meetingroomapi/appointment/detailInfo`
+const meeting_reserveDetail = `${baseURL}/hgInspection/meetingroomapi/appointment/detailInfo`
 
 // 取消会议室预约信息
-const meeting_delreserve = `${api}/hgInspection/meetingroomapi/appointment/delete`
+const meeting_delreserve = `${baseURL}/hgInspection/meetingroomapi/appointment/delete`
 
 // 变更会议室预约时间
-const meeting_changeReserveTime = `${api}/hgInspection/meetingroomapi/appointment/addchange`
+const meeting_changeReserveTime = `${baseURL}/hgInspection/meetingroomapi/appointment/addchange`
 
 // 会议室请求置换
-const meeting_newReplacement = `${api}/hgInspection/meetingroomapi/appointment/addswap`
+const meeting_newReplacement = `${baseURL}/hgInspection/meetingroomapi/appointment/addswap`
 
 // 会议置换请求列表
-const meeting_replacementList = `${api}/hgInspection/meetingroomapi/appointment/queryswap`
+const meeting_replacementList = `${baseURL}/hgInspection/meetingroomapi/appointment/queryswap`
 
 // 拒绝会议置换申请
-const meeting_refusereplacement = `${api}/hgInspection/meetingroomapi/appointment/refuseswap`
+const meeting_refusereplacement = `${baseURL}/hgInspection/meetingroomapi/appointment/refuseswap`
 
 // 同意会议置换申请
-const meeting_agreereplacement = `${api}/hgInspection/meetingroomapi/appointment/checkswap`
+const meeting_agreereplacement = `${baseURL}/hgInspection/meetingroomapi/appointment/checkswap`
 
 export {
 	// 获取全部房间列表

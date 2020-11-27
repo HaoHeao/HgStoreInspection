@@ -1,29 +1,28 @@
+import baseURL from './http_config.js'
+
 /* 计划巡检 */
-const api = 'https://vipapi.hanguangbaihuo.com';
-// const api = 'https://vipapi-cs.hanguangbaihuo.com';
-// const api = 'http://192.168.128.66:8081'
 
 // openid登录
-// const layout_openidLogin = `${api}/hgInspection/storeapi/login/` //正式、测试
-const layout_openidLogin = `${api}/hgInspection/storeapi/login/`
+// const layout_openidLogin = `${baseURL}/hgInspection/storeapi/login/` //正式、测试
+const layout_openidLogin = `${baseURL}/hgInspection/storeapi/login/`
 
 // 用户名密码登录
-const layout_login = `${api}/hgInspection/storeapi/login`
+const layout_login = `${baseURL}/hgInspection/storeapi/login`
 
 // 请求消息列表数据
-const layout_getMessageList = `${api}/hgInspection/storeapi/msg/all`
+const layout_getMessageList = `${baseURL}/hgInspection/storeapi/msg/all`
 
 // 发送消息已阅读
-const layout_sendMessageLooked = `${api}/hgInspection/storeapi/msg/view/save`
+const layout_sendMessageLooked = `${baseURL}/hgInspection/storeapi/msg/view/save`
 
 // 退出登录
-const layout_logout = `${api}/hgInspection/storeapi/loginout/`
+const layout_logout = `${baseURL}/hgInspection/storeapi/loginout/`
 
 // 修改密码
-const layout_changePassword = `${api}/hgInspection/storeapi/user/password/update`
+const layout_changePassword = `${baseURL}/hgInspection/storeapi/user/password/update`
 
 // 修改手机号
-const layout_changeIPhone = `${api}/hgInspection/storeapi/user/mobile/update`
+const layout_changeIPhone = `${baseURL}/hgInspection/storeapi/user/mobile/update`
 
 export {
 	// openid登录

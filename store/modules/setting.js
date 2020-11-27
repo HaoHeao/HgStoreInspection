@@ -1,8 +1,8 @@
 const setting = {
 	namespaced: true,
 	state: {
-		version: "0.9.4",
-		lastmodify: "2020/11/19",
+		version: "0.9.5",
+		lastmodify: "2020/11/27",
 		systemName: "北京汉光巡检系统",
 		appId: "wx252743e71090a061",
 		openId: '',
@@ -10,6 +10,8 @@ const setting = {
 		hasLogin: false,
 		userinfo: {},
 
+		// 上传图片限制大小 单位：B
+		updataImageSize: 1048576*10, //1M=1048576
 		// OSS下载规则
 		OSSDownload: "?x-oss-process=image/resize,m_mfit,h_120,w_120",
 		// swiper是否采用衔接滑动，即播放到末尾后重新回到开头

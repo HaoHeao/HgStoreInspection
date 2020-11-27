@@ -219,8 +219,8 @@
 					// 不能有巡检整改回复
 					// 问题状态必须为0
 					let nextDate = _this.moment(new Date().getTime() + 24*60*60*1000).format("YYYY/MM/DD")
-					if(_this.userinfo.username == _this.inspectionQuestionDetail.username &&
-					 new Date(_this.inspectionQuestionDetail.insertdate).getTime() < new Date(nextDate) &&
+					if(_this.userinfo.usernumber == _this.inspectionQuestionDetail.usernumber &&
+					 new Date(_this.inspectionQuestionDetail.insertdate.replace(/-/g, "/")).getTime() < new Date(nextDate) &&
 					 _this.inspectionQuestionDetail.planinspectionfeedback.length == 0 && 
 					 _this.inspectionQuestionDetail.status == 0
 					) return true
@@ -390,9 +390,7 @@
 								let [err, success] = data
 								console.log('撤回整改回复返回------>>>', success)
 								if (!err && success.data.success) {
-									uni.navigateBack({
-										delta: 1
-									});
+									this.UpdateNavigationBack()
 								} else {
 									uni.showToast({
 										title: err ? err : success.data.errmsg,
@@ -411,8 +409,9 @@
 			chooseImgage(){
 				let _this = this;
 				uni.chooseImage({
-					success: function (res) {
-						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item=> item.path))
+					success: function(res) {
+						_this.utils.imagesFilter(res.tempFiles)
+						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item => item.path))
 					}
 				});
 			},
@@ -565,6 +564,13 @@
 					console.log(e)
 					uni.hideNavigationBarLoading()
 				}
+			},
+			// 返回上一页并更新
+			UpdateNavigationBack() {
+				let pages = getCurrentPages();
+				let beforePage = pages[pages.length - 2];
+				beforePage.$vm.getInspectionDetail(beforePage.$vm.questionStatus);
+				uni.navigateBack()
 			},
 		},
 		onLoad(option) {

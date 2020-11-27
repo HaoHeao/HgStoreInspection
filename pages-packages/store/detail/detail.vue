@@ -473,8 +473,9 @@
 			chooseImgage(){
 				let _this = this;
 				uni.chooseImage({
-					success: function (res) {
-						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item=> item.path))
+					success: function(res) {
+						_this.utils.imagesFilter(res.tempFiles)
+						_this.tempFilePaths = _this.tempFilePaths.concat(res.tempFiles.map(item => item.path))
 					}
 				});
 			},
