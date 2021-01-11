@@ -1,8 +1,10 @@
 const setting = {
 	namespaced: true,
 	state: {
-		version: "0.9.5",
-		lastmodify: "2020/11/27",
+		version: "0.9.6T",
+		lastmodify: "2020/12/31",
+		thismodify: "2020/12/31",
+		updataRemark: '',
 		systemName: "北京汉光巡检系统",
 		appId: "wx252743e71090a061",
 		openId: '',
@@ -28,10 +30,12 @@ const setting = {
 		},
 		// loadmore问题大小
 		loadmoreFontSize: '24',
-		// 与前一个元素的距离，单位rpx
-		loadmoreMarginTop: '50',
-		// 与后一个元素的距离，单位rpx
-		loadmoreMarginBottom: '50',
+		// loadmore高度
+		loadmoreHeight: '100',
+		// // 与前一个元素的距离，单位rpx
+		// loadmoreMarginTop: '50',
+		// // 与后一个元素的距离，单位rpx
+		// loadmoreMarginBottom: '50',
 		// loadmore状态为nomore时内容是否显示为一个'·'
 		isDot: false,
 		// 返回顶部按钮

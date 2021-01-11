@@ -99,8 +99,7 @@
 					</view>
 				</view>
 				<u-loadmore :class="inspectionDetail && inspectionDetail.feedback?'loadmore-view':''" status="nomore" :icon-type="setting.iconType"
-				 :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-				 :margin-bottom="setting.loadmoreMarginBottom" />
+				 :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
 			</block>
 		</scroll-view>
 		<view class="sublimt-btn" @click="openFeedbackPopup()" v-if="inspectionDetail && inspectionDetail.feedback">回复</view>

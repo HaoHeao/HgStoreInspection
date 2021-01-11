@@ -49,8 +49,7 @@
 				</block>
 			</block>
 			<u-loadmore :status="getDataLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-			 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-			 :margin-bottom="setting.loadmoreMarginBottom" />
+			 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
 		</scroll-view>
 		<view class="popup reply-view" v-if="inspectionDetail && inspectionDetail.feedback">
 			<view class="remark-view">
