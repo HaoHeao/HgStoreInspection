@@ -21,6 +21,13 @@
 							</view>
 							<view class="txt">{{item.mname}}</view>
 						</view>
+						
+						<view class="item" @click="toModule('store-inspection')">
+							<view class="icon-view">
+								<image src="@/static/tabbar/work/store-inspection.svg" mode="widthFix" class="icon"></image>
+							</view>
+							<view class="txt">卖场检查</view>
+						</view>
 						<!-- <view class="item" @click="toModule('spot-check')">
 							<view class="icon-view">
 								<image src="@/static/tabbar/work/spot-check.svg" mode="widthFix" class="icon"></image>
@@ -97,6 +104,10 @@
 				} else if (type == 'plan-review') {
 					uni.reLaunch({
 						url: '/pages-packages/plan-review/index/index'
+					})
+				} else if (type == 'store-inspection') {
+					uni.reLaunch({
+						url: '/pages-packages/store-inspection/index/index'
 					})
 				}
 			},

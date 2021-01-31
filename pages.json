@@ -132,6 +132,27 @@
 				"disableScroll": true
 			}
 		}]
+	}, {
+		"root": "pages-packages/store-inspection",
+		"pages": [{
+			"path": "index/index",
+			"style": {
+				"navigationBarTitleText": "卖场检查",
+				"disableScroll": true
+			}
+		}, {
+			"path": "add/index",
+			"style": {
+				"navigationBarTitleText": "新增检查记录",
+				"disableScroll": true
+			}
+		}, {
+			"path": "detail/index",
+			"style": {
+				"navigationBarTitleText": "检查明细",
+				"disableScroll": true
+			}
+		}]
 	}],
 	"preloadRule": {
 		"pages-packages/store/index/index": {
@@ -157,6 +178,10 @@
 		"pages-packages/plan-review/index/index": {
 			"network": "all",
 			"packages": ["pages-packages/plan-review"]
+		},
+		"pages-packages/store-inspection/index/index": {
+			"network": "all",
+			"packages": ["pages-packages/store-inspection"]
 		}
 	},
 	"globalStyle": {
