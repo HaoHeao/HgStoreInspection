@@ -53,7 +53,7 @@
 								</view>
 							</view>
 							<u-loadmore class="loadmore" :status="reviewLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" />
+							 :is-dot="setting.isDot" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!reviewData.length">
 							<view class="center">
@@ -99,7 +99,7 @@
 								</view>
 							</view>
 							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType"
-							 :load-text="setting.loadText" :is-dot="setting.isDot" />
+							 :load-text="setting.loadText" :is-dot="setting.isDot" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!completedData.length">
 							<view class="center">

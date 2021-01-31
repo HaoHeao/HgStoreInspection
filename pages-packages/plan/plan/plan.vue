@@ -131,7 +131,7 @@
 				</view>
 				<u-loadmore :class="inspectionDetail && inspectionDetail.submitQuestion?'loadmore-view':''" status="nomore"
 				 :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize"
-				 :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+				 :height="setting.loadmoreHeight" />
 			</block>
 		</scroll-view>
 		<view class="sublimt-btn" @click="submitQuestions()" v-if="inspectionDetail && inspectionDetail.submitQuestion">提出巡检问题</view>

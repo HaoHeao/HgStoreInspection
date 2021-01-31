@@ -34,8 +34,7 @@
 								</view>
 							</view>
 							<u-loadmore :status="processingLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-							 :margin-bottom="setting.loadmoreMarginBottom" />
+							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!processingData.length">
 							<view class="center">
@@ -67,8 +66,7 @@
 								</view>
 							</view>
 							<u-loadmore :status="notSumupLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-							 :margin-bottom="setting.loadmoreMarginBottom" />
+							 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!notSumupData.length">
 							<view class="center">

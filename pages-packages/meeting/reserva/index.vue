@@ -27,7 +27,7 @@
 					<view class="fixed-equip" v-if="option_roominfo.fixedEquipment.length">
 						<view class="title">固定设备</view>
 						<view class="equip-list">
-							<view class="item" v-for="(item,index) of option_roominfo.fixedEquipment">
+							<view class="item" v-for="(item,index) of option_roominfo.fixedEquipment" :key="index">
 								<image class="icon" :src="iconurl + item.goodsitem.icon" mode="widthFix"></image>
 								<view class="name">{{item.goodsname}}</view>
 							</view>

@@ -117,7 +117,7 @@
 			</block>
 			<u-loadmore :class="inspectionQuestionDetail && inspectionQuestionDetail.feedback?'loadmore-view':''" :status="getDataLoading?'loading':'nomore'"
 			 :icon-type="setting.iconType" :load-text="setting.loadText" :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize"
-			 :margin-top="setting.loadmoreMarginTop" :margin-bottom="setting.loadmoreMarginBottom" />
+			 :height="setting.loadmoreHeight" />
 		</scroll-view>
 		<view class="sublimt-btn" v-if="inspectionQuestionDetail && inspectionQuestionDetail.feedback" @click="openReplyPopup()">整改</view>
 		<!-- uni-popup的底部蒙层 -->

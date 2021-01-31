@@ -42,7 +42,7 @@
 						</view>
 					</view>
 					<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-					 :is-dot="setting.isDot" />
+					 :is-dot="setting.isDot" :height="setting.loadmoreHeight" />
 					<view class="bottom"></view>
 				</block>
 				<view class="no-data-view" v-if="!tabelData.length">

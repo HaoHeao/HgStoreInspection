@@ -30,7 +30,7 @@
 								</view>
 							</view>
 							<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-							 :is-dot="setting.isDot" />
+							 :is-dot="setting.isDot" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!waitData.length">
 							<view class="center">
@@ -58,7 +58,7 @@
 								</view>
 							</view>
 							<u-loadmore class="loadmore" :status="computedLoading?'loading':'nomore'" :icon-type="setting.iconType"
-							 :load-text="setting.loadText" :is-dot="setting.isDot" />
+							 :load-text="setting.loadText" :is-dot="setting.isDot" :height="setting.loadmoreHeight" />
 						</block>
 						<view class="no-data-view fadeIn" v-if="!solvedData.length">
 							<view class="center">

@@ -12,7 +12,8 @@
 				<u-loading class="u-loadmore-icon" :color="iconColor" :mode="iconType == 'circle' ? 'circle' : 'flower'" :show="status == 'loading' && icon"></u-loading>
 			</view>
 			<!-- 如果没有更多的状态下，显示内容为dot（粗点），加载特定样式 -->
-			<view class="u-line-1" :style="[loadTextStyle]" :class="[(status == 'nomore' && isDot == true) ? 'u-dot-text' : 'u-more-text']" @tap="loadMore">
+			<view class="u-line-1" :style="[loadTextStyle]" :class="[(status == 'nomore' && isDot == true) ? 'u-dot-text' : 'u-more-text']"
+			 @tap="loadMore">
 				{{ showText }}
 			</view>
 		</view>
@@ -58,7 +59,7 @@
 			},
 			// 字体颜色
 			color: {
-				type: String, 
+				type: String,
 				default: '#606266'
 			},
 			// 组件状态，loadmore-加载前的状态，loading-加载中的状态，nomore-没有更多的状态
@@ -135,15 +136,14 @@
 			// 加载中花朵动画形式
 			// 动画由base64图片生成，暂不支持修改
 			flowerStyle() {
-				return {
-				}
+				return {}
 			},
 			// 显示的提示文字
 			showText() {
 				let text = '';
-				if(this.status == 'loadmore') text = this.loadText.loadmore;
-				else if(this.status == 'loading') text = this.loadText.loading;
-				else if(this.status == 'nomore' && this.isDot) text = this.dotText;
+				if (this.status == 'loadmore') text = this.loadText.loadmore;
+				else if (this.status == 'loading') text = this.loadText.loading;
+				else if (this.status == 'nomore' && this.isDot) text = this.dotText;
 				else text = this.loadText.nomore;
 				return text;
 			}
@@ -151,7 +151,7 @@
 		methods: {
 			loadMore() {
 				// 只有在“加载更多”的状态下才发送点击事件，内容不满一屏时无法触发底部上拉事件，所以需要点击来触发
-				if(this.status == 'loadmore') this.$emit('loadmore');
+				if (this.status == 'loadmore') this.$emit('loadmore');
 			}
 		}
 	}
@@ -159,42 +159,46 @@
 
 <style scoped lang="scss">
 	@import "../../libs/css/style.components.scss";
-	
+
 	/* #ifdef MP */
 	// 在mp.scss中，赋予了u-line为flex: 1，这里需要一个明确的长度，所以重置掉它
 	// 在组件内部，把组件名(u-line)当做选择器，在微信开发工具会提示不合法，但不影响使用
 	u-line {
 		flex: none;
 	}
+
 	/* #endif */
-	
+
+
 	.u-load-more-wrap {
 		@include vue-flex;
 		justify-content: center;
 		align-items: center;
+
+		// padding-bottom: env(safe-area-inset-bottom);
 	}
-	
+
 	.u-load-more-inner {
 		@include vue-flex;
 		justify-content: center;
 		align-items: center;
 		padding: 0 12rpx;
 	}
-	
+
 	.u-more {
 		position: relative;
 		@include vue-flex;
 		justify-content: center;
 	}
-	
+
 	.u-dot-text {
 		font-size: 28rpx;
 	}
-	
+
 	.u-loadmore-icon-wrap {
 		margin-right: 8rpx;
 	}
-	
+
 	.u-loadmore-icon {
 		@include vue-flex;
 		align-items: center;

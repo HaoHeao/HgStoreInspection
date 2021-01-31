@@ -4,6 +4,7 @@
 		 scroll-with-animation :enable-back-to-top="setting.enableBackToTop" :refresher-triggered="getDataRefresherLoading"
 		 @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
 			<view class="message-list" v-if="messageData.length">
+				<view style="height:20rpx;"></view>
 				<view class="item fadeIn" @click="messageGoGoGo(item)" v-for="(item,index) of messageData" :key="index">
 					<view class="source">
 						<image src="@/static/module1.png" mode="widthFix" class="img" v-if="item.itype == 1"></image>
@@ -23,8 +24,7 @@
 					</view>
 				</view>
 				<u-loadmore :status="getMessageLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-				 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :margin-top="setting.loadmoreMarginTop"
-				 :margin-bottom="setting.loadmoreMarginBottom" />
+				 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
 			</view>
 			<view class="no-data-view fadeIn" v-if="!messageData.length">
 				<view class="center">
@@ -188,11 +188,10 @@
 		background: #F6F7F9;
 
 		.scroll-view {
-			height: calc(100vh - 100rpx);
+			height: calc(100vh - 100rpx - env(safe-area-inset-bottom));
 		}
 
 		.message-list {
-			margin-top: 20rpx;
 
 			.item {
 				margin: 20rpx;
