@@ -1,9 +1,9 @@
 const setting = {
 	namespaced: true,
 	state: {
-		version: "0.9.6T",
+		version: "0.9.6",
 		lastmodify: "2020/12/31",
-		thismodify: "2021/01/31",
+		thismodify: "2021/02/01",
 		updataRemark: '【新增】卖场检查',
 		systemName: "北京汉光巡检系统",
 		appId: "wx252743e71090a061",
@@ -24,18 +24,14 @@ const setting = {
 		iconType: 'circle',
 		// loadmore各个状态的文本
 		loadText: {
-			loadmore: '我是有底线的',
+			loadmore: '没有更多内容',
 			loading: '努力加载中',
-			nomore: '我是有底线的'
+			nomore: '没有更多内容'
 		},
 		// loadmore问题大小
 		loadmoreFontSize: '24',
 		// loadmore高度
-		loadmoreHeight: '100',
-		// // 与前一个元素的距离，单位rpx
-		// loadmoreMarginTop: '50',
-		// // 与后一个元素的距离，单位rpx
-		// loadmoreMarginBottom: '50',
+		loadmoreHeight: '160',
 		// loadmore状态为nomore时内容是否显示为一个'·'
 		isDot: false,
 		// 返回顶部按钮

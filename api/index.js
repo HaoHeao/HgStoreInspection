@@ -16,4 +16,7 @@ const meeting = require('./meeting.js')
 /* 店面抽盘 */
 const spotcheck = require('./spotcheck.js')
 
-export default Object.assign(global, layout, store, plan, meeting, spotcheck);
+/* 卖场检查 */
+const storeinspection = require('./storeinspection.js')
+
+export default Object.assign(global, layout, store, plan, meeting, spotcheck, storeinspection);

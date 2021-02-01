@@ -1,48 +1,48 @@
 <template>
 	<view class="container">
 		<view class="tabs">
-			<view class="left">共 3 条记录</view>
+			<view class="left">{{tabelData.length?`共 ${tabelData.length} 条记录`:''}}</view>
 			<view class="center"></view>
 			<view class="right">
 				<picker header-text="选择时间" mode="date" fields="month" @change="selectDataTime">
-					<view class="content">{{moment(date).format("YYYY年MM月")}}</view>
+					<view class="content">{{moment(date.replace(/-/g, '/') + '/01').format("YYYY年MM月")}}</view>
 				</picker>
 			</view>
 		</view>
 		<view class="main">
 			<scroll-view class="scroll-view" scroll-y refresher-enabled scroll-with-animation :enable-back-to-top="setting.enableBackToTop"
-			 :refresher-triggered="getDataLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore" @scrolltolower="onTolower">
-				<!-- <block v-if="tabelData.length"> -->
-				<view style="height: 20rpx;"></view>
-				<view class="item" @click="lookReplay(item)">
-					<view class="question">
-						<view class="txt">测试测试测试测试测试测试测试</view>
-					</view>
-					<view class="info-view">
-						<view class="title">检查机构及人员</view>
-						<view class="content">
-							测试测试测试测试测试
+			 :refresher-triggered="getDataLoading" @refresherrefresh="onRefresh" @refresherrestore="onRestore">
+				<block v-if="tabelData.length">
+					<view style="height: 20rpx;"></view>
+					<view class="item" @click="lookReplay(item)" v-for="(item,index) of tabelData" :key="index">
+						<view class="question">
+							<view class="txt">{{`${moment(item.chkdate.replace(/-/g, '/')).format("YYYY年MM月DD日")}  ${item.chktime.replace(/~/g, ' - ')}`}}</view>
+						</view>
+						<view class="info-view">
+							<view class="title">检查机构及人员</view>
+							<view class="content">
+								{{item.orguser}}
+							</view>
+						</view>
+						<view class="info-view">
+							<view class="title">检查内容</view>
+							<view class="content">{{item.chkplace}}</view>
+						</view>
+						<view class="info-view">
+							<view class="title">陪检人员</view>
+							<view class="content">{{item.compuser}}</view>
 						</view>
 					</view>
-					<view class="info-view">
-						<view class="title">检查内容</view>
-						<view class="content">测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试</view>
-					</view>
-					<view class="info-view">
-						<view class="title">陪检人员</view>
-						<view class="content">测试测试测试测试测试</view>
-					</view>
-				</view>
-				<u-loadmore class="loadmore" :status="waitLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
-				 :is-dot="setting.isDot" />
-				<view class="bottom"></view>
-				<!-- </block> -->
-				<!-- <view class="no-data-view" v-if="!tabelData.length">
+					<u-loadmore :status="getDataLoading?'loading':'nomore'" :icon-type="setting.iconType" :load-text="setting.loadText"
+					 :is-dot="setting.isDot" :font-size="setting.loadmoreFontSize" :height="setting.loadmoreHeight" />
+					<view style="height: 160rpx;"></view>
+				</block>
+				<view class="no-data-view" v-if="!tabelData.length">
 					<view class="center">
 						<image src="@/static/icon/no-data.svg" mode="widthFix" class="icon"></image>
 						<view class="tip">暂无数据</view>
 					</view>
-				</view> -->
+				</view>
 			</scroll-view>
 		</view>
 		<navigator url="../add/index" class="bottom-btn">
@@ -59,10 +59,7 @@
 				date: "",
 				// 首页数据
 				tabelData: [],
-				tabelInfo: {},
 				getDataLoading: false,
-				// 解决popup里input不显示
-				showFilterPopup: false
 			}
 		},
 		computed: {
@@ -78,7 +75,6 @@
 			async onRefresh() {
 				console.log('下拉刷新')
 				await this.getData()
-				this.getDataLoading = false
 			},
 			// 刷新完成/重置
 			onRestore() {
@@ -87,39 +83,37 @@
 			},
 			selectDataTime(e) {
 				this.date = e.detail.value.replace(/-/g, '/')
-				console.log(this.date)
+				console.log('date', this.date)
+				this.getData()
 			},
 			lookReplay(item) {
 				uni.navigateTo({
-					url: "../detail/index"
+					url: "../detail/index?inspectionlogid=" + item.orgchecklogid
 				})
 			},
+			// 获取列表数据
 			async getData() {
 				if (this.getDataLoading) return
-				uni.showNavigationBarLoading()
 				this.getDataLoading = true
 				try {
 					let data = await uni.request({
 						method: 'GET',
-						url: this.api.spotcheck_search,
+						url: this.api.storeinspection_getDataList,
 						data: {
-							rows: this.pagesize,
-							page: this.pageindex,
-							checkuserid: this.userinfo.usernumber,
-							checkdate: this.date,
-							conerno: this.conerno,
-							difflag: this.difference ? 1 : ''
+							sdate: this.moment(`${this.date}/01`).format("YYYY/MM/01"),
+							edate: (new Date(`${this.date}/01`).getMonth() + 2 >
+								12 ? new Date(`${this.date}/01`).getFullYear() + 1 : new Date(`${this.date}/01`).getFullYear()) + '/' + (
+								new Date(
+									`${this.date}/01`).getMonth() + 2 >
+								12 ? '01' : new Date(`${this.date}/01`).getMonth() + 2) + '/' + '01',
 						}
 					})
 					this.getDataLoading = false
-					uni.hideNavigationBarLoading()
 					let [err, success] = data
-					console.log('查询成功------>>>', err, data)
+					console.log('查询成功------>>>', err, success)
 					if (!err && success.data.success) {
-						this.tabelData = this.tabelData.concat(success.data.data.pBillStockSpotcheckDetail)
-						this.tabelInfo = success.data
-						this.pagenum ? '' : this.pagenum = success.data.page
-						this.pageindex += 1
+						this.tabelData = success.data.data[0]
+						console.log('获取列表数据成功------>>>', this.tabelData)
 					} else {
 						uni.showToast({
 							title: err ? err : success.data.errmsg,
@@ -128,16 +122,15 @@
 						});
 					}
 				} catch (e) {
-					uni.hideNavigationBarLoading()
 					this.getDataLoading = false
 					console.log(e)
 				}
 			},
 		},
 		onLoad: async function() {
-			this.date = this.moment().format("YYYY-MM")
+			this.date = this.moment().format("YYYY/MM")
 			console.log(this.date)
-			// this.getData()
+			this.getData()
 		},
 		onShow: async function() {
 
@@ -224,14 +217,15 @@
 
 						.title {
 							color: #647484;
-							min-width: 5em;
-							width: 5em;
+							width: 4em;
+							min-width: 4em;
 							margin-right: 20rpx;
 							white-space: normal;
 						}
 
 						.content {
 							color: #333;
+							word-break:break-all;
 						}
 					}
 				}

@@ -150,9 +150,9 @@
 			console.log('全局setting------>>>', this.setting)
 
 
-			uni.reLaunch({
-				url: '/pages-packages/store-inspection/index/index'
-			})
+			// uni.reLaunch({
+			// 	url: '/pages-packages/store-inspection/index/index'
+			// })
 		},
 		// 分享
 		onShareAppMessage() {}

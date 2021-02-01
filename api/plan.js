@@ -33,9 +33,6 @@ const plan_submitInspectionReview = `${baseURL}/hgInspection/storeapi/plan/confi
 // 计划巡检列表
 const plan_getPlanList = `${baseURL}/hgInspection/storeapi/plan/load`
 
-// 计划巡检上传图片
-const plan_uploadImage = `${baseURL}/hgInspection/file/upload-picture`
-
 // 计划巡检问题整改回复
 const plan_getQuestionReply = `${baseURL}/hgInspection/storeapi/plan/reply/save`
 
@@ -66,8 +63,6 @@ export {
 	plan_submitInspectionReview,
 	// 计划巡检列表
 	plan_getPlanList,
-	// 计划巡检上传图片
-	plan_uploadImage,
 	// 计划巡检问题整改回复
 	plan_getQuestionReply,
 	// 计划巡检撤回问题整改回复

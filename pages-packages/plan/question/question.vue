@@ -422,7 +422,7 @@
 				for(let item of this.tempFilePaths){
 					try{
 						let uploadResult = await uni.uploadFile({
-							url: _this.api.plan_uploadImage,
+							url: _this.api.uploadImage,
 							filePath: item,
 							name: 'file',
 							method: "POST",
